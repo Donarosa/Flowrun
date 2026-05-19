@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowRun · Post 01 · Carousel Z2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #4A5D3A;
+    --moss-deep: #3A4A2D;
+    --moss-soft: #7A9E6B;
+    --moss-tint: #E8EEE3;
+    --deep: #1B3A4B;
+    --deep-soft: #2D5066;
+    --deep-tint: #E1E8ED;
+    --stone: #8C8578;
+    --sand: #F5F2ED;
+    --sand-warm: #ECE6DC;
+    --ink: #2C2C2C;
+    --terracotta: #C4826D;
+    --terracotta-tint: #F5E4DE;
+    --sky: #A8C4D4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: #D8D3C5;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    padding: 48px 0 80px;
+  }
+
+  /* ============== INSTRUCTIONS ============== */
+  .doc-header {
+    max-width: 1080px;
+    margin: 0 auto 32px;
+    padding: 32px;
+    background: white;
+    border-radius: 20px;
+  }
+
+  .doc-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--deep);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .doc-header p {
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+
+  .doc-header code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--sand);
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--moss);
+  }
+
+  .doc-meta {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(44,44,44,0.08);
+    display: flex;
+    gap: 32px;
+    font-size: 13px;
+    color: var(--stone);
+  }
+
+  /* ============== SLIDE BASE ============== */
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    margin: 0 auto 24px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide-watermark {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 5;
+  }
+
+  .slide-watermark .wm-symbol {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--moss);
+    color: var(--sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide-watermark .wm-symbol svg { width: 24px; height: 24px; }
+
+  .slide-watermark .wm-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+  }
+
+  .slide-watermark.on-dark .wm-text { color: var(--sand); }
+  .slide-watermark.on-dark .wm-symbol {
+    background: rgba(245,242,237,0.18);
+  }
+
+  .slide-number {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    z-index: 5;
+  }
+
+  .slide-number.on-dark { color: rgba(245,242,237,0.5); }
+
+  .swipe-cue {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: rgba(245,242,237,0.6);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+  }
+
+  .swipe-cue.on-light { color: var(--stone); }
+
+  /* ============== SLIDE 1 · HOOK ============== */
+  .slide-01 {
+    background: var(--moss);
+    color: var(--sand);
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 80px;
+  }
+
+  .slide-01 .hook {
+    font-size: 128px;
+    line-height: 0.96;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    color: var(--sand);
+    max-width: 900px;
+  }
+
+  .slide-01 .hook .accent {
+    color: var(--moss-soft);
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  .slide-01 .sub {
+    font-size: 32px;
+    font-weight: 500;
+    color: rgba(245,242,237,0.7);
+    margin-top: 48px;
+    line-height: 1.3;
+    max-width: 700px;
+    letter-spacing: -0.005em;
+  }
+
+  /* ============== SLIDE 2 · LA TRAMPA ============== */
+  .slide-02 {
+    background: var(--sand);
+    padding: 200px 80px 120px;
+  }
+
+  .eyebrow-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    color: var(--moss);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .slide-02 h2 {
+    font-size: 88px;
+    font-weight: 800;
+    color: var(--deep);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin-bottom: 40px;
+  }
+
+  .slide-02 .body {
+    font-size: 36px;
+    color: var(--ink);
+    line-height: 1.4;
+    max-width: 900px;
+    margin-bottom: 56px;
+    font-weight: 400;
+  }
+
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .comp-card {
+    background: white;
+    border-radius: 24px;
+    padding: 36px 32px;
+  }
+
+  .comp-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--moss);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .comp-card .value {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--deep);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+
+  .comp-card .error {
+    margin-top: 12px;
+    color: var(--terracotta);
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  .takeaway {
+    background: var(--deep);
+    color: var(--sand);
+    padding: 28px 32px;
+    border-radius: 24px;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============== SLIDE 3 · QUÉ ES Z2 ============== */
+  .slide-03 {
+    background: var(--sand);
+    padding: 200px 80px 120px;
+  }
+
+  .slide-03 h2 {
+    font-size: 96px;
+    font-weight: 800;
+    color: var(--deep);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+
+  .slide-03 .lead {
+    font-size: 38px;
+    color: var(--ink);
+    line-height: 1.4;
+    max-width: 900px;
+    margin-bottom: 48px;
+    font-weight: 400;
+  }
+
+  .slide-03 .lead strong {
+    color: var(--moss);
+    font-weight: 700;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .feature-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: white;
+    padding: 24px 28px;
+    border-radius: 20px;
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .feature-bullet {
+    width: 14px;
+    height: 14px;
+    background: var(--moss);
+    border-radius: 100px;
+    flex-shrink: 0;
+    margin-top: 14px;
+  }
+
+  .data-tag-large {
+    display: inline-block;
+    background: var(--moss);
+    color: var(--sand);
+    padding: 20px 32px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============== SLIDE 4 · 80/20 ============== */
+  .slide-04 {
+    background: var(--deep);
+    color: var(--sand);
+    padding: 0 80px;
+    justify-content: center;
+  }
+
+  .slide-04 .big-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 380px;
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--sand);
+    margin-bottom: 0;
+  }
+
+  .slide-04 .big-num .slash {
+    color: var(--moss-soft);
+  }
+
+  .slide-04 .principle {
+    font-size: 36px;
+    color: rgba(245,242,237,0.8);
+    font-weight: 500;
+    margin-top: 32px;
+    letter-spacing: -0.01em;
+    max-width: 800px;
+    line-height: 1.35;
+  }
+
+  .slide-04 .principle strong {
+    color: var(--sand);
+    font-weight: 700;
+  }
+
+  .citation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--moss-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 48px;
+    font-weight: 600;
+  }
+
+  /* ============== SLIDE 5 · TALK TEST ============== */
+  .slide-05 {
+    background: var(--sand);
+    padding: 200px 80px 120px;
+  }
+
+  .slide-05 h2 {
+    font-size: 88px;
+    font-weight: 800;
+    color: var(--deep);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .slide-05 .sub {
+    font-size: 30px;
+    color: var(--stone);
+    margin-bottom: 56px;
+    font-weight: 500;
+  }
+
+  .test-row {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 36px;
+    border-radius: 24px;
+    margin-bottom: 14px;
+  }
+
+  .test-row.good { background: var(--moss-tint); }
+  .test-row.warn { background: var(--terracotta-tint); }
+  .test-row.bad { background: var(--deep); color: var(--sand); }
+
+  .test-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .test-row.good .test-icon { background: var(--moss); color: var(--sand); }
+  .test-row.warn .test-icon { background: var(--terracotta); color: var(--sand); }
+  .test-row.bad .test-icon { background: rgba(245,242,237,0.18); color: var(--sand); }
+
+  .test-text {
+    flex: 1;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--deep);
+    line-height: 1.2;
+  }
+
+  .test-row.bad .test-text { color: var(--sand); }
+
+  .test-zone {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--moss);
+    letter-spacing: 0.04em;
+  }
+
+  .test-row.warn .test-zone { color: var(--terracotta); }
+  .test-row.bad .test-zone { color: var(--sand); }
+
+  /* ============== SLIDE 6 · ESTÁS EN Z2 ============== */
+  .slide-06 {
+    background: var(--moss-tint);
+    padding: 200px 80px 120px;
+  }
+
+  .slide-06 .eyebrow-tag { color: var(--moss); }
+
+  .slide-06 h2 {
+    font-size: 88px;
+    font-weight: 800;
+    color: var(--deep);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin-bottom: 56px;
+  }
+
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .check-item {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .check-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 100px;
+    background: var(--moss);
+    color: var(--sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 32px;
+    color: var(--ink);
+    line-height: 1.25;
+    font-weight: 500;
+  }
+
+  .check-text strong { color: var(--moss); font-weight: 700; }
+
+  /* ============== SLIDE 7 · NO EN Z2 ============== */
+  .slide-07 {
+    background: var(--deep);
+    color: var(--sand);
+    padding: 200px 80px 120px;
+  }
+
+  .slide-07 .eyebrow-tag { color: var(--terracotta); }
+
+  .slide-07 h2 {
+    font-size: 88px;
+    font-weight: 800;
+    color: var(--sand);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin-bottom: 56px;
+  }
+
+  .slide-07 .check-item {
+    background: rgba(245,242,237,0.08);
+  }
+
+  .slide-07 .check-icon {
+    background: var(--terracotta);
+  }
+
+  .slide-07 .check-text { color: var(--sand); }
+  .slide-07 .check-text strong { color: var(--terracotta); }
+
+  /* ============== SLIDE 8 · CTA ============== */
+  .slide-08 {
+    background: var(--moss);
+    color: var(--sand);
+    padding: 200px 80px 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .slide-08 h2 {
+    font-size: 104px;
+    font-weight: 800;
+    color: var(--sand);
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+    max-width: 900px;
+    margin-bottom: 32px;
+  }
+
+  .slide-08 h2 .accent {
+    color: var(--moss-soft);
+    font-style: italic;
+  }
+
+  .slide-08 .sub {
+    font-size: 32px;
+    color: rgba(245,242,237,0.75);
+    line-height: 1.4;
+    max-width: 800px;
+    margin-bottom: 64px;
+  }
+
+  .app-mockup {
+    background: var(--sand);
+    color: var(--ink);
+    border-radius: 32px;
+    padding: 40px 36px;
+    width: 100%;
+    margin-bottom: 64px;
+  }
+
+  .mockup-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--moss);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .mockup-stat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 100px;
+    font-weight: 700;
+    color: var(--deep);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .mockup-stat .unit {
+    font-size: 36px;
+    color: var(--stone);
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  .mockup-zone {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--moss);
+    color: var(--sand);
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .mockup-zone::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 100px;
+    background: var(--moss-soft);
+  }
+
+  .cta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .cta-pill {
+    background: var(--sand);
+    color: var(--moss);
+    padding: 26px 48px;
+    border-radius: 100px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .handle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    color: var(--sand);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============== SLIDE LABEL OVERLAY (for design view) ============== */
+  .slide-tag {
+    max-width: 1080px;
+    margin: 0 auto 12px;
+    padding: 10px 24px;
+    background: white;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--moss);
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .slide-tag .role {
+    color: var(--stone);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position: absolute;">
+  <symbol id="switchback" viewBox="0 0 100 100">
+    <path d="M 20 80 Q 35 75, 35 60 Q 35 45, 50 45 Q 65 45, 65 30 Q 65 20, 80 20" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="doc-header">
+  <h1>Post 01 · ¿Qué es Z2 y por qué cambia todo?</h1>
+  <p><strong>Carousel · 8 slides · 1080×1350 px</strong> · Pilar: Ciencia Simple</p>
+  <p>Cada slide está a tamaño nativo de Instagram (1080×1350, formato vertical 4:5). Para exportar cada una como imagen:</p>
+  <p>1. Click derecho sobre el slide → <strong>Inspect / Inspeccionar</strong></p>
+  <p>2. En DevTools, click derecho en el elemento <code>&lt;div class="slide slide-XX"&gt;</code> → <strong>Capture node screenshot</strong></p>
+  <p>3. Se descarga el PNG en 1080×1350. Listo para subir a Instagram.</p>
+  <div class="doc-meta">
+    <div>Formato: 4:5 (1080×1350)</div>
+    <div>Tipografía: Inter · JetBrains Mono</div>
+    <div>Paleta: brandbook FlowRun</div>
+  </div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 01 · HOOK                                          -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 01 / 08</span><span class="role">HOOK · captura atención</span></div>
+<div class="slide slide-01">
+  <div class="slide-watermark on-dark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="hook">
+    Si corrés<br>
+    siempre al 80%,<br>
+    <span class="accent">no progresás.</span>
+  </div>
+  <div class="sub">Una verdad incómoda del running que casi nadie te dice.</div>
+
+  <div class="slide-number on-dark">01 / 08</div>
+  <div class="swipe-cue">desliza →</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 02 · LA TRAMPA                                     -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 02 / 08</span><span class="role">PROBLEMA · qué hace mal la mayoría</span></div>
+<div class="slide slide-02">
+  <div class="slide-watermark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="eyebrow-tag">01 · el problema</div>
+  <h2>La trampa del<br>"voy bien".</h2>
+  <div class="body">Casi todos los runners hacen sus días fáciles <strong>demasiado rápido</strong> y sus días duros <strong>demasiado lento</strong>.</div>
+
+  <div class="comparison-row">
+    <div class="comp-card">
+      <div class="label">Días fáciles</div>
+      <div class="value">Demasiado rápido</div>
+      <div class="error">No recuperás</div>
+    </div>
+    <div class="comp-card">
+      <div class="label">Días duros</div>
+      <div class="value">Demasiado lento</div>
+      <div class="error">No progresás</div>
+    </div>
+  </div>
+
+  <div class="takeaway">Resultado: cansancio sin progreso.</div>
+
+  <div class="slide-number">02 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 03 · QUÉ ES Z2                                     -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 03 / 08</span><span class="role">DEFINICIÓN · qué es zona 2</span></div>
+<div class="slide slide-03">
+  <div class="slide-watermark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="eyebrow-tag">02 · la zona 2</div>
+  <h2>¿Qué es la<br>zona 2?</h2>
+  <div class="lead">El ritmo en el que tu cuerpo usa principalmente <strong>grasa</strong> como combustible.</div>
+
+  <div class="feature-list">
+    <div class="feature-item">
+      <div class="feature-bullet"></div>
+      Podés conversar mientras corrés
+    </div>
+    <div class="feature-item">
+      <div class="feature-bullet"></div>
+      Lo sostenés más de 60 minutos
+    </div>
+    <div class="feature-item">
+      <div class="feature-bullet"></div>
+      Terminás entero, no destruido
+    </div>
+  </div>
+
+  <div class="data-tag-large">RPE 3-4 · 65-75% FC máx</div>
+
+  <div class="slide-number">03 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 04 · 80/20                                         -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 04 / 08</span><span class="role">CIENCIA · principio polarizado</span></div>
+<div class="slide slide-04">
+  <div class="slide-watermark on-dark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="big-num">80<span class="slash">/</span>20</div>
+  <div class="principle">Los atletas élite pasan el <strong>80% de su entrenamiento en zona fácil</strong>. Solo 20% en alta intensidad.<br><br>No es debilidad.<br><strong>Es estrategia.</strong></div>
+
+  <div class="citation">Stephen Seiler · 2006 · científico noruego</div>
+
+  <div class="slide-number on-dark">04 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 05 · TALK TEST                                     -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 05 / 08</span><span class="role">HERRAMIENTA · cómo medirlo</span></div>
+<div class="slide slide-05">
+  <div class="slide-watermark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="eyebrow-tag">03 · el test sin tecnología</div>
+  <h2>El talk test.</h2>
+  <div class="sub">Mientras corrés, prestá atención a tu respiración:</div>
+
+  <div class="test-row good">
+    <div class="test-icon">✓</div>
+    <div class="test-text">Hablás en frases completas</div>
+    <div class="test-zone">Z2</div>
+  </div>
+  <div class="test-row warn">
+    <div class="test-icon">!</div>
+    <div class="test-text">Hablás cortado, pausas</div>
+    <div class="test-zone">Z3</div>
+  </div>
+  <div class="test-row bad">
+    <div class="test-icon">✗</div>
+    <div class="test-text">Solo palabras sueltas</div>
+    <div class="test-zone">Z4</div>
+  </div>
+
+  <div class="slide-number">05 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 06 · EN Z2 SI                                      -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 06 / 08</span><span class="role">VALIDACIÓN POSITIVA · señales OK</span></div>
+<div class="slide slide-06">
+  <div class="slide-watermark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="eyebrow-tag">04 · señales que vas bien</div>
+  <h2>Estás en Z2 si...</h2>
+
+  <div class="check-list">
+    <div class="check-item">
+      <div class="check-icon">✓</div>
+      <div class="check-text">Podés sostener el ritmo <strong>60+ minutos</strong></div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✓</div>
+      <div class="check-text">Tu respiración es <strong>nasal o casi</strong></div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✓</div>
+      <div class="check-text">Terminás sintiéndote <strong>bien</strong>, no destruido</div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✓</div>
+      <div class="check-text">Mañana <strong>podés volver a correr</strong></div>
+    </div>
+  </div>
+
+  <div class="slide-number">06 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 07 · NO EN Z2                                      -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 07 / 08</span><span class="role">VALIDACIÓN NEGATIVA · señales de alerta</span></div>
+<div class="slide slide-07">
+  <div class="slide-watermark on-dark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div class="eyebrow-tag">05 · te pasaste si</div>
+  <h2>NO estás en Z2 si...</h2>
+
+  <div class="check-list">
+    <div class="check-item">
+      <div class="check-icon">✗</div>
+      <div class="check-text">Tu respiración <strong>se corta</strong> al hablar</div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✗</div>
+      <div class="check-text">Las piernas pesan <strong>antes de los 20'</strong></div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✗</div>
+      <div class="check-text">Necesitás <strong>48 hs</strong> para recuperarte</div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">✗</div>
+      <div class="check-text">Sentís que <strong>perseguís</strong> el ritmo</div>
+    </div>
+  </div>
+
+  <div class="slide-number on-dark">07 / 08</div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 08 · CTA                                           -->
+<!-- ====================================================== -->
+<div class="slide-tag"><span>SLIDE 08 / 08</span><span class="role">CTA · cierre con producto</span></div>
+<div class="slide slide-08">
+  <div class="slide-watermark on-dark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <div>
+    <h2>Aprendé a leer<br>tu <span class="accent">ritmo real.</span></h2>
+    <div class="sub">FlowRun te dice exactamente en qué zona corriste — sin pulsómetro de pecho, sin reloj nuevo.</div>
+  </div>
+
+  <div class="app-mockup">
+    <div class="mockup-label">Tu ritmo real · esta semana</div>
+    <div class="mockup-stat">5'52<span class="unit">/km</span></div>
+    <div class="mockup-zone">Z2 · 78% del volumen</div>
+  </div>
+
+  <div class="cta-row">
+    <div class="cta-pill">Probá gratis →</div>
+    <div class="handle">@flowrun.app</div>
+  </div>
+
+  <div class="slide-number on-dark">08 / 08</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowRun · Propuesta de Valor — Brief para Diseño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #4A5D3A;
+    --deep: #1B3A4B;
+    --stone: #8C8578;
+    --sand: #F5F2ED;
+    --ink: #2C2C2C;
+    --moss-soft: #7A9E6B;
+    --terracotta: #C4826D;
+    --sky: #A8C4D4;
+    --line: rgba(44,44,44,0.08);
+    --line-strong: rgba(44,44,44,0.16);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--sand);
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 80px 56px 120px;
+  }
+
+  /* ============= HERO ============= */
+  .hero {
+    padding: 60px 0 80px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 80px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 24px;
+  }
+
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+
+  .brand-symbol {
+    width: 56px;
+    height: 56px;
+    background: var(--moss);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sand);
+  }
+
+  .brand-symbol svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .brand-name {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .brand-name em {
+    font-style: normal;
+    color: var(--stone);
+    font-weight: 400;
+  }
+
+  h1 {
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 32px;
+    max-width: 880px;
+  }
+
+  .lead {
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 720px;
+    font-weight: 400;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 48px;
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .meta-item .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 8px;
+  }
+
+  .meta-item .value {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ============= SECTION ============= */
+  section {
+    margin-bottom: 96px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-head {
+    margin-bottom: 40px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--moss);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 17px;
+    color: var(--stone);
+    max-width: 640px;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--deep);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  p { margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--deep); font-weight: 600; }
+
+  /* ============= PITCH BLOCK ============= */
+  .pitch-block {
+    background: var(--moss);
+    color: var(--sand);
+    border-radius: 24px;
+    padding: 56px 48px;
+  }
+
+  .pitch-block .oneliner {
+    font-size: 32px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+
+  .pitch-block .desc {
+    font-size: 17px;
+    line-height: 1.65;
+    opacity: 0.88;
+    max-width: 680px;
+  }
+
+  /* ============= VALUE COLUMNS ============= */
+  .three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .value-card {
+    background: white;
+    border-radius: 18px;
+    padding: 32px 28px;
+  }
+
+  .value-card .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: var(--moss);
+  }
+
+  .value-card .icon-wrap svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ============= AUDIENCE ============= */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .audience-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .audience-card .level-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: var(--sand);
+    color: var(--moss);
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .audience-card h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .audience-card .quote {
+    font-style: italic;
+    color: var(--stone);
+    margin-bottom: 16px;
+    font-size: 15px;
+  }
+
+  .audience-card ul {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .audience-card li {
+    font-size: 14px;
+    color: var(--ink);
+    padding: 6px 0;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .audience-card li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 13px;
+    width: 8px;
+    height: 1px;
+    background: var(--moss);
+  }
+
+  .plan-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--moss);
+    background: var(--sand);
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+
+  /* ============= COMPARISON TABLE ============= */
+  .comparison {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .comparison table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .comparison th, .comparison td {
+    padding: 18px 24px;
+    text-align: left;
+    font-size: 15px;
+  }
+
+  .comparison thead {
+    background: var(--deep);
+    color: var(--sand);
+  }
+
+  .comparison th {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  .comparison th:last-child {
+    color: white;
+  }
+
+  .comparison tbody tr {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .comparison tbody tr:last-child { border-bottom: none; }
+
+  .comparison td:first-child {
+    font-weight: 600;
+    color: var(--deep);
+    width: 28%;
+  }
+
+  .comparison td:nth-child(2) { color: var(--stone); width: 36%; }
+
+  .comparison td:last-child {
+    color: var(--moss);
+    font-weight: 500;
+    width: 36%;
+  }
+
+  /* ============= HOW IT WORKS ============= */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .step {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--moss-soft);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .step h3 { font-size: 16px; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--stone); }
+
+  /* ============= VOICE ============= */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .voice-do, .voice-dont {
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+  }
+
+  .voice-do { border-left: 4px solid var(--moss); }
+  .voice-dont { border-left: 4px solid var(--terracotta); }
+
+  .voice-do h3, .voice-dont h3 {
+    margin-bottom: 16px;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .voice-do h3 { color: var(--moss); }
+  .voice-dont h3 { color: var(--terracotta); }
+
+  .voice-do ul, .voice-dont ul {
+    list-style: none;
+  }
+
+  .voice-do li, .voice-dont li {
+    padding: 8px 0;
+    font-size: 15px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .voice-do li:last-child, .voice-dont li:last-child { border-bottom: none; }
+
+  .coach-message {
+    margin-top: 40px;
+    background: var(--deep);
+    color: var(--sand);
+    border-radius: 18px;
+    padding: 32px 36px;
+    position: relative;
+  }
+
+  .coach-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--moss-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .coach-message blockquote {
+    font-size: 19px;
+    line-height: 1.55;
+    font-style: italic;
+    font-weight: 400;
+    max-width: 720px;
+  }
+
+  /* ============= VISUAL SYSTEM ============= */
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .swatch {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .swatch-color {
+    height: 110px;
+  }
+
+  .swatch-info {
+    padding: 14px 16px 18px;
+  }
+
+  .swatch-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--deep);
+  }
+
+  .swatch-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 2px;
+  }
+
+  .swatch-use {
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  .accent-palette {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .type-spec {
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .type-sample {
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+
+  .type-sample:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .type-display { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--deep); }
+  .type-h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: var(--deep); }
+  .type-h2 { font-size: 22px; font-weight: 600; color: var(--deep); }
+  .type-body { font-size: 16px; color: var(--ink); }
+  .type-caption { font-size: 12px; color: var(--stone); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+  .type-mono { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--moss); }
+
+  .type-spec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* ============= TAGLINES ============= */
+  .taglines-stack {
+    display: grid;
+    gap: 16px;
+  }
+
+  .tagline-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .tagline-card .tag-text {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .tagline-card .tag-use {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--moss);
+    background: var(--sand);
+    padding: 6px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tagline-card.primary {
+    background: var(--moss);
+  }
+
+  .tagline-card.primary .tag-text { color: var(--sand); }
+  .tagline-card.primary .tag-use { background: rgba(245,242,237,0.18); color: var(--sand); }
+
+  /* ============= LANDING WIREFRAME ============= */
+  .wireframe {
+    background: white;
+    border-radius: 20px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  .wf-section {
+    background: var(--sand);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .wf-section:last-child { margin-bottom: 0; }
+
+  .wf-label {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .wf-section h3 {
+    margin-bottom: 8px;
+    font-size: 17px;
+  }
+
+  .wf-section p {
+    font-size: 14px;
+    color: var(--stone);
+    margin-bottom: 0;
+  }
+
+  .wf-section.hero-wf {
+    background: var(--deep);
+    color: var(--sand);
+    padding: 48px 32px;
+  }
+
+  .wf-section.hero-wf h3 { color: var(--sand); font-size: 24px; }
+  .wf-section.hero-wf p { color: rgba(245,242,237,0.7); font-size: 15px; }
+  .wf-section.hero-wf .wf-label { color: var(--moss-soft); }
+
+  /* ============= SOCIAL BIOS ============= */
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .social-card {
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+  }
+
+  .social-platform {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .platform-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--moss);
+    color: var(--sand);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .social-platform .name {
+    font-weight: 600;
+    color: var(--deep);
+    font-size: 15px;
+  }
+
+  .social-platform .handle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--stone);
+    margin-left: auto;
+  }
+
+  .social-bio {
+    background: var(--sand);
+    border-radius: 12px;
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    white-space: pre-line;
+  }
+
+  /* ============= FOOTER ============= */
+  footer {
+    margin-top: 96px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+    color: var(--stone);
+    font-size: 13px;
+  }
+
+  footer .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* ============= PRINT ============= */
+  @media print {
+    body { background: white; }
+    .page { padding: 24px; max-width: none; }
+    section { break-inside: avoid; margin-bottom: 32px; }
+    .pitch-block, .coach-message { break-inside: avoid; }
+  }
+
+  @media (max-width: 860px) {
+    .page { padding: 48px 24px; }
+    h1 { font-size: 36px; }
+    h2 { font-size: 26px; }
+    .three-col, .audience-grid, .voice-grid, .social-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .palette { grid-template-columns: repeat(2, 1fr); }
+    .pitch-block .oneliner { font-size: 24px; }
+    .pitch-block { padding: 36px 28px; }
+    .tagline-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position: absolute;">
+  <symbol id="switchback" viewBox="0 0 100 100">
+    <path d="M 20 80 Q 35 75, 35 60 Q 35 45, 50 45 Q 65 45, 65 30 Q 65 20, 80 20" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+  <!-- ============= HERO ============= -->
+  <header class="hero">
+    <div class="eyebrow">Brief para diseño · v1.0</div>
+
+    <div class="brand-mark">
+      <div class="brand-symbol">
+        <svg><use href="#switchback"/></svg>
+      </div>
+      <div class="brand-name">flowrun <em>— propuesta de valor</em></div>
+    </div>
+
+    <h1>Coach AI de running que te enseña tu ritmo real.</h1>
+    <p class="lead">Documento de referencia con todo lo necesario para diseñar la landing page, los perfiles sociales y las piezas de comunicación de FlowRun.</p>
+
+    <div class="meta-row">
+      <div class="meta-item">
+        <div class="label">Producto</div>
+        <div class="value">FlowRun · Trail running app</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Mercado</div>
+        <div class="value">USA + LATAM</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Idioma base</div>
+        <div class="value">Español (voseo AR)</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Plataforma</div>
+        <div class="value">Web app · PWA</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============= 01 · PITCH ============= -->
+  <section id="pitch">
+    <div class="section-head">
+      <div class="section-num">01 / pitch</div>
+      <h2>Lo que es FlowRun, en una respiración.</h2>
+    </div>
+
+    <div class="pitch-block">
+      <div class="oneliner">FlowRun es tu coach de running con IA que te enseña tu ritmo sostenible — el paso real que tu cuerpo puede mantener.</div>
+      <p class="desc">La mayoría de los runners corren demasiado rápido en sus días fáciles y demasiado lento en los duros. Resultado: lesiones, agotamiento, ganas de dejar. FlowRun combina tus datos de carrera con cómo te sentiste y te enseña tu ritmo real, con planes que se adaptan a tu respuesta. De cero al trail, ciencia presentada simple.</p>
+    </div>
+  </section>
+
+  <!-- ============= 02 · PROBLEMA / SOLUCIÓN ============= -->
+  <section id="value">
+    <div class="section-head">
+      <div class="section-num">02 / propuesta de valor</div>
+      <h2>Problema, solución, diferencial.</h2>
+      <p class="section-sub">Las tres piezas que necesitan estar claras en la landing.</p>
+    </div>
+
+    <div class="three-col">
+      <div class="value-card">
+        <div class="icon-wrap" style="background:#F5E4DE;color:var(--terracotta);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>El problema</h3>
+        <p>Los runners no saben a qué ritmo correr. Las apps miden, no enseñan. Los coaches son caros e inflexibles. La cultura del "más rápido = mejor" genera lesiones y abandono.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>La solución</h3>
+        <p>Coach AI que combina tus <strong>datos</strong> post-carrera, tu <strong>sensación</strong> en un check-in de 20 segundos y la <strong>ciencia</strong> de zonas para darte planes adaptativos que ajustan según tu respuesta, no por calendario.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="icon-wrap" style="background:#E8F0E4;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>El diferencial</h3>
+        <p>No es app de grabación. Usás tu reloj actual. Te enseña el ritmo correcto en lugar de medirlo. Hace el bridge calle→trail que nadie hace bien. Habla en español de verdad, no traducido.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 03 · AUDIENCIA ============= -->
+  <section id="audience">
+    <div class="section-head">
+      <div class="section-num">03 / audiencia</div>
+      <h2>Cuatro niveles de runner.</h2>
+      <p class="section-sub">Cada nivel tiene un dolor distinto y un plan específico. La landing debería tocar al menos los cuatro.</p>
+    </div>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="level-tag">Nivel cero</div>
+        <h3>"Nunca corrí."</h3>
+        <p class="quote">No corre o lleva años sin correr. Tiene miedo al dolor, al ridículo, al agotamiento.</p>
+        <ul>
+          <li>Quiere arrancar sin lesionarse</li>
+          <li>Necesita validación que dice "esto está bien"</li>
+          <li>Progresión por respuesta, no por velocidad</li>
+        </ul>
+        <span class="plan-tag">plan · desde_cero_3d · run-walk</span>
+      </div>
+
+      <div class="audience-card">
+        <div class="level-tag">Nivel nuevo</div>
+        <h3>"Empecé hace poco."</h3>
+        <p class="quote">Sale 1-2 veces por semana. No sabe si va rápido, lento o si lo hace bien.</p>
+        <ul>
+          <li>Quiere estructura clara</li>
+          <li>Necesita aprender qué es Z2</li>
+          <li>Quiere ver progreso real</li>
+        </ul>
+        <span class="plan-tag">plan · nuevo_calle_3d / nuevo_montana_3d</span>
+      </div>
+
+      <div class="audience-card">
+        <div class="level-tag">Calle → Trail</div>
+        <h3>"Quiero ir al cerro."</h3>
+        <p class="quote">Corredor de calle que quiere pasar al trail. No sabe manejar la pendiente ni adaptar el ritmo.</p>
+        <ul>
+          <li>Bridge específico calle → montaña</li>
+          <li>Fuerza excéntrica, técnica de bajada</li>
+          <li>Lectura del terreno</li>
+        </ul>
+        <span class="plan-tag">plan · calle_trail_base_3d · 12 semanas</span>
+      </div>
+
+      <div class="audience-card">
+        <div class="level-tag">Trail avanzado</div>
+        <h3>"Ya corro montaña."</h3>
+        <p class="quote">Trail runner buscando subir nivel. Quiere optimizar performance sin romperse.</p>
+        <ul>
+          <li>Subidas, bajadas, VO2</li>
+          <li>Periodización polarizada</li>
+          <li>Peak para carrera objetivo</li>
+        </ul>
+        <span class="plan-tag">plan · bloques H / I / J / K</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 04 · DIFERENCIADORES ============= -->
+  <section id="diff">
+    <div class="section-head">
+      <div class="section-num">04 / diferenciadores</div>
+      <h2>Por qué no somos otra app más.</h2>
+      <p class="section-sub">Esta tabla es la columna vertebral del posicionamiento. Diseñala visible y comparativa.</p>
+    </div>
+
+    <div class="comparison">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Apps tradicionales</th>
+            <th>FlowRun</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Grabación GPS</td><td>Sustituye tu reloj</td><td>Usás tu reloj actual</td></tr>
+          <tr><td>Planes</td><td>Estáticos · calendario fijo</td><td>Adaptativos · gate criteria</td></tr>
+          <tr><td>Zonas Z1 / Z2</td><td>Mezcladas</td><td>Separadas explícitamente</td></tr>
+          <tr><td>Bridge calle → trail</td><td>Genérico</td><td>Específico, con técnica</td></tr>
+          <tr><td>Idioma</td><td>Inglés primero, traducido</td><td>Español nativo (voseo)</td></tr>
+          <tr><td>Nivel cero absoluto</td><td>Asume base de carrera</td><td>Run-walk progresivo (Galloway)</td></tr>
+          <tr><td>Feedback post-run</td><td>Métricas frías</td><td>Lenguaje humano + ciencia</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============= 05 · CÓMO FUNCIONA ============= -->
+  <section id="how">
+    <div class="section-head">
+      <div class="section-num">05 / cómo funciona</div>
+      <h2>Cuatro pasos.</h2>
+      <p class="section-sub">Esta secuencia debería estar visible en la landing como módulo principal después del hero.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Conectá tus datos</h3>
+        <p>Strava, FIT, GPX, TCX o entrada manual. Sin reloj nuevo.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Elegí tu plan</h3>
+        <p>9 planes según nivel y objetivo. Run-walk hasta trail VO2.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Corré + check-in</h3>
+        <p>20 segundos: RPE, respiración, talk test, intención.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Recibí tu coaching</h3>
+        <p>Qué hiciste bien, qué ajustar, qué viene mañana.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 06 · VOZ DE MARCA ============= -->
+  <section id="voice">
+    <div class="section-head">
+      <div class="section-num">06 / voz de marca</div>
+      <h2>Cómo habla FlowRun.</h2>
+      <p class="section-sub">Coach que te conoce, no app fría ni gurú motivacional. Cálido y preciso.</p>
+    </div>
+
+    <div class="voice-grid">
+      <div class="voice-do">
+        <h3>Sí · usar</h3>
+        <ul>
+          <li>Voseo argentino (corré, tenés, podés)</li>
+          <li>Datos traducidos a lenguaje humano</li>
+          <li>Frases cortas y directas</li>
+          <li>Ciencia simple, sin tecnicismos</li>
+          <li>Tono "el profe" — sabe, respeta</li>
+        </ul>
+      </div>
+      <div class="voice-dont">
+        <h3>No · evitar</h3>
+        <ul>
+          <li>"¡Vamos guerrero!", motivacional vacío</li>
+          <li>"No pain no gain", cultura sufrimiento</li>
+          <li>Emojis fitness (💪🔥🏆)</li>
+          <li>Términos técnicos sin traducir</li>
+          <li>Tono militar o competitivo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="coach-message">
+      <div class="coach-label">Ejemplo · mensaje del profe</div>
+      <blockquote>"Hoy fuiste 12% más rápido que tu Z2. Tu RPE marcó 6, no 3-4. La próxima, bajá un cambio en el primer km — el cuerpo te lo va a agradecer."</blockquote>
+    </div>
+  </section>
+
+  <!-- ============= 07 · SISTEMA VISUAL ============= -->
+  <section id="visual">
+    <div class="section-head">
+      <div class="section-num">07 / sistema visual</div>
+      <h2>Paleta y tipografía.</h2>
+      <p class="section-sub">Sistema cerrado de 5 tokens principales + 3 acentos. Tipografía: Inter, una sola familia.</p>
+    </div>
+
+    <h3 style="margin-bottom:14px; font-size:13px; color:var(--stone); letter-spacing:0.08em; text-transform:uppercase;">Paleta principal</h3>
+    <div class="palette">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#4A5D3A;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Verde musgo</div>
+          <div class="swatch-hex">#4A5D3A</div>
+          <div class="swatch-use">Fondos primarios, highlight</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1B3A4B;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Azul profundo</div>
+          <div class="swatch-hex">#1B3A4B</div>
+          <div class="swatch-use">Texto sobre claro, acentos</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#8C8578;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Gris piedra</div>
+          <div class="swatch-hex">#8C8578</div>
+          <div class="swatch-use">Texto secundario, bordes</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F5F2ED;border:1px solid var(--line);"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Blanco arena</div>
+          <div class="swatch-hex">#F5F2ED</div>
+          <div class="swatch-use">Fondo claro principal</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#2C2C2C;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Negro suave</div>
+          <div class="swatch-hex">#2C2C2C</div>
+          <div class="swatch-use">Texto principal</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:14px; font-size:13px; color:var(--stone); letter-spacing:0.08em; text-transform:uppercase;">Acentos · uso moderado</h3>
+    <div class="accent-palette">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#7A9E6B; height:70px;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Verde claro</div>
+          <div class="swatch-hex">#7A9E6B</div>
+          <div class="swatch-use">CTAs, positivos</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#C4826D; height:70px;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Terracota</div>
+          <div class="swatch-hex">#C4826D</div>
+          <div class="swatch-use">Alertas, zona roja</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#A8C4D4; height:70px;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Azul cielo</div>
+          <div class="swatch-hex">#A8C4D4</div>
+          <div class="swatch-use">Datos, gráficos</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:14px; font-size:13px; color:var(--stone); letter-spacing:0.08em; text-transform:uppercase;">Tipografía · Inter</h3>
+    <div class="type-spec">
+      <div class="type-sample">
+        <div class="type-display">Corré al ritmo correcto.</div>
+        <div class="type-spec-label">Display · Inter 800 · -2% letter-spacing</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-h1">Tu ritmo real</div>
+        <div class="type-spec-label">H1 · Inter 700</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-h2">Cómo funciona</div>
+        <div class="type-spec-label">H2 · Inter 600</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-body">Tu cuerpo te dice cosas. FlowRun aprende a escucharlo y te lo traduce en un plan que cambia cuando vos cambiás.</div>
+        <div class="type-spec-label">Body · Inter 400</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-caption">EYEBROW / LABEL</div>
+        <div class="type-spec-label">Caption · Inter 500 · uppercase · letter-spacing 0.08em</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-mono">RPE 5 · 5'42"/km · Z2</div>
+        <div class="type-spec-label">Mono · JetBrains Mono · datos y números</div>
+      </div>
+    </div>
+
+    <p style="font-size:14px; color:var(--stone); margin-top:24px;"><strong>Reglas:</strong> Sin bordes 1px — solo cambios tonales. Sin drop shadows — profundidad por capas. Border-radius 12-18px en cards, pill en botones. Fotografía: golden hour, runners relajados, no sufriendo. Sin neón, sin fitness agresivo.</p>
+  </section>
+
+  <!-- ============= 08 · TAGLINES ============= -->
+  <section id="taglines">
+    <div class="section-head">
+      <div class="section-num">08 / taglines</div>
+      <h2>Frases listas por contexto.</h2>
+      <p class="section-sub">Una primaria, varias secundarias. Elegir según jerarquía y espacio.</p>
+    </div>
+
+    <div class="taglines-stack">
+      <div class="tagline-card primary">
+        <div class="tag-text">Corré al ritmo correcto. Disfrutá más.</div>
+        <div class="tag-use">Hero principal</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">Encontrá tu ritmo real.</div>
+        <div class="tag-use">Hero alterno</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">Find your flow. Run your pace.</div>
+        <div class="tag-use">Versión EN</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">Ciencia simple. Carreras mejores.</div>
+        <div class="tag-use">Sub-claim</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">El coach que entiende cómo te sentís.</div>
+        <div class="tag-use">Sub-claim</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">De cero al trail, a tu paso.</div>
+        <div class="tag-use">Sub-claim</div>
+      </div>
+      <div class="tagline-card">
+        <div class="tag-text">La app que te enseña a sentir tu esfuerzo.</div>
+        <div class="tag-use">Posicionamiento</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 09 · LANDING WIREFRAME ============= -->
+  <section id="landing">
+    <div class="section-head">
+      <div class="section-num">09 / estructura landing</div>
+      <h2>Wireframe de secciones.</h2>
+      <p class="section-sub">Orden recomendado. Cada bloque tiene una función específica en el embudo.</p>
+    </div>
+
+    <div class="wireframe">
+      <div class="wf-section hero-wf">
+        <div class="wf-label">01 · Hero</div>
+        <h3>Corré al ritmo correcto. Disfrutá más.</h3>
+        <p>Subhead 2 líneas · CTA primario "Empezá gratis" · CTA secundario "Cómo funciona" · Visual: foto trail + mockup app</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">02 · Problema</div>
+        <h3>¿Te suena?</h3>
+        <p>Tres dolores con ícono · "Salís pero no sabés a qué ritmo" · "Te lesionás cuando progresás" · "Querés ir al cerro pero no sabés cómo"</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">03 · Solución</div>
+        <h3>Datos + Sensación + Ciencia</h3>
+        <p>Tres columnas · Lo que NO es ("no es otra app de grabación")</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">04 · Cómo funciona</div>
+        <h3>Cuatro pasos con mockups</h3>
+        <p>Conectar · Elegir plan · Correr + check-in · Recibir coaching</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">05 · Para quién</div>
+        <h3>Cuatro niveles de runner</h3>
+        <p>Cards · Cero / Nuevo / Calle→Trail / Trail avanzado</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">06 · Lo que NO somos</div>
+        <h3>Diferenciación cruda</h3>
+        <p>Tabla comparativa o lista negativa · refuerza posicionamiento</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">07 · Ciencia</div>
+        <h3>Basado en investigación revisada por pares</h3>
+        <p>Galloway · Seiler · Gabbett · Fokkema · Esteve-Lanao</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">08 · Compatibilidad</div>
+        <h3>Funciona con tu reloj actual</h3>
+        <p>Logos: Strava · COROS · Garmin · Suunto · Apple Health</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">09 · FAQ</div>
+        <h3>5-6 preguntas frecuentes</h3>
+        <p>¿Necesito reloj? ¿Strava? ¿Principiante? ¿Trail? ¿Idiomas? ¿Precio?</p>
+      </div>
+      <div class="wf-section">
+        <div class="wf-label">10 · CTA final</div>
+        <h3>Empezá tu ritmo real</h3>
+        <p>Email capture (waitlist) o botones store · footer minimalista</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 10 · REDES SOCIALES ============= -->
+  <section id="social">
+    <div class="section-head">
+      <div class="section-num">10 / redes sociales</div>
+      <h2>Bios listas para copiar.</h2>
+      <p class="section-sub">Mantener consistencia entre plataformas y respetar los límites de caracteres.</p>
+    </div>
+
+    <div class="social-grid">
+      <div class="social-card">
+        <div class="social-platform">
+          <div class="platform-icon">IG</div>
+          <div class="name">Instagram</div>
+          <div class="handle">@flowrun.app</div>
+        </div>
+        <div class="social-bio">🏔️ Coach AI de trail running
+Aprendé tu ritmo sostenible.
+De cero al cerro · ciencia simple.
+🇦🇷 Hecho en Alta Gracia.
+👇 Probalo gratis</div>
+      </div>
+
+      <div class="social-card">
+        <div class="social-platform">
+          <div class="platform-icon">TT</div>
+          <div class="name">TikTok</div>
+          <div class="handle">@flowrun</div>
+        </div>
+        <div class="social-bio">Coach AI de running.
+Ritmo correcto · menos lesiones · más disfrute 🌲</div>
+      </div>
+
+      <div class="social-card">
+        <div class="social-platform">
+          <div class="platform-icon">X</div>
+          <div class="name">X / Twitter</div>
+          <div class="handle">@flowrun</div>
+        </div>
+        <div class="social-bio">AI coach que te enseña a correr al ritmo correcto.
+Datos + sensación + ciencia.
+Para empezar de cero o pasar de calle a trail.</div>
+      </div>
+
+      <div class="social-card">
+        <div class="social-platform">
+          <div class="platform-icon">in</div>
+          <div class="name">LinkedIn</div>
+          <div class="handle">company/flowrun</div>
+        </div>
+        <div class="social-bio">FlowRun es una app de coaching de running con IA enfocada en enseñar el ritmo sostenible — el paso real que cada cuerpo puede mantener. Combina datos, check-in de sensación y planes adaptativos para llevar runners desde cero hasta el trail. Lanzamiento 2026 · LATAM + USA.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 11 · FOTOGRAFÍA ============= -->
+  <section id="photo">
+    <div class="section-head">
+      <div class="section-num">11 / fotografía</div>
+      <h2>Dirección visual.</h2>
+      <p class="section-sub">Mood board mental. Cuando se contrate fotógrafo, este es el norte.</p>
+    </div>
+
+    <div class="three-col">
+      <div class="value-card">
+        <h3>Sujetos</h3>
+        <p style="font-size:14px;">Personas corriendo <strong>relajadas</strong>, no sufriendo. Sin poses heroicas. Sin grupos de competición. Caras concentradas pero calmas.</p>
+      </div>
+      <div class="value-card">
+        <h3>Luz y color</h3>
+        <p style="font-size:14px;"><strong>Golden hour</strong>, amanecer en montaña, luz natural baja. Tonos cálidos ligeramente desaturados. Nada de filtros neón ni alta saturación.</p>
+      </div>
+      <div class="value-card">
+        <h3>Paisaje</h3>
+        <p style="font-size:14px;">Senderos visibles, sierras de Córdoba, naturaleza accesible. No alta montaña épica — trail real, alcanzable. Alta Gracia + cercanías es la base.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:24px; font-size:14px; color:var(--stone);"><strong>Referencias visuales:</strong> editorial outdoor estilo Salomon y Patagonia, pero más accesible. Tracksmith para la calidez de runners. Nada de Gymshark ni fitness influencer.</p>
+  </section>
+
+  <!-- ============= FOOTER ============= -->
+  <footer>
+    <div class="footer-row">
+      <div>FlowRun · brief para diseño · v1.0 · 2026-05-12</div>
+      <div>Fuentes: <code style="font-family:'JetBrains Mono',monospace;">discovery/launch-brief.md · Branbook.html</code></div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

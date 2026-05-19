@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritmo Real — Sistema de Planes de Entrenamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #1B4332;
+    --green-800: #2D6A4F;
+    --green-700: #40916C;
+    --green-600: #52B788;
+    --green-500: #74C69D;
+    --green-200: #B7E4C7;
+    --green-100: #D8F3DC;
+    --green-50: #F0FDF4;
+
+    --z1: #93C5FD;
+    --z1-bg: #EFF6FF;
+    --z2: #52B788;
+    --z2-bg: #F0FDF4;
+    --z3: #FBBF24;
+    --z3-bg: #FFFBEB;
+    --z4: #EF4444;
+    --z4-bg: #FEF2F2;
+    --mixed: #A78BFA;
+    --mixed-bg: #F5F3FF;
+    --na: #9CA3AF;
+    --na-bg: #F9FAFB;
+
+    --bg: #FAFFFE;
+    --surface: #FFFFFF;
+    --surface-2: #F7FDF9;
+    --border: #D8F3DC;
+    --border-mid: #B7E4C7;
+    --text-primary: #0F1F17;
+    --text-secondary: #3D6B52;
+    --text-muted: #6B9E82;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(27,67,50,0.07), 0 1px 2px rgba(27,67,50,0.05);
+    --shadow-md: 0 4px 16px rgba(27,67,50,0.10), 0 2px 4px rgba(27,67,50,0.06);
+    --shadow-lg: 0 10px 30px rgba(27,67,50,0.12), 0 4px 8px rgba(27,67,50,0.07);
+    --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, var(--green-900) 0%, var(--green-800) 60%, var(--green-700) 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2352B788' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+  .site-header .inner { position: relative; max-width: 900px; margin: 0 auto; }
+  .site-header .logo-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-200);
+    margin-bottom: 10px;
+  }
+  .site-header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .site-header h1 em {
+    font-style: italic;
+    color: var(--green-200);
+  }
+  .site-header p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.75);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* ── Sticky Nav ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(27,67,50,0.06);
+  }
+  .sticky-nav .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    padding: 0 16px;
+  }
+  .sticky-nav a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition), border-color var(--transition);
+    white-space: nowrap;
+  }
+  .sticky-nav a.active, .sticky-nav a:hover {
+    color: var(--green-800);
+    border-bottom-color: var(--green-700);
+  }
+  .sticky-nav a .nav-icon { font-size: 1rem; }
+
+  /* ── Layout ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 48px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  .section-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 600;
+    color: var(--green-900);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .section-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+
+  /* ── Tab Pills ── */
+  .tab-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .tab-pill {
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border-mid);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+    user-select: none;
+  }
+  .tab-pill:hover {
+    border-color: var(--green-600);
+    color: var(--green-800);
+    background: var(--green-50);
+  }
+  .tab-pill.active {
+    background: var(--green-900);
+    border-color: var(--green-900);
+    color: white;
+    box-shadow: 0 2px 8px rgba(27,67,50,0.25);
+  }
+
+  /* ── Block Cards Grid ── */
+  .blocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .block-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    transition: all var(--transition);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .block-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--zone-color, var(--green-500));
+    opacity: 0.8;
+    transition: opacity var(--transition);
+  }
+  .block-card:hover {
+    border-color: var(--green-500);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .block-card.highlighted {
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.25), var(--shadow-md);
+    background: var(--green-50);
+    transform: translateY(-2px);
+  }
+
+  .block-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .block-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: var(--zone-bg, var(--green-100));
+    color: var(--zone-color, var(--green-800));
+    flex-shrink: 0;
+  }
+  .block-card-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .zone-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .trail-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--green-800), var(--green-700));
+    color: white;
+    letter-spacing: 0.04em;
+  }
+  .block-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .block-category {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .block-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 10px;
+  }
+  .block-duration {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .block-duration strong { color: var(--text-primary); }
+  .level-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .level-cero { background: #E0E7FF; color: #3730A3; }
+  .level-nuevo { background: #DCFCE7; color: #166534; }
+  .level-base { background: #FEF9C3; color: #854D0E; }
+  .level-avanzado { background: #FEE2E2; color: #991B1B; }
+
+  /* Range bar */
+  .range-bar-wrap { margin-top: 10px; }
+  .range-bar-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .range-bar-track {
+    height: 5px;
+    background: var(--border);
+    border-radius: 999px;
+    position: relative;
+    overflow: visible;
+  }
+  .range-bar-fill {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--zone-color, var(--green-500));
+    opacity: 0.7;
+  }
+  .range-bar-dot {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--zone-color, var(--green-700));
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  /* ── Plan Selector ── */
+  .plan-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 580px) {
+    .plan-selector { grid-template-columns: 1fr; }
+  }
+  .plan-pill {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border-mid);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: left;
+  }
+  .plan-pill:hover {
+    border-color: var(--green-600);
+    background: var(--green-50);
+  }
+  .plan-pill.active {
+    border-color: var(--green-800);
+    background: linear-gradient(135deg, var(--green-900), var(--green-800));
+    box-shadow: var(--shadow-md);
+  }
+  .plan-pill .plan-pill-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    transition: color var(--transition);
+  }
+  .plan-pill.active .plan-pill-name { color: white; }
+  .plan-pill .plan-pill-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: color var(--transition);
+  }
+  .plan-pill.active .plan-pill-meta { color: rgba(255,255,255,0.7); }
+
+  /* ── Plan Stats Header ── */
+  .plan-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--green-50), var(--surface));
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+  }
+  @media (max-width: 600px) {
+    .plan-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-item { text-align: center; }
+  .stat-value {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--green-900);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Week Cards ── */
+  .plan-weeks { display: flex; flex-direction: column; gap: 16px; }
+
+  .week-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+    animation: fadeInUp 0.3s ease both;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .week-card.deload {
+    background: linear-gradient(135deg, #FAFFFE, #F5FDF8);
+    border: 1.5px dashed var(--green-500);
+  }
+
+  .week-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .week-num {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green-900);
+    line-height: 1;
+    min-width: 32px;
+  }
+  .week-phase {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--green-100);
+    color: var(--green-800);
+    letter-spacing: 0.02em;
+  }
+  .deload .week-phase {
+    background: rgba(167,139,250,0.15);
+    color: #6D28D9;
+  }
+  .deload-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(167,139,250,0.15);
+    color: #6D28D9;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(167,139,250,0.4);
+  }
+  .week-total-bar-wrap {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .week-total-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .week-total-bar-track {
+    width: 90px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .week-total-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--green-600), var(--green-700));
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .deload .week-total-bar-fill {
+    background: linear-gradient(90deg, #A78BFA, #8B5CF6);
+    opacity: 0.7;
+  }
+
+  .day-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 10px;
+  }
+
+  .day-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px;
+    transition: all var(--transition);
+  }
+  .day-card:hover {
+    border-color: var(--green-500);
+    box-shadow: var(--shadow-sm);
+  }
+  .deload .day-card {
+    background: rgba(255,255,255,0.6);
+  }
+  .day-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .day-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .day-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .block-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all var(--transition);
+    letter-spacing: 0.03em;
+    border: 1px solid transparent;
+  }
+  .block-pill:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .day-duration {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .day-duration span {
+    font-weight: 700;
+    color: var(--green-800);
+  }
+
+  /* ── Volume bar ── */
+  .volume-section { margin-top: 36px; }
+  .volume-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  .volume-bars { display: flex; flex-direction: column; gap: 6px; }
+  .volume-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+  }
+  .volume-row-label {
+    width: 38px;
+    font-weight: 600;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+  }
+  .volume-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .volume-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--green-500), var(--green-700));
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .volume-bar-fill.deload-fill {
+    background: linear-gradient(90deg, #C4B5FD, #A78BFA);
+  }
+  .volume-row-val {
+    width: 50px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-weight: 600;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    background: var(--green-900);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 0.8rem;
+    margin-top: 0;
+  }
+  .site-footer strong { color: var(--green-200); }
+
+  /* ── Animations ── */
+  .fade-in { animation: fadeIn 0.4s ease both; }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .sticky-nav a { padding: 12px 14px; font-size: 0.8rem; }
+    .sticky-nav a .nav-icon { display: none; }
+    .plan-stats { padding: 16px; }
+    .week-card { padding: 16px; }
+    .week-total-bar-wrap { margin-left: 0; }
+    .week-card-header { gap: 8px; }
+    .blocks-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .blocks-grid { grid-template-columns: 1fr; }
+    .day-cards { grid-template-columns: 1fr; }
+  }
+
+  /* Category section headers in grid */
+  .category-section-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0 4px;
+  }
+  .category-section-header h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+  .category-section-header hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .plan-content { display: none; }
+  .plan-content.active { display: block; }
+
+  .blocks-tab-content { display: none; }
+  .blocks-tab-content.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+  /* hidden block placeholder to maintain grid */
+  .block-card[hidden] { display: none !important; }
+
+  .tooltip {
+    position: relative;
+  }
+  .tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green-900);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="inner">
+    <div class="logo-eyebrow">Sistema de Entrenamiento</div>
+    <h1>Ritmo <em>Real</em></h1>
+    <p>Tu guía completa de bloques y planes de entrenamiento para correr en ciudad y montaña</p>
+  </div>
+</header>
+
+<!-- Sticky Nav -->
+<nav class="sticky-nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="#catalogo" class="active" data-nav="catalogo">
+      <span class="nav-icon">🧱</span> Catálogo de Bloques
+    </a>
+    <a href="#simulador" data-nav="simulador">
+      <span class="nav-icon">📅</span> Simulador de Plan
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ SECTION 1: CATÁLOGO ═══════════════════════════════ -->
+<section id="catalogo">
+  <div class="container">
+    <h2 class="section-title">Catálogo de Bloques</h2>
+    <p class="section-subtitle">17 bloques de entrenamiento organizados por categoría — haz clic en un código de bloque en el plan para resaltarlo aquí</p>
+
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;padding:16px 20px;background:linear-gradient(135deg,var(--z1-bg),var(--z2-bg));border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--z1);flex-shrink:0;"></span>
+        <span style="font-size:0.82rem;color:var(--text-primary);"><strong>Z1</strong> <span style="color:var(--text-muted);">(RPE 1-3):</span> Respiración nasal, hablar sin esfuerzo.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--z2);flex-shrink:0;"></span>
+        <span style="font-size:0.82rem;color:var(--text-primary);"><strong>Z2</strong> <span style="color:var(--text-muted);">(RPE 4-5):</span> Hablar en frases completas.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-flex;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--z1),var(--z2));flex-shrink:0;"></span>
+        <span style="font-size:0.82rem;color:var(--text-muted);">Los bloques <strong style="color:var(--text-primary);">z1-z2</strong> combinan ambas según terreno.</span>
+      </div>
+    </div>
+
+    <div class="tab-pills" id="catalogTabs">
+      <button class="tab-pill active" data-tab="todos">Todos</button>
+      <button class="tab-pill" data-tab="carrera">🏃 Carrera</button>
+      <button class="tab-pill" data-tab="trail">⛰️ Trail Específico</button>
+      <button class="tab-pill" data-tab="fuerza">💪 Fuerza</button>
+    </div>
+
+    <div id="blocksGrid" class="blocks-grid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 2: SIMULADOR ═══════════════════════════════ -->
+<section id="simulador">
+  <div class="container">
+    <h2 class="section-title">Simulador de Plan</h2>
+    <p class="section-subtitle">Elige tu perfil y visualiza el plan semana a semana</p>
+
+    <div class="plan-selector" id="planSelector">
+      <button class="plan-pill active" data-plan="desde_cero">
+        <div class="plan-pill-name">🌱 Desde Cero</div>
+        <div class="plan-pill-meta">8 semanas · 3 días/semana · gate criteria</div>
+      </button>
+      <button class="plan-pill" data-plan="nuevo_calle">
+        <div class="plan-pill-name">🏙️ Nuevo Calle</div>
+        <div class="plan-pill-meta">8 semanas · 3 días/semana</div>
+      </button>
+      <button class="plan-pill" data-plan="nuevo_montana">
+        <div class="plan-pill-name">⛰️ Nuevo Montaña</div>
+        <div class="plan-pill-meta">8 semanas · 3 días/semana</div>
+      </button>
+      <button class="plan-pill" data-plan="calle_trail_base">
+        <div class="plan-pill-name">🌿 Calle→Trail Base</div>
+        <div class="plan-pill-meta">12 semanas · 3 días/semana</div>
+      </button>
+      <button class="plan-pill" data-plan="calle_trail_avanzado">
+        <div class="plan-pill-name">🔥 Calle→Trail Avanzado</div>
+        <div class="plan-pill-meta">12 semanas · 4 días/semana</div>
+      </button>
+    </div>
+
+    <div id="planStatsContainer"></div>
+    <div id="planContent"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <strong>Ritmo Real</strong> — Sistema de Planes de Entrenamiento · Todos los bloques y planes con fines educativos
+</footer>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+
+const ZONE_STYLES = {
+  z1:    { label: 'Zona 1', color: '#2563EB', bg: '#DBEAFE', hex: '#93C5FD' },
+  z2:    { label: 'Zona 2', color: '#166534', bg: '#DCFCE7', hex: '#52B788' },
+  z3:    { label: 'Zona 3', color: '#92400E', bg: '#FEF3C7', hex: '#FBBF24' },
+  z4:    { label: 'Zona 4', color: '#991B1B', bg: '#FEE2E2', hex: '#EF4444' },
+  mixed: { label: 'Mixto',  color: '#5B21B6', bg: '#EDE9FE', hex: '#A78BFA' },
+  'z1-z2': { label: 'Zona 1-2', color: '#0E7C5F', bg: '#DFFBEE', hex: '#6DD8A8' },
+  'n/a': { label: 'N/A',    color: '#374151', bg: '#F3F4F6', hex: '#9CA3AF' },
+};
+
+const BLOCKS = [
+  // CARRERA
+  { code:'RW', name:'Run-Walk Progresivo',   cat:'carrera', zone:'z1-z2', base:30, min:20,  max:40,  level:'cero',     trail:false, desc:'Alternar trote y caminata con ratios progresivos (1\'/4\' → 3\'/2\' → 5\'/2\' → continuo)' },
+  { code:'RS', name:'Rodaje Sostenible',     cat:'carrera', zone:'z1-z2', base:40, min:15,  max:90,  level:'nuevo',    trail:false },
+  { code:'RP', name:'Rodaje Progresivo',     cat:'carrera', zone:'mixed', base:45, min:25,  max:70,  level:'base',     trail:false },
+  { code:'IU', name:'Intervalos Umbral',     cat:'carrera', zone:'z4',    base:35, min:25,  max:50,  level:'avanzado', trail:false },
+  { code:'ST', name:'Strides/Pasadas',       cat:'carrera', zone:'z4',    base:10, min:5,   max:15,  level:'base',     trail:false },
+  { code:'TL', name:'Tirada Larga',          cat:'carrera', zone:'z1-z2', base:70, min:45,  max:150, level:'base',     trail:false },
+  { code:'RA', name:'Recuperación Activa',   cat:'carrera', zone:'z1',    base:25, min:15,  max:40,  level:'nuevo',    trail:false },
+  // TRAIL
+  { code:'SC',  name:'Subidas Conversacionales', cat:'trail', zone:'z2',    base:30, min:20, max:50,  level:'nuevo',    trail:true },
+  { code:'SF',  name:'Subidas Fuertes',          cat:'trail', zone:'z4',    base:30, min:20, max:45,  level:'avanzado', trail:true },
+  { code:'TB',  name:'Técnica Bajada',            cat:'trail', zone:'z1-z2', base:25, min:15, max:40,  level:'base',     trail:true },
+  { code:'SMC', name:'Sesión Mixta Ciudad',       cat:'trail', zone:'mixed', base:40, min:25, max:60,  level:'nuevo',    trail:true },
+  { code:'TLM', name:'Tirada Larga Montaña',      cat:'trail', zone:'z1-z2', base:80, min:50, max:180, level:'base',     trail:true },
+  { code:'CF',  name:'Caminata Fuerte',           cat:'trail', zone:'z1',    base:35, min:20, max:60,  level:'nuevo',    trail:true },
+  // FUERZA
+  { code:'FG',  name:'Fuerza General',        cat:'fuerza', zone:'n/a', base:25, min:15, max:40, level:'nuevo',  trail:false },
+  { code:'FE',  name:'Fuerza Excéntrica',     cat:'fuerza', zone:'n/a', base:20, min:15, max:35, level:'nuevo',  trail:false },
+  { code:'PL',  name:'Pliometría Suave',      cat:'fuerza', zone:'n/a', base:15, min:10, max:25, level:'base',   trail:false },
+  { code:'MF',  name:'Movilidad/Flexibilidad',cat:'fuerza', zone:'n/a', base:15, min:10, max:25, level:'nuevo',  trail:false },
+];
+
+// Helper: get block by code
+function getBlock(code) {
+  return BLOCKS.find(b => b.code === code.trim());
+}
+
+// ═══ PLAN DATA ═══
+
+const PLANS = {
+  desde_cero: {
+    name: 'Desde Cero',
+    weeks: 8,
+    daysPerWeek: 3,
+    kmEquiv: 40,
+    profile: 'Cero',
+    isBlockBased: true,
+    phases: [
+      { label: 'Bloque A', weeks: [1,2] },
+      { label: 'Bloque B', weeks: [3,4] },
+      { label: 'Bloque C', weeks: [5,6] },
+      { label: 'Bloque D', weeks: [7,8] },
+    ],
+    blocks: [
+      { id: 'A', label: 'Bloque A', semanas: 'sem 1-2', sessions: "RW(1'/4') + FG + RW(1'/4')", minPerWeek: 80,
+        days: [
+          { d:1, name:'Run-Walk Intro',      blocks:[{code:'RW',dur:25}] },
+          { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+          { d:3, name:'Run-Walk Intro',       blocks:[{code:'RW',dur:25}] },
+        ]
+      },
+      { id: 'B', label: 'Bloque B', semanas: 'sem 3-4', sessions: "RW(3'/2') + FG + RW(3'/2')", minPerWeek: 80,
+        days: [
+          { d:1, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:25}] },
+          { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+          { d:3, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:25}] },
+        ]
+      },
+      { id: 'C', label: 'Bloque C', semanas: 'sem 5-6', sessions: "RW(5'/2') + FG+FE + RW(5'/2')", minPerWeek: 95,
+        days: [
+          { d:1, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+          { d:2, name:'Fuerza Combinada',     blocks:[{code:'FG',dur:20},{code:'FE',dur:15}], totalDur:35 },
+          { d:3, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+        ]
+      },
+      { id: 'D', label: 'Bloque D', semanas: 'sem 7-8', sessions: "RS continuo + FG + RS continuo", minPerWeek: 75,
+        days: [
+          { d:1, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+          { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+          { d:3, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+        ]
+      },
+    ],
+    gateCriteria: [
+      { from: 'A', to: 'B', criteria: 'RPE ≤ 4, sin dolor, 4+ sesiones' },
+      { from: 'B', to: 'C', criteria: 'RPE ≤ 4, sin dolor, 4+ sesiones' },
+      { from: 'C', to: 'D', criteria: 'RPE ≤ 4, sin dolor, 4+ sesiones' },
+    ],
+    // Also provide standard data for volume chart compatibility
+    data: [
+      { w:1, deload:false, days:[
+        { d:1, name:'Run-Walk Intro',      blocks:[{code:'RW',dur:25}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Run-Walk Intro',       blocks:[{code:'RW',dur:25}] },
+      ]},
+      { w:2, deload:false, days:[
+        { d:1, name:'Run-Walk Intro',      blocks:[{code:'RW',dur:25}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Run-Walk Intro',       blocks:[{code:'RW',dur:30}] },
+      ]},
+      { w:3, deload:false, days:[
+        { d:1, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:25}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:25}] },
+      ]},
+      { w:4, deload:false, days:[
+        { d:1, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:30}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Run-Walk Progreso',    blocks:[{code:'RW',dur:30}] },
+      ]},
+      { w:5, deload:false, days:[
+        { d:1, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+        { d:2, name:'Fuerza Combinada',     blocks:[{code:'FG',dur:20},{code:'FE',dur:15}], totalDur:35 },
+        { d:3, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+      ]},
+      { w:6, deload:false, days:[
+        { d:1, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+        { d:2, name:'Fuerza Combinada',     blocks:[{code:'FG',dur:20},{code:'FE',dur:15}], totalDur:35 },
+        { d:3, name:'Run-Walk Avanzado',    blocks:[{code:'RW',dur:30}] },
+      ]},
+      { w:7, deload:false, days:[
+        { d:1, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+      ]},
+      { w:8, deload:false, days:[
+        { d:1, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+        { d:2, name:'Fuerza General',       blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Rodaje Continuo',      blocks:[{code:'RS',dur:25}] },
+      ]},
+    ]
+  },
+
+  nuevo_calle: {
+    name: 'Nuevo Calle',
+    weeks: 8,
+    daysPerWeek: 3,
+    kmEquiv: 85,
+    phases: [
+      { label: 'Construir Hábito',  weeks: [1,2] },
+      { label: 'Construir Base',    weeks: [3,4] },
+      { label: 'Consolidar',        weeks: [5,6] },
+      { label: 'Probar Límites',    weeks: [7,8] },
+    ],
+    data: [
+      { w:1, deload:false, days:[
+        { d:1, name:'Empezar a Moverse',  blocks:[{code:'RA',dur:25}] },
+        { d:2, name:'Fuerza Base',        blocks:[{code:'FG',dur:15},{code:'MF',dur:5}], totalDur:20 },
+        { d:3, name:'Primer Rodaje',      blocks:[{code:'RS',dur:25}] },
+      ]},
+      { w:2, deload:false, days:[
+        { d:1, name:'Moverse Más',        blocks:[{code:'RA',dur:25}] },
+        { d:2, name:'Fuerza Base',        blocks:[{code:'FG',dur:15},{code:'MF',dur:5}], totalDur:20 },
+        { d:3, name:'Rodaje Sostenible',  blocks:[{code:'RS',dur:30}] },
+      ]},
+      { w:3, deload:false, days:[
+        { d:1, name:'Rodaje Suave',       blocks:[{code:'RS',dur:25}] },
+        { d:2, name:'Fuerza + Core',      blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Rodaje Creciendo',   blocks:[{code:'RS',dur:35}] },
+      ]},
+      { w:4, deload:true, days:[
+        { d:1, name:'Recuperación',       blocks:[{code:'RA',dur:20}] },
+        { d:2, name:'Movilidad',          blocks:[{code:'MF',dur:15}] },
+        { d:3, name:'Rodaje Suave',       blocks:[{code:'RS',dur:25}] },
+      ]},
+      { w:5, deload:false, days:[
+        { d:1, name:'Rodaje Base',        blocks:[{code:'RS',dur:30}] },
+        { d:2, name:'Fuerza',             blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Rodaje + Progresivo',blocks:[{code:'RP',dur:35}] },
+      ]},
+      { w:6, deload:false, days:[
+        { d:1, name:'Rodaje Base',        blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Fuerza',             blocks:[{code:'FG',dur:25}] },
+        { d:3, name:'Rodaje Largo',       blocks:[{code:'TL',dur:45}] },
+      ]},
+      { w:7, deload:false, days:[
+        { d:1, name:'Rodaje Firme',       blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Fuerza',             blocks:[{code:'FG',dur:20},{code:'PL',dur:10}], totalDur:30 },
+        { d:3, name:'Tu Primer Test',     blocks:[{code:'TL',dur:50}] },
+      ]},
+      { w:8, deload:true, days:[
+        { d:1, name:'Regenerativo',       blocks:[{code:'RA',dur:20}] },
+        { d:2, name:'Movilidad',          blocks:[{code:'MF',dur:15}] },
+        { d:3, name:'Rodaje Celebración', blocks:[{code:'RS',dur:30}] },
+      ]},
+    ]
+  },
+
+  nuevo_montana: {
+    name: 'Nuevo Montaña',
+    weeks: 8,
+    daysPerWeek: 3,
+    kmEquiv: 90,
+    phases: [
+      { label: 'Primeros Pasos',       weeks: [1,2] },
+      { label: 'Construir Base Trail', weeks: [3,4] },
+      { label: 'Subir Nivel',          weeks: [5,6] },
+      { label: 'Tu Primer Trail',      weeks: [7,8] },
+    ],
+    data: [
+      { w:1, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:25}] },
+        { d:2, name:'Preparar el Cuerpo',    blocks:[{code:'FE',dur:15},{code:'FG',dur:10}], totalDur:25 },
+        { d:3, name:'Primer Contacto Trail', blocks:[{code:'CF',dur:25},{code:'RA',dur:10}], totalDur:35 },
+      ]},
+      { w:2, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:30}] },
+        { d:2, name:'Fuerza Trail',          blocks:[{code:'FE',dur:15},{code:'FG',dur:10}], totalDur:25 },
+        { d:3, name:'Subidas Suaves',        blocks:[{code:'SC',dur:25},{code:'CF',dur:10}], totalDur:35 },
+      ]},
+      { w:3, deload:false, days:[
+        { d:1, name:'Rodaje + Terreno',      blocks:[{code:'RS',dur:30}] },
+        { d:2, name:'Fuerza Excéntrica',     blocks:[{code:'FE',dur:25}] },
+        { d:3, name:'Trail Mixto',           blocks:[{code:'SMC',dur:35}] },
+      ]},
+      { w:4, deload:true, days:[
+        { d:1, name:'Recuperación',          blocks:[{code:'RA',dur:20}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:15}] },
+        { d:3, name:'Caminata Montaña',      blocks:[{code:'CF',dur:30}] },
+      ]},
+      { w:5, deload:false, days:[
+        { d:1, name:'Rodaje Base',           blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Fuerza + Bajadas',      blocks:[{code:'FE',dur:15},{code:'TB',dur:15}], totalDur:30 },
+        { d:3, name:'Subidas Progresivas',   blocks:[{code:'SC',dur:35}] },
+      ]},
+      { w:6, deload:false, days:[
+        { d:1, name:'Rodaje Sostenible',     blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Fuerza Trail',          blocks:[{code:'FE',dur:15},{code:'PL',dur:15}], totalDur:30 },
+        { d:3, name:'Tirada Trail',          blocks:[{code:'TLM',dur:50}] },
+      ]},
+      { w:7, deload:false, days:[
+        { d:1, name:'Rodaje + Terreno',      blocks:[{code:'RS',dur:40}] },
+        { d:2, name:'Fuerza Completa',       blocks:[{code:'FE',dur:15},{code:'FG',dur:15}], totalDur:30 },
+        { d:3, name:'Tu Primer Trail Largo', blocks:[{code:'TLM',dur:60}] },
+      ]},
+      { w:8, deload:true, days:[
+        { d:1, name:'Regenerativo',          blocks:[{code:'RA',dur:20}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:15}] },
+        { d:3, name:'Trail Suave',           blocks:[{code:'CF',dur:25},{code:'RA',dur:10}], totalDur:35 },
+      ]},
+    ]
+  },
+
+  calle_trail_base: {
+    name: 'Calle→Trail Base',
+    weeks: 12,
+    daysPerWeek: 3,
+    kmEquiv: 185,
+    phases: [
+      { label: 'Motor + Proteger', weeks: [1,2,3,4] },
+      { label: 'Subir Desnivel',   weeks: [5,6,7,8] },
+      { label: 'Simular Carrera',  weeks: [9,10,11,12] },
+    ],
+    data: [
+      { w:1, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:40}] },
+        { d:2, name:'Trail en Ciudad',       blocks:[{code:'SMC',dur:40}] },
+        { d:3, name:'Tirada Sostenible',     blocks:[{code:'TL',dur:55}] },
+      ]},
+      { w:2, deload:false, days:[
+        { d:1, name:'Base + Strides',        blocks:[{code:'RS',dur:35},{code:'ST',dur:10}], totalDur:45 },
+        { d:2, name:'Trail Ciudad + Fuerza', blocks:[{code:'SMC',dur:35},{code:'FE',dur:15}], totalDur:50 },
+        { d:3, name:'Tirada',               blocks:[{code:'TL',dur:60}] },
+      ]},
+      { w:3, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:35},{code:'ST',dur:10}], totalDur:45 },
+        { d:2, name:'Subidas Intro',         blocks:[{code:'SC',dur:30},{code:'FE',dur:15}], totalDur:45 },
+        { d:3, name:'Tirada Ondulada',       blocks:[{code:'TL',dur:65}] },
+      ]},
+      { w:4, deload:true, days:[
+        { d:1, name:'Rodaje Suave',          blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Movilidad + Fuerza',    blocks:[{code:'MF',dur:15},{code:'FE',dur:15}], totalDur:30 },
+        { d:3, name:'Rodaje Fácil',          blocks:[{code:'RS',dur:40}] },
+      ]},
+      { w:5, deload:false, days:[
+        { d:1, name:'Base + Progresivo',     blocks:[{code:'RP',dur:50}] },
+        { d:2, name:'Subidas Sostenidas',    blocks:[{code:'SC',dur:30},{code:'TB',dur:15}], totalDur:45 },
+        { d:3, name:'Tirada Montaña',        blocks:[{code:'TLM',dur:70}] },
+      ]},
+      { w:6, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:35},{code:'ST',dur:10}], totalDur:45 },
+        { d:2, name:'Subidas + Bajadas',     blocks:[{code:'SC',dur:20},{code:'TB',dur:15},{code:'FE',dur:15}], totalDur:50 },
+        { d:3, name:'Tirada Montaña',        blocks:[{code:'TLM',dur:80}] },
+      ]},
+      { w:7, deload:false, days:[
+        { d:1, name:'Progresivo Trail',      blocks:[{code:'RP',dur:50}] },
+        { d:2, name:'Subidas Largas',        blocks:[{code:'SC',dur:50}] },
+        { d:3, name:'Larga Montaña',         blocks:[{code:'TLM',dur:85}] },
+      ]},
+      { w:8, deload:true, days:[
+        { d:1, name:'Rodaje Suave',          blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:15},{code:'FE',dur:15}], totalDur:30 },
+        { d:3, name:'Trail Fácil',           blocks:[{code:'TLM',dur:60}] },
+      ]},
+      { w:9, deload:false, days:[
+        { d:1, name:'Rodaje + Umbral',       blocks:[{code:'RP',dur:50}] },
+        { d:2, name:'Subidas + Técnica',     blocks:[{code:'SC',dur:30},{code:'TB',dur:20}], totalDur:50 },
+        { d:3, name:'Larga Montaña',         blocks:[{code:'TLM',dur:95}] },
+      ]},
+      { w:10, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:35},{code:'ST',dur:10}], totalDur:45 },
+        { d:2, name:'Subidas Fuertes',       blocks:[{code:'SF',dur:30},{code:'TB',dur:15}], totalDur:45 },
+        { d:3, name:'Larga Montaña',         blocks:[{code:'TLM',dur:105}] },
+      ]},
+      { w:11, deload:false, days:[
+        { d:1, name:'Rodaje Pre-Simulacro',  blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Fuerza Trail',          blocks:[{code:'FE',dur:15},{code:'PL',dur:15}], totalDur:30 },
+        { d:3, name:'SIMULACRO',             blocks:[{code:'TLM',dur:120}] },
+      ]},
+      { w:12, deload:true, days:[
+        { d:1, name:'Regenerativo',          blocks:[{code:'RA',dur:25}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:20}] },
+        { d:3, name:'Trail Celebración',     blocks:[{code:'TLM',dur:60}] },
+      ]},
+    ]
+  },
+
+  calle_trail_avanzado: {
+    name: 'Calle→Trail Avanzado',
+    weeks: 12,
+    daysPerWeek: 4,
+    kmEquiv: 290,
+    phases: [
+      { label: 'Base + Técnica',        weeks: [1,2,3,4] },
+      { label: 'Volumen + Desnivel',    weeks: [5,6,7,8] },
+      { label: 'Especificidad',         weeks: [9,10,11,12] },
+    ],
+    data: [
+      { w:1, deload:false, days:[
+        { d:1, name:'Rodaje + Strides',      blocks:[{code:'RS',dur:40},{code:'ST',dur:10}], totalDur:50 },
+        { d:2, name:'Subidas Específicas',   blocks:[{code:'SC',dur:30},{code:'TB',dur:20}], totalDur:50 },
+        { d:3, name:'Fuerza Trail',          blocks:[{code:'FE',dur:15},{code:'PL',dur:10},{code:'FG',dur:10}], totalDur:35 },
+        { d:4, name:'Larga Montaña',         blocks:[{code:'TLM',dur:90}] },
+      ]},
+      { w:2, deload:false, days:[
+        { d:1, name:'Progresivo',            blocks:[{code:'RP',dur:55}] },
+        { d:2, name:'Subidas + Bajadas',     blocks:[{code:'SC',dur:35},{code:'TB',dur:20}], totalDur:55 },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'PL',dur:15}], totalDur:35 },
+        { d:4, name:'Larga',                blocks:[{code:'TLM',dur:95}] },
+      ]},
+      { w:3, deload:false, days:[
+        { d:1, name:'Base + Strides',        blocks:[{code:'RS',dur:40},{code:'ST',dur:10}], totalDur:50 },
+        { d:2, name:'Subidas Largas',        blocks:[{code:'SC',dur:55}] },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'FG',dur:15}], totalDur:35 },
+        { d:4, name:'Larga Montaña',         blocks:[{code:'TLM',dur:100}] },
+      ]},
+      { w:4, deload:true, days:[
+        { d:1, name:'Rodaje Suave',          blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:20}] },
+        { d:3, name:'Fuerza Light',          blocks:[{code:'FE',dur:20}] },
+        { d:4, name:'Trail Fácil',           blocks:[{code:'TLM',dur:65}] },
+      ]},
+      { w:5, deload:false, days:[
+        { d:1, name:'Progresivo Firme',      blocks:[{code:'RP',dur:55}] },
+        { d:2, name:'Subidas + Técnica',     blocks:[{code:'SC',dur:35},{code:'TB',dur:20}], totalDur:55 },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'PL',dur:15}], totalDur:35 },
+        { d:4, name:'Larga',                blocks:[{code:'TLM',dur:110}] },
+      ]},
+      { w:6, deload:false, days:[
+        { d:1, name:'Base Aeróbica',         blocks:[{code:'RS',dur:40},{code:'ST',dur:10}], totalDur:50 },
+        { d:2, name:'Subidas Fuertes Intro', blocks:[{code:'SF',dur:30},{code:'TB',dur:20}], totalDur:50 },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'PL',dur:15}], totalDur:35 },
+        { d:4, name:'Larga Montaña',         blocks:[{code:'TLM',dur:115}] },
+      ]},
+      { w:7, deload:false, days:[
+        { d:1, name:'Progresivo',            blocks:[{code:'RP',dur:55}] },
+        { d:2, name:'Subidas Sostenidas',    blocks:[{code:'SC',dur:55}] },
+        { d:3, name:'Fuerza Trail',          blocks:[{code:'FE',dur:20},{code:'FG',dur:15}], totalDur:35 },
+        { d:4, name:'Larga',                blocks:[{code:'TLM',dur:120}] },
+      ]},
+      { w:8, deload:true, days:[
+        { d:1, name:'Rodaje Suave',          blocks:[{code:'RS',dur:35}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:20}] },
+        { d:3, name:'Fuerza Light',          blocks:[{code:'FE',dur:20}] },
+        { d:4, name:'Trail Fácil',           blocks:[{code:'TLM',dur:75}] },
+      ]},
+      { w:9, deload:false, days:[
+        { d:1, name:'Umbral Suave',          blocks:[{code:'IU',dur:50}] },
+        { d:2, name:'Subidas Fuertes',       blocks:[{code:'SF',dur:35},{code:'TB',dur:20}], totalDur:55 },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'PL',dur:15}], totalDur:35 },
+        { d:4, name:'Larga Montaña',         blocks:[{code:'TLM',dur:130}] },
+      ]},
+      { w:10, deload:false, days:[
+        { d:1, name:'Base + Strides',        blocks:[{code:'RS',dur:40},{code:'ST',dur:10}], totalDur:50 },
+        { d:2, name:'Subidas Largas',        blocks:[{code:'SC',dur:55}] },
+        { d:3, name:'Fuerza',               blocks:[{code:'FE',dur:20},{code:'PL',dur:15}], totalDur:35 },
+        { d:4, name:'Larga',                blocks:[{code:'TLM',dur:140}] },
+      ]},
+      { w:11, deload:false, days:[
+        { d:1, name:'Umbral Controlado',     blocks:[{code:'IU',dur:50}] },
+        { d:2, name:'Subidas Fuertes',       blocks:[{code:'SF',dur:30},{code:'TB',dur:20}], totalDur:50 },
+        { d:3, name:'Fuerza Mantenimiento',  blocks:[{code:'FE',dur:25}] },
+        { d:4, name:'SIMULACRO',             blocks:[{code:'TLM',dur:150}] },
+      ]},
+      { w:12, deload:true, days:[
+        { d:1, name:'Regenerativo',          blocks:[{code:'RA',dur:25}] },
+        { d:2, name:'Movilidad',             blocks:[{code:'MF',dur:20}] },
+        { d:3, name:'Fuerza Light',          blocks:[{code:'FE',dur:20}] },
+        { d:4, name:'Trail Celebración',     blocks:[{code:'TLM',dur:70}] },
+      ]},
+    ]
+  }
+};
+
+// ═══════════════════════ HELPERS ═══════════════════════
+
+function getPhaseLabel(plan, weekNum) {
+  for (const phase of plan.phases) {
+    if (phase.weeks.includes(weekNum)) return phase.label;
+  }
+  return '';
+}
+
+function weekTotal(weekData) {
+  let total = 0;
+  for (const day of weekData.days) {
+    if (day.totalDur) {
+      total += day.totalDur;
+    } else {
+      total += day.blocks.reduce((s, b) => s + b.dur, 0);
+    }
+  }
+  return total;
+}
+
+function planMaxWeekTotal(planData) {
+  return Math.max(...planData.map(w => weekTotal(w)));
+}
+
+function zoneStyle(zone) {
+  return ZONE_STYLES[zone] || ZONE_STYLES['n/a'];
+}
+
+function levelClass(level) {
+  const map = { cero: 'level-cero', nuevo: 'level-nuevo', base: 'level-base', avanzado: 'level-avanzado' };
+  return map[level] || 'level-nuevo';
+}
+
+function levelLabel(level) {
+  const map = { cero: 'Cero', nuevo: 'Nuevo', base: 'Base', avanzado: 'Avanzado' };
+  return map[level] || level;
+}
+
+function rangePct(val, min, max) {
+  return Math.round(((val - min) / (max - min)) * 100);
+}
+
+function blockPillStyle(code) {
+  const block = getBlock(code);
+  if (!block) return '';
+  const zs = zoneStyle(block.zone);
+  return `background:${zs.bg};color:${zs.color};border-color:${zs.hex}33;`;
+}
+
+function catLabel(cat) {
+  const m = { carrera: 'Carrera', trail: 'Trail Específico', fuerza: 'Fuerza' };
+  return m[cat] || cat;
+}
+
+// ═══════════════════════ RENDER BLOCKS ═══════════════════════
+
+function renderBlockCard(block) {
+  const zs = zoneStyle(block.zone);
+  const minPct = 0;
+  const maxPct = 100;
+  const basePct = rangePct(block.base, block.min, block.max);
+
+  return `
+    <div class="block-card" data-code="${block.code}" data-cat="${block.cat}"
+         style="--zone-color:${zs.hex};--zone-bg:${zs.bg};" id="block-${block.code}">
+      <div class="block-card-header">
+        <div>
+          <div class="block-code">${block.code}</div>
+        </div>
+        <div style="flex:1; padding: 0 6px;">
+          <div class="block-name">${block.name}</div>
+          <div class="block-category">${catLabel(block.cat)}</div>
+        </div>
+        <div class="block-card-badges">
+          <span class="zone-pill" style="background:${zs.bg};color:${zs.color};">
+            <span style="width:7px;height:7px;border-radius:50%;background:${zs.hex};display:inline-block;flex-shrink:0;"></span>
+            ${zs.label}
+          </span>
+          ${block.trail ? '<span class="trail-badge">⛰️ Trail</span>' : ''}
+        </div>
+      </div>
+
+      <div class="range-bar-wrap">
+        <div class="range-bar-label">
+          <span>${block.min} min</span>
+          <span>${block.max} min</span>
+        </div>
+        <div class="range-bar-track">
+          <div class="range-bar-fill" style="left:0;width:100%;"></div>
+          <div class="range-bar-dot" style="left:${basePct}%;" title="Base: ${block.base} min"></div>
+        </div>
+      </div>
+
+      ${block.desc ? `<div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);line-height:1.4;font-style:italic;">${block.desc}</div>` : ''}
+
+      <div class="block-meta">
+        <div class="block-duration">Base: <strong>${block.base} min</strong></div>
+        <span class="level-badge ${levelClass(block.level)}">${levelLabel(block.level)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderAllBlocks(filterCat) {
+  const grid = document.getElementById('blocksGrid');
+  const categories = filterCat === 'todos'
+    ? ['carrera', 'trail', 'fuerza']
+    : [filterCat];
+
+  let html = '';
+  for (const cat of categories) {
+    const filtered = BLOCKS.filter(b => b.cat === cat);
+    if (filtered.length === 0) continue;
+    if (filterCat === 'todos') {
+      html += `<div class="category-section-header"><h3>${catLabel(cat)}</h3><hr/></div>`;
+    }
+    for (const b of filtered) {
+      html += renderBlockCard(b);
+    }
+  }
+  grid.innerHTML = html;
+  grid.className = 'blocks-grid fade-in';
+}
+
+// ═══════════════════════ RENDER PLAN ═══════════════════════
+
+function renderPlanStats(planKey) {
+  const plan = PLANS[planKey];
+  const maxMin = planMaxWeekTotal(plan.data);
+  const totalMin = plan.data.reduce((s, w) => s + weekTotal(w), 0);
+  const container = document.getElementById('planStatsContainer');
+  container.innerHTML = `
+    <div class="plan-stats fade-in">
+      <div class="stat-item">
+        <div class="stat-value">${plan.weeks}</div>
+        <div class="stat-label">Semanas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">${plan.daysPerWeek}</div>
+        <div class="stat-label">Días / Semana</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">~${plan.kmEquiv}</div>
+        <div class="stat-label">Km Equiv. Total</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">${maxMin}</div>
+        <div class="stat-label">Min Semana Pico</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDesdeCero(planKey) {
+  const plan = PLANS[planKey];
+  const container = document.getElementById('planContent');
+  const dayOrdinal = ['D1','D2','D3'];
+
+  let blocksHtml = '';
+  let animDelay = 0;
+  for (const blk of plan.blocks) {
+    let daysHtml = '';
+    for (const day of blk.days) {
+      const dayDur = day.totalDur || day.blocks.reduce((s, b) => s + b.dur, 0);
+      const blockPillsHtml = day.blocks.map(b => {
+        const block = getBlock(b.code);
+        const style = block ? blockPillStyle(b.code) : '';
+        return `<span class="block-pill" style="${style}" onclick="highlightBlock('${b.code}')" data-tip="${block ? block.name : b.code}: ${b.dur}min">${b.code}</span>`;
+      }).join('');
+
+      daysHtml += `
+        <div class="day-card">
+          <div class="day-label">${dayOrdinal[day.d-1]}</div>
+          <div class="day-name">${day.name}</div>
+          <div class="day-blocks">${blockPillsHtml}</div>
+          <div class="day-duration">\u23F1 <span>${dayDur} min</span></div>
+        </div>
+      `;
+    }
+
+    blocksHtml += `
+      <div class="week-card" style="animation-delay:${animDelay}ms">
+        <div class="week-card-header">
+          <div class="week-num">${blk.id}</div>
+          <span class="week-phase">${blk.label} (${blk.semanas})</span>
+          <div class="week-total-bar-wrap">
+            <span class="week-total-label">${blk.minPerWeek} min/sem</span>
+          </div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);margin:-8px 0 12px 44px;font-weight:500;">${blk.sessions}</div>
+        <div class="day-cards">${daysHtml}</div>
+      </div>
+    `;
+    animDelay += 60;
+  }
+
+  // Gate criteria visualization
+  let gateHtml = `
+    <div style="margin-top:28px;padding:24px;background:linear-gradient(135deg,var(--green-50),var(--surface));border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);">
+      <h4 style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-weight:600;color:var(--green-900);margin-bottom:16px;">Gate Criteria <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);">(avance por respuesta, no por calendario)</span></h4>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;">
+  `;
+
+  const blockIds = ['A', 'B', 'C', 'D'];
+  for (let i = 0; i < blockIds.length; i++) {
+    gateHtml += `<div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;background:var(--green-900);color:white;font-family:'Fraunces',Georgia,serif;font-size:1.2rem;font-weight:700;flex-shrink:0;">${blockIds[i]}</div>`;
+    if (i < blockIds.length - 1) {
+      const gate = plan.gateCriteria[i];
+      gateHtml += `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 8px;flex-shrink:0;">
+          <div style="font-size:1.2rem;color:var(--green-700);">\u2192</div>
+          <div style="font-size:0.65rem;font-weight:600;color:var(--text-muted);text-align:center;max-width:120px;line-height:1.3;background:var(--green-100);padding:4px 8px;border-radius:6px;">${gate.criteria}</div>
+        </div>
+      `;
+    }
+  }
+  gateHtml += `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 8px;flex-shrink:0;">
+          <div style="font-size:1.2rem;color:var(--green-700);">\u2192</div>
+        </div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;border-radius:12px;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);color:#166534;font-weight:700;font-size:0.85rem;flex-shrink:0;border:1.5px solid #86EFAC;">\uD83C\uDF93 Graduaci\u00F3n</div>
+      </div>
+    </div>
+  `;
+
+  // Volume chart
+  const maxWeek = planMaxWeekTotal(plan.data);
+  let volumeRows = '';
+  for (const week of plan.data) {
+    const total = weekTotal(week);
+    const pct = Math.round((total / maxWeek) * 100);
+    volumeRows += `
+      <div class="volume-row">
+        <div class="volume-row-label">S${week.w}</div>
+        <div class="volume-bar-track">
+          <div class="volume-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="volume-row-val">${total} min</div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="plan-weeks fade-in">${blocksHtml}</div>
+    ${gateHtml}
+    <div class="volume-section">
+      <div class="volume-title">Progresi\u00F3n de Volumen Semanal</div>
+      <div class="volume-bars">${volumeRows}</div>
+    </div>
+  `;
+}
+
+function renderPlan(planKey) {
+  const plan = PLANS[planKey];
+  if (plan.isBlockBased) {
+    return renderDesdeCero(planKey);
+  }
+  const maxWeek = planMaxWeekTotal(plan.data);
+  const container = document.getElementById('planContent');
+
+  const dayOrdinal = ['D1','D2','D3','D4'];
+
+  let weeksHtml = '';
+  let animDelay = 0;
+  for (const week of plan.data) {
+    const phaseLabel = getPhaseLabel(plan, week.w);
+    const total = weekTotal(week);
+    const pct = Math.round((total / maxWeek) * 100);
+
+    let daysHtml = '';
+    for (const day of week.days) {
+      const dayDur = day.totalDur || day.blocks.reduce((s, b) => s + b.dur, 0);
+      const blockPillsHtml = day.blocks.map(b => {
+        const block = getBlock(b.code);
+        const style = block ? blockPillStyle(b.code) : '';
+        return `<span class="block-pill" style="${style}" onclick="highlightBlock('${b.code}')" data-tip="${block ? block.name : b.code}: ${b.dur}min">${b.code}</span>`;
+      }).join('');
+
+      daysHtml += `
+        <div class="day-card">
+          <div class="day-label">${dayOrdinal[day.d-1]}</div>
+          <div class="day-name">${day.name}</div>
+          <div class="day-blocks">${blockPillsHtml}</div>
+          <div class="day-duration">⏱ <span>${dayDur} min</span></div>
+        </div>
+      `;
+    }
+
+    weeksHtml += `
+      <div class="week-card ${week.deload ? 'deload' : ''}" style="animation-delay:${animDelay}ms">
+        <div class="week-card-header">
+          <div class="week-num">S${week.w}</div>
+          <span class="week-phase">${phaseLabel}</span>
+          ${week.deload ? '<span class="deload-badge">↓ Descarga</span>' : ''}
+          <div class="week-total-bar-wrap">
+            <span class="week-total-label">${total} min</span>
+            <div class="week-total-bar-track">
+              <div class="week-total-bar-fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="day-cards">${daysHtml}</div>
+      </div>
+    `;
+    animDelay += 40;
+  }
+
+  // Volume chart
+  let volumeRows = '';
+  for (const week of plan.data) {
+    const total = weekTotal(week);
+    const pct = Math.round((total / maxWeek) * 100);
+    volumeRows += `
+      <div class="volume-row">
+        <div class="volume-row-label">S${week.w}${week.deload ? ' ↓' : ''}</div>
+        <div class="volume-bar-track">
+          <div class="volume-bar-fill ${week.deload ? 'deload-fill' : ''}" style="width:${pct}%"></div>
+        </div>
+        <div class="volume-row-val">${total} min</div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="plan-weeks fade-in">${weeksHtml}</div>
+    <div class="volume-section">
+      <div class="volume-title">Progresión de Volumen Semanal</div>
+      <div class="volume-bars">${volumeRows}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════ HIGHLIGHT BLOCK ═══════════════════════
+
+function highlightBlock(code) {
+  // Remove existing highlights
+  document.querySelectorAll('.block-card.highlighted').forEach(el => el.classList.remove('highlighted'));
+
+  // Switch to catalog tab
+  document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Make sure "Todos" tab is active (or the right category)
+  const block = getBlock(code);
+  if (!block) return;
+
+  // Find card or re-render with all
+  setTimeout(() => {
+    let card = document.getElementById('block-' + code);
+    if (!card) {
+      // Switch to todos
+      setActiveBlockTab('todos');
+      renderAllBlocks('todos');
+      setTimeout(() => {
+        card = document.getElementById('block-' + code);
+        if (card) {
+          card.classList.add('highlighted');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => card.classList.remove('highlighted'), 2500);
+        }
+      }, 100);
+    } else {
+      card.classList.add('highlighted');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => card.classList.remove('highlighted'), 2500);
+    }
+  }, 300);
+}
+
+// ═══════════════════════ TAB LOGIC ═══════════════════════
+
+let activeBlockTab = 'todos';
+let activePlan = 'desde_cero';
+
+function setActiveBlockTab(tab) {
+  activeBlockTab = tab;
+  document.querySelectorAll('#catalogTabs .tab-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
+}
+
+document.getElementById('catalogTabs').addEventListener('click', e => {
+  const pill = e.target.closest('.tab-pill');
+  if (!pill) return;
+  const tab = pill.dataset.tab;
+  setActiveBlockTab(tab);
+  renderAllBlocks(tab);
+});
+
+document.getElementById('planSelector').addEventListener('click', e => {
+  const pill = e.target.closest('.plan-pill');
+  if (!pill) return;
+  const plan = pill.dataset.plan;
+  activePlan = plan;
+  document.querySelectorAll('.plan-pill').forEach(el => el.classList.toggle('active', el.dataset.plan === plan));
+  renderPlanStats(plan);
+  renderPlan(plan);
+});
+
+// Nav highlighting on scroll
+const navLinks = document.querySelectorAll('.sticky-nav a');
+const sections = document.querySelectorAll('section[id]');
+
+function updateNav() {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if (top <= 80) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.dataset.nav === current);
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+
+// ═══════════════════════ INIT ═══════════════════════
+
+renderAllBlocks('todos');
+renderPlanStats('desde_cero');
+renderPlan('desde_cero');
+</script>
+</body>
+</html>
