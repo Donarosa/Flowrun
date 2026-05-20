@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors — sourced from brandbook + landing */
+  --color-cream: oklch(98% 0.006 90);
+  --color-paper: oklch(99.4% 0.004 90);
+  --color-paper-2: #ffffff;
+  --color-ink: #1B1F1B;
+  --color-fg: oklch(20% 0.012 145);
+  --color-muted: oklch(48% 0.012 145);
+  --color-soft: oklch(72% 0.010 145);
+  --color-hair: oklch(94% 0.008 90);
+  --color-border: oklch(94% 0.008 90);
+
+  --color-trail: #3D6B3F;
+  --color-trail-deep: #2B4F2D;
+  --color-trail-tint: oklch(96% 0.018 145);
+  --color-pine: oklch(26% 0.08 145);
+  --color-pine-deep: oklch(18% 0.06 145);
+  --color-lichen: oklch(94% 0.018 145);
+  --color-moss: oklch(88% 0.022 145);
+
+  --color-warn: oklch(78% 0.14 80);
+  --color-alert: oklch(60% 0.18 25);
+
+  /* Fonts — loaded via next/font in layout.tsx */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss03';
+}
