@@ -2,7 +2,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getUser } from '@/lib/supabase/get-user'
 import { getSessionById } from '@/lib/plan'
+import { getSessionCheckin } from '@/lib/checkin'
 import { SessionActions } from './actions-client'
+import type {
+  BreathingLevel,
+  SessionIntent,
+  TalkTestLevel,
+} from '@/types/database'
 
 const DAYS_ES = [
   'Domingo',
@@ -35,11 +41,28 @@ function formatLongDate(iso: string): string {
 
 type Params = Promise<{ id: string }>
 
+const TALK_LABEL: Record<TalkTestLevel, string> = {
+  phrases: 'Frases completas',
+  words: 'Solo palabras',
+  none: 'No pude hablar',
+}
+const BREATHING_LABEL: Record<BreathingLevel, string> = {
+  easy: 'Cómoda',
+  medium: 'Media',
+  hard: 'Agitada',
+}
+const INTENT_LABEL: Record<SessionIntent, string> = {
+  disfrutar: 'Disfrutar',
+  mejorar: 'Mejorar',
+  trail: 'Trail',
+}
+
 export default async function SessionPage({ params }: { params: Params }) {
   const { id } = await params
   const user = await getUser()
   const session = await getSessionById(id, user!.id)
   if (!session) notFound()
+  const checkin = await getSessionCheckin(id)
 
   return (
     <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
@@ -107,10 +130,42 @@ export default async function SessionPage({ params }: { params: Params }) {
         ))}
       </ul>
 
+      {checkin && (
+        <section className="bg-trail-tint rounded-2xl p-4 mb-6 shadow-[inset_0_0_0_1px_var(--color-trail-tint)]">
+          <h3 className="font-mono text-[10px] tracking-[0.14em] uppercase text-trail font-bold mb-3">
+            Tu check-in
+          </h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[12.5px]">
+            <CheckinRow label="Sensación" value={`${checkin.rpe}/5`} />
+            <CheckinRow label="Habla" value={TALK_LABEL[checkin.talk_test]} />
+            <CheckinRow
+              label="Respiración"
+              value={BREATHING_LABEL[checkin.breathing]}
+            />
+            <CheckinRow label="Objetivo" value={INTENT_LABEL[checkin.intent]} />
+          </dl>
+          {checkin.notes && (
+            <p className="text-[12.5px] text-ink leading-relaxed mt-3 pt-3 border-t border-trail/15">
+              {checkin.notes}
+            </p>
+          )}
+        </section>
+      )}
+
       <SessionActions
         userSessionId={session.userSessionId}
         status={session.status}
+        hasCheckin={!!checkin}
       />
     </main>
+  )
+}
+
+function CheckinRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-muted text-[11px]">{label}</dt>
+      <dd className="text-ink font-semibold">{value}</dd>
+    </div>
   )
 }

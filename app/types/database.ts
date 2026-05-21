@@ -9,6 +9,21 @@ export type Gender = 'male' | 'female' | 'other' | 'prefer_not_to_say'
 export type PlanStatus = 'active' | 'paused' | 'completed'
 export type SessionStatus = 'pending' | 'completed' | 'skipped'
 export type BlockCategory = 'carrera' | 'trail' | 'fuerza' | 'movilidad'
+export type TalkTestLevel = 'phrases' | 'words' | 'none'
+export type BreathingLevel = 'easy' | 'medium' | 'hard'
+export type SessionIntent = 'disfrutar' | 'mejorar' | 'trail'
+
+export type SessionCheckinRow = {
+  id: string
+  user_session_id: string
+  rpe: number
+  talk_test: TalkTestLevel
+  breathing: BreathingLevel
+  intent: SessionIntent
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
 
 // Shape de los bloques embebidos en template_sessions.blocks (JSONB)
 export type SessionBlock = {
@@ -195,6 +210,19 @@ export type Database = {
         Update: Partial<UserSessionRow>
         Relationships: []
       }
+      session_checkins: {
+        Row: SessionCheckinRow
+        Insert: Omit<
+          SessionCheckinRow,
+          'id' | 'created_at' | 'updated_at'
+        > & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<SessionCheckinRow>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -206,6 +234,9 @@ export type Database = {
       gender: Gender
       plan_status: PlanStatus
       session_status: SessionStatus
+      talk_test_level: TalkTestLevel
+      breathing_level: BreathingLevel
+      session_intent: SessionIntent
     }
     CompositeTypes: { [_ in never]: never }
   }
