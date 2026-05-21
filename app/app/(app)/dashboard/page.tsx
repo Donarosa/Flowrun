@@ -1,8 +1,6 @@
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
-import { LogoMark } from '@/components/brand/logo-mark'
-import { LogoutButton } from '@/components/auth/logout-button'
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -14,40 +12,28 @@ export default async function DashboardPage() {
   const noPlanYet = profile.experience_level === 'advanced'
 
   return (
-    <div className="flex-1 flex flex-col bg-cream">
-      <header className="flex items-center justify-between px-7 py-5">
-        <div className="flex items-center gap-2">
-          <LogoMark className="w-7 h-7 text-trail" />
-          <span className="font-semibold text-ink tracking-tight">
-            flow<span className="text-trail">run</span>
-          </span>
-        </div>
-        <LogoutButton />
-      </header>
+    <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
+      <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted font-semibold mb-2">
+        Hoy
+      </p>
+      <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+        Hola, {greeting}.
+      </h1>
 
-      <main className="flex-1 px-7 py-8 max-w-md mx-auto w-full">
-        <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted font-semibold mb-2">
-          Hoy
-        </p>
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight mb-6">
-          Hola, {greeting}.
-        </h1>
-
-        {session ? (
-          <SessionCard session={session} />
-        ) : noPlanYet ? (
-          <EmptyState
-            title="Tu plan avanzado está en camino"
-            body="Los planes para nivel avanzado se sumarán pronto. Mientras tanto seguí tu rutina actual."
-          />
-        ) : (
-          <EmptyState
-            title="Hoy descansás"
-            body="No tenés sesión programada. Hidratarte y caminar suave también suman."
-          />
-        )}
-      </main>
-    </div>
+      {session ? (
+        <SessionCard session={session} />
+      ) : noPlanYet ? (
+        <EmptyState
+          title="Tu plan avanzado está en camino"
+          body="Los planes para nivel avanzado se sumarán pronto. Mientras tanto seguí tu rutina actual."
+        />
+      ) : (
+        <EmptyState
+          title="Hoy descansás"
+          body="No tenés sesión programada. Hidratarte y caminar suave también suman."
+        />
+      )}
+    </main>
   )
 }
 

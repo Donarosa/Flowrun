@@ -131,6 +131,13 @@ export async function assignPlan(userId: string): Promise<string | null> {
 
 // Sesión del día actual, con datos del template y bloques resueltos a nombres.
 // Retorna null si no hay sesión hoy (día de descanso) o no hay plan.
+export type ResolvedBlock = {
+  code: string
+  name: string
+  durationMin: number
+  note?: string
+}
+
 export type TodaySession = {
   userSessionId: string
   status: SessionStatus
@@ -139,7 +146,33 @@ export type TodaySession = {
   isDeload: boolean
   weekNumber: number
   totalDurationMin: number
-  blocks: { code: string; name: string; durationMin: number; note?: string }[]
+  blocks: ResolvedBlock[]
+}
+
+export type PlanSessionSummary = {
+  userSessionId: string
+  status: SessionStatus
+  scheduledDate: string
+  sessionName: string
+  totalDurationMin: number
+  isDeload: boolean
+  blockCodes: string[]
+  isToday: boolean
+  isPast: boolean
+}
+
+export type PlanWeek = {
+  weekNumber: number
+  hasDeload: boolean
+  sessions: PlanSessionSummary[]
+}
+
+export type PlanOverview = {
+  templateCode: string
+  templateName: string
+  totalWeeks: number
+  startedOn: string
+  weeks: PlanWeek[]
 }
 
 export async function getTodaySession(
@@ -231,5 +264,127 @@ export async function getTodaySession(
       durationMin: b.duration_min,
       note: b.note,
     })),
+  }
+}
+
+// Plan completo agrupado por semana, para la pantalla /plan.
+export async function getPlanOverview(
+  userId: string
+): Promise<PlanOverview | null> {
+  const supabase = await createClient()
+
+  const { data: plan } = await supabase
+    .from('user_plans')
+    .select(
+      `
+      id,
+      started_on,
+      template:plan_templates ( code, name, total_weeks )
+    `
+    )
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle<{
+      id: string
+      started_on: string
+      template:
+        | { code: string; name: string; total_weeks: number }
+        | { code: string; name: string; total_weeks: number }[]
+        | null
+    }>()
+  if (!plan || !plan.template) return null
+
+  const template = Array.isArray(plan.template) ? plan.template[0] : plan.template
+  if (!template) return null
+
+  type Row = {
+    id: string
+    status: SessionStatus
+    scheduled_date: string
+    template_session:
+      | {
+          session_name: string
+          blocks: SessionBlock[]
+          total_duration_min: number
+          is_deload: boolean
+          week_number: number
+        }
+      | {
+          session_name: string
+          blocks: SessionBlock[]
+          total_duration_min: number
+          is_deload: boolean
+          week_number: number
+        }[]
+      | null
+  }
+
+  const { data: rows } = await supabase
+    .from('user_sessions')
+    .select(
+      `
+      id,
+      status,
+      scheduled_date,
+      template_session:template_sessions (
+        session_name,
+        blocks,
+        total_duration_min,
+        is_deload,
+        week_number
+      )
+    `
+    )
+    .eq('user_plan_id', plan.id)
+    .order('scheduled_date', { ascending: true })
+    .returns<Row[]>()
+
+  const today = todayIso()
+  const sessions: (PlanSessionSummary & { weekNumber: number })[] = (
+    rows ?? []
+  )
+    .map((r) => {
+      const t = Array.isArray(r.template_session)
+        ? r.template_session[0]
+        : r.template_session
+      if (!t) return null
+      return {
+        weekNumber: t.week_number,
+        userSessionId: r.id,
+        status: r.status,
+        scheduledDate: r.scheduled_date,
+        sessionName: t.session_name,
+        totalDurationMin: t.total_duration_min,
+        isDeload: t.is_deload,
+        blockCodes: t.blocks.map((b) => b.code),
+        isToday: r.scheduled_date === today,
+        isPast: r.scheduled_date < today,
+      }
+    })
+    .filter((s): s is NonNullable<typeof s> => s !== null)
+
+  // Agrupar por week_number.
+  const byWeek = new Map<number, PlanSessionSummary[]>()
+  for (const s of sessions) {
+    const { weekNumber, ...summary } = s
+    const arr = byWeek.get(weekNumber) ?? []
+    arr.push(summary)
+    byWeek.set(weekNumber, arr)
+  }
+
+  const weeks: PlanWeek[] = Array.from(byWeek.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([weekNumber, sess]) => ({
+      weekNumber,
+      hasDeload: sess.some((s) => s.isDeload),
+      sessions: sess,
+    }))
+
+  return {
+    templateCode: template.code,
+    templateName: template.name,
+    totalWeeks: template.total_weeks,
+    startedOn: plan.started_on,
+    weeks,
   }
 }
