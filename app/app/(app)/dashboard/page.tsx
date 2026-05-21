@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
@@ -38,8 +39,12 @@ export default async function DashboardPage() {
 }
 
 function SessionCard({ session }: { session: TodaySession }) {
+  const done = session.status === 'completed'
   return (
-    <article className="bg-paper-2 rounded-3xl p-5 shadow-[inset_0_0_0_1px_var(--color-border)]">
+    <Link
+      href={`/sesion/${session.userSessionId}`}
+      className="block bg-paper-2 rounded-3xl p-5 shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-cream transition"
+    >
       <div className="flex items-center gap-2 mb-3">
         <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-trail font-semibold">
           Semana {session.weekNumber}
@@ -47,6 +52,11 @@ function SessionCard({ session }: { session: TodaySession }) {
         {session.isDeload && (
           <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-stone font-semibold">
             · Descarga
+          </span>
+        )}
+        {done && (
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold ml-auto">
+            ✓ Hecha
           </span>
         )}
       </div>
@@ -83,7 +93,7 @@ function SessionCard({ session }: { session: TodaySession }) {
           </li>
         ))}
       </ul>
-    </article>
+    </Link>
   )
 }
 

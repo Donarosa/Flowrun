@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getPlanOverview, type PlanSessionSummary } from '@/lib/plan'
 
@@ -84,27 +85,32 @@ function SessionRow({ session }: { session: PlanSessionSummary }) {
         : null
 
   return (
-    <li className={`rounded-2xl p-4 flex items-start gap-3 ${tone}`}>
-      <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-muted font-semibold w-[44px] shrink-0 pt-0.5">
-        {formatDate(session.scheduledDate)}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-semibold text-ink leading-snug mb-1">
-          {session.sessionName}
+    <li>
+      <Link
+        href={`/sesion/${session.userSessionId}`}
+        className={`block rounded-2xl p-4 flex items-start gap-3 transition hover:brightness-[0.98] ${tone}`}
+      >
+        <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-muted font-semibold w-[44px] shrink-0 pt-0.5">
+          {formatDate(session.scheduledDate)}
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted">
-          <span className="font-mono font-semibold text-trail">
-            {session.blockCodes.join(' · ')}
+        <div className="flex-1 min-w-0">
+          <div className="text-[14px] font-semibold text-ink leading-snug mb-1">
+            {session.sessionName}
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted">
+            <span className="font-mono font-semibold text-trail">
+              {session.blockCodes.join(' · ')}
+            </span>
+            <span>·</span>
+            <span className="tabular-nums">{session.totalDurationMin}′</span>
+          </div>
+        </div>
+        {statusBadge && (
+          <span className="font-mono text-[14px] font-bold text-pine pt-0.5">
+            {statusBadge}
           </span>
-          <span>·</span>
-          <span className="tabular-nums">{session.totalDurationMin}′</span>
-        </div>
-      </div>
-      {statusBadge && (
-        <span className="font-mono text-[14px] font-bold text-stone pt-0.5">
-          {statusBadge}
-        </span>
-      )}
+        )}
+      </Link>
     </li>
   )
 }

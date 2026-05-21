@@ -267,6 +267,122 @@ export async function getTodaySession(
   }
 }
 
+// Detalle completo de una sesión por id, con bloques resueltos (nombre + descripción).
+// Verifica ownership: si la sesión no pertenece al usuario, retorna null.
+export type SessionDetail = {
+  userSessionId: string
+  status: SessionStatus
+  scheduledDate: string
+  completedAt: string | null
+  name: string
+  isDeload: boolean
+  weekNumber: number
+  totalDurationMin: number
+  blocks: {
+    code: string
+    name: string
+    description: string | null
+    durationMin: number
+    note?: string
+  }[]
+}
+
+export async function getSessionById(
+  userSessionId: string,
+  userId: string
+): Promise<SessionDetail | null> {
+  const supabase = await createClient()
+
+  type Row = {
+    id: string
+    status: SessionStatus
+    scheduled_date: string
+    completed_at: string | null
+    user_plan:
+      | { user_id: string }
+      | { user_id: string }[]
+      | null
+    template_session:
+      | {
+          session_name: string
+          blocks: SessionBlock[]
+          total_duration_min: number
+          is_deload: boolean
+          week_number: number
+        }
+      | {
+          session_name: string
+          blocks: SessionBlock[]
+          total_duration_min: number
+          is_deload: boolean
+          week_number: number
+        }[]
+      | null
+  }
+
+  const { data: row } = await supabase
+    .from('user_sessions')
+    .select(
+      `
+      id,
+      status,
+      scheduled_date,
+      completed_at,
+      user_plan:user_plans ( user_id ),
+      template_session:template_sessions (
+        session_name,
+        blocks,
+        total_duration_min,
+        is_deload,
+        week_number
+      )
+    `
+    )
+    .eq('id', userSessionId)
+    .maybeSingle<Row>()
+
+  if (!row) return null
+  const plan = Array.isArray(row.user_plan) ? row.user_plan[0] : row.user_plan
+  if (!plan || plan.user_id !== userId) return null
+  const tmpl = Array.isArray(row.template_session)
+    ? row.template_session[0]
+    : row.template_session
+  if (!tmpl) return null
+
+  const codes = tmpl.blocks.map((b) => b.code)
+  const { data: blockRows } = await supabase
+    .from('workout_blocks')
+    .select('code, name, description')
+    .in('code', codes)
+  const blockByCode = new Map(
+    (blockRows ?? []).map((b: { code: string; name: string; description: string | null }) => [
+      b.code,
+      b,
+    ])
+  )
+
+  return {
+    userSessionId: row.id,
+    status: row.status,
+    scheduledDate: row.scheduled_date,
+    completedAt: row.completed_at,
+    name: tmpl.session_name,
+    isDeload: tmpl.is_deload,
+    weekNumber: tmpl.week_number,
+    totalDurationMin: tmpl.total_duration_min,
+    blocks: tmpl.blocks.map((b) => {
+      const meta = blockByCode.get(b.code)
+      return {
+        code: b.code,
+        name: meta?.name ?? b.code,
+        description: meta?.description ?? null,
+        durationMin: b.duration_min,
+        note: b.note,
+      }
+    }),
+  }
+}
+
 // Plan completo agrupado por semana, para la pantalla /plan.
 export async function getPlanOverview(
   userId: string
