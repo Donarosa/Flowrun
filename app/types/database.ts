@@ -12,6 +12,24 @@ export type BlockCategory = 'carrera' | 'trail' | 'fuerza' | 'movilidad'
 export type TalkTestLevel = 'phrases' | 'words' | 'none'
 export type BreathingLevel = 'easy' | 'medium' | 'hard'
 export type SessionIntent = 'disfrutar' | 'mejorar' | 'trail'
+export type SubscriptionStatus = 'trialing' | 'active' | 'canceled' | 'expired'
+export type SubscriptionPlan = 'monthly' | 'pack_3m'
+export type PaymentMethod = 'transfer' | 'card'
+export type Currency = 'ARS' | 'USD'
+
+export type SubscriptionRow = {
+  id: string
+  user_id: string
+  status: SubscriptionStatus
+  plan: SubscriptionPlan | null
+  payment_method: PaymentMethod | null
+  currency: Currency | null
+  amount: number | null
+  trial_started_on: string
+  current_period_end: string
+  created_at: string
+  updated_at: string
+}
 
 export type SessionCheckinRow = {
   id: string
@@ -223,6 +241,20 @@ export type Database = {
         Update: Partial<SessionCheckinRow>
         Relationships: []
       }
+      subscriptions: {
+        Row: SubscriptionRow
+        Insert: Omit<
+          SubscriptionRow,
+          'id' | 'created_at' | 'updated_at' | 'trial_started_on'
+        > & {
+          id?: string
+          trial_started_on?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<SubscriptionRow>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -237,6 +269,10 @@ export type Database = {
       talk_test_level: TalkTestLevel
       breathing_level: BreathingLevel
       session_intent: SessionIntent
+      subscription_status: SubscriptionStatus
+      subscription_plan: SubscriptionPlan
+      payment_method: PaymentMethod
+      currency: Currency
     }
     CompositeTypes: { [_ in never]: never }
   }

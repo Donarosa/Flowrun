@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getPlanOverview, type PlanSessionSummary } from '@/lib/plan'
+import { getSubscription, isLocked } from '@/lib/subscription'
+import { PaywallBlock } from '@/components/subscription/paywall-block'
 
 const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
@@ -13,6 +15,25 @@ function formatDate(iso: string): string {
 
 export default async function PlanPage() {
   const user = await getUser()
+  const subscription = await getSubscription(user!.id)
+
+  if (isLocked(subscription)) {
+    return (
+      <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
+        <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted font-semibold mb-2">
+          Plan
+        </p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+          Tu plan está esperándote
+        </h1>
+        <PaywallBlock
+          title="Acceso al plan completo"
+          body="El plan adaptativo, las sesiones y los check-ins son parte de la suscripción. Tu plan se queda guardado para cuando vuelvas."
+        />
+      </main>
+    )
+  }
+
   const overview = await getPlanOverview(user!.id)
 
   if (!overview) {

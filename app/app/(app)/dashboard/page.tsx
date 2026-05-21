@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
+import { getSubscription, getAccessState } from '@/lib/subscription'
+import { TrialBanner } from '@/components/subscription/trial-banner'
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -9,6 +11,8 @@ export default async function DashboardPage() {
   const profile = data!.profile
 
   const session = await getTodaySession(user!.id)
+  const subscription = await getSubscription(user!.id)
+  const access = getAccessState(subscription)
   const greeting = profile.name?.split(' ')[0] || profile.email.split('@')[0]
   const noPlanYet = profile.experience_level === 'advanced'
 
@@ -20,6 +24,8 @@ export default async function DashboardPage() {
       <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight mb-6">
         Hola, {greeting}.
       </h1>
+
+      <TrialBanner access={access} />
 
       {session ? (
         <SessionCard session={session} />

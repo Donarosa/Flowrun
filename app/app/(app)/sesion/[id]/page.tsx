@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { getUser } from '@/lib/supabase/get-user'
 import { getSessionById } from '@/lib/plan'
 import { getSessionCheckin } from '@/lib/checkin'
+import { getSubscription, isLocked } from '@/lib/subscription'
+import { PaywallBlock } from '@/components/subscription/paywall-block'
 import { SessionActions } from './actions-client'
 import type {
   BreathingLevel,
@@ -63,6 +65,8 @@ export default async function SessionPage({ params }: { params: Params }) {
   const session = await getSessionById(id, user!.id)
   if (!session) notFound()
   const checkin = await getSessionCheckin(id)
+  const subscription = await getSubscription(user!.id)
+  const locked = isLocked(subscription)
 
   return (
     <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
@@ -152,11 +156,18 @@ export default async function SessionPage({ params }: { params: Params }) {
         </section>
       )}
 
-      <SessionActions
-        userSessionId={session.userSessionId}
-        status={session.status}
-        hasCheckin={!!checkin}
-      />
+      {locked ? (
+        <PaywallBlock
+          title="Tu acceso terminó"
+          body="Suscribite para volver a marcar sesiones y hacer check-ins."
+        />
+      ) : (
+        <SessionActions
+          userSessionId={session.userSessionId}
+          status={session.status}
+          hasCheckin={!!checkin}
+        />
+      )}
     </main>
   )
 }

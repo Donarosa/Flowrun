@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
+import { getSubscription, getAccessState } from '@/lib/subscription'
 import { LogoutButton } from '@/components/auth/logout-button'
 import { COUNTRIES } from '@/lib/countries'
 import type {
@@ -8,7 +10,33 @@ import type {
   Gender,
   GoalType,
   PerceivedBase,
+  SubscriptionPlan,
 } from '@/types/database'
+
+const PLAN_LABEL: Record<SubscriptionPlan, string> = {
+  monthly: 'Mensual',
+  pack_3m: 'Pack 3 meses',
+}
+
+const MONTHS_ES = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre',
+]
+
+function formatLongDate(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`)
+  return `${d.getUTCDate()} de ${MONTHS_ES[d.getUTCMonth()]}`
+}
 
 const GENDER_LABEL: Record<Gender, string> = {
   female: 'Femenino',
@@ -50,6 +78,8 @@ export default async function PerfilPage() {
   const user = await getUser()
   const data = await getProfileWithMetrics(user!.id)
   const { profile, metrics } = data!
+  const subscription = await getSubscription(user!.id)
+  const access = getAccessState(subscription)
 
   const pistaKey =
     `${profile.experience_level}_${profile.goal_type}` as keyof typeof PISTA_LABEL
@@ -64,6 +94,45 @@ export default async function PerfilPage() {
         {profile.name ?? profile.email.split('@')[0]}
       </h1>
       <p className="text-[13px] text-muted mb-7">{profile.email}</p>
+
+      <section className="mb-6">
+        <SectionTitle>Tu suscripción</SectionTitle>
+        <Link
+          href="/suscripcion"
+          className="block bg-paper-2 rounded-2xl p-4 shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-cream transition"
+        >
+          <div className="flex items-start justify-between gap-3 mb-1.5">
+            <div className="flex-1 min-w-0">
+              <p className="text-[14px] font-semibold text-ink">
+                {access.status === 'trial' && 'Trial gratuito'}
+                {access.status === 'paid' &&
+                  (access.plan ? PLAN_LABEL[access.plan] : 'Activa')}
+                {access.status === 'expired' && 'Sin acceso'}
+              </p>
+              {access.status === 'expired' ? (
+                <p className="text-[12px] text-terracotta-deep mt-0.5">
+                  Tu acceso terminó · suscribite
+                </p>
+              ) : (
+                <p className="text-[12px] text-muted mt-0.5">
+                  {access.daysLeft === 1
+                    ? `Último día`
+                    : `Quedan ${access.daysLeft} días`}
+                  {' · vence el '}
+                  {formatLongDate(access.periodEnd)}
+                </p>
+              )}
+            </div>
+            {access.status === 'paid' ? (
+              <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold">
+                Activa
+              </span>
+            ) : (
+              <span className="text-[14px] text-trail font-semibold">→</span>
+            )}
+          </div>
+        </Link>
+      </section>
 
       <section className="mb-6">
         <SectionTitle>Sobre vos</SectionTitle>
