@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { assignPlan } from '@/lib/plan'
 import type {
   ExperienceLevel,
   GoalType,
@@ -151,6 +152,10 @@ export async function setEsfuerzo(mode: EffortMode) {
     .update({ preferred_effort_mode: mode })
     .eq('user_id', user.id)
   if (error) throw new Error(error.message)
+
+  // Última pregunta del onboarding: asignar plan inicial.
+  // assignPlan es idempotente — si ya hay plan activo, retorna sin tocar nada.
+  await assignPlan(user.id)
 
   redirect('/dashboard')
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { OptionCard } from '@/components/onboarding/option-card'
 import { ProgressBar } from '@/components/onboarding/progress-bar'
+import { LoadingScreen } from '@/components/brand/loading-screen'
 import { setEsfuerzo } from '../actions'
 import type { EffortMode } from '@/types/database'
 
@@ -14,6 +15,10 @@ export default function EsfuerzoPage() {
     if (!choice) return
     setLoading(true)
     await setEsfuerzo(choice)
+  }
+
+  if (loading) {
+    return <LoadingScreen overlay message="Armando tu plan…" />
   }
 
   return (
