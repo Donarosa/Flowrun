@@ -4,6 +4,8 @@ import { getUser } from '@/lib/supabase/get-user'
 import { getSessionById } from '@/lib/plan'
 import { getSessionCheckin } from '@/lib/checkin'
 import { getSubscription, isLocked } from '@/lib/subscription'
+import { getProfileWithMetrics } from '@/lib/profile'
+import { getTipForSession, tipCategoryLabel } from '@/lib/education'
 import { PaywallBlock } from '@/components/subscription/paywall-block'
 import { SessionActions } from './actions-client'
 import type {
@@ -73,6 +75,17 @@ export default async function SessionPage({ params }: { params: Params }) {
   const checkin = await getSessionCheckin(id)
   const subscription = await getSubscription(user!.id)
   const locked = isLocked(subscription)
+
+  const profileData = await getProfileWithMetrics(user!.id)
+  const tip =
+    profileData?.profile.experience_level && profileData?.profile.goal_type
+      ? await getTipForSession({
+          userSessionId: session.userSessionId,
+          blockCodes: session.blocks.map((b) => b.code),
+          level: profileData.profile.experience_level,
+          goal: profileData.profile.goal_type,
+        })
+      : null
 
   return (
     <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
@@ -152,6 +165,17 @@ export default async function SessionPage({ params }: { params: Params }) {
           </li>
         ))}
       </ul>
+
+      {tip && (
+        <aside className="bg-moss-soft rounded-2xl p-4 mb-6 shadow-[inset_0_0_0_1px_var(--color-moss-soft)]">
+          <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold mb-2">
+            {tipCategoryLabel(tip.category)}
+          </p>
+          <p className="text-[13.5px] text-ink leading-relaxed">
+            {tip.contentEs}
+          </p>
+        </aside>
+      )}
 
       {checkin && (
         <section className="bg-trail-tint rounded-2xl p-4 mb-6 shadow-[inset_0_0_0_1px_var(--color-trail-tint)]">

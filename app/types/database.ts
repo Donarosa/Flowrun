@@ -13,6 +13,15 @@ export type TalkTestLevel = 'phrases' | 'words' | 'none'
 export type BreathingLevel = 'easy' | 'medium' | 'hard'
 export type SessionIntent = 'disfrutar' | 'mejorar' | 'trail'
 export type LegsFatigueLevel = 'low' | 'medium' | 'high'
+export type TipCategory =
+  | 'respiracion'
+  | 'esfuerzo'
+  | 'tecnica_trail'
+  | 'nutricion'
+  | 'prevencion'
+  | 'motivacion'
+export type TipLevel = 'new' | 'base' | 'advanced' | 'all'
+export type TipGoalContext = 'calle' | 'calle_trail' | 'trail' | 'all'
 export type SubscriptionStatus = 'trialing' | 'active' | 'canceled' | 'expired'
 export type SubscriptionPlan = 'monthly' | 'pack_3m'
 export type PaymentMethod = 'transfer' | 'card'
@@ -54,6 +63,18 @@ export type AdaptationLogRow = {
   modifier_applied: number | null
   sessions_modified: number
   message_es: string
+  created_at: string
+}
+
+export type EducationTipRow = {
+  id: string
+  category: TipCategory
+  applicable_blocks: string[]
+  level: TipLevel
+  goal_context: TipGoalContext
+  content_es: string
+  content_en: string | null
+  show_max_times: number
   created_at: string
 }
 
@@ -287,6 +308,15 @@ export type Database = {
         Update: Partial<AdaptationLogRow>
         Relationships: []
       }
+      education_tips: {
+        Row: EducationTipRow
+        Insert: Omit<EducationTipRow, 'id' | 'created_at'> & {
+          id?: string
+          created_at?: string
+        }
+        Update: Partial<EducationTipRow>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -306,6 +336,9 @@ export type Database = {
       payment_method: PaymentMethod
       currency: Currency
       legs_fatigue_level: LegsFatigueLevel
+      tip_category: TipCategory
+      tip_level: TipLevel
+      tip_goal_context: TipGoalContext
     }
     CompositeTypes: { [_ in never]: never }
   }
