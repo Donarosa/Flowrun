@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import type {
+  ExperienceLevel,
+  GoalType,
   SessionBlock,
   SessionStatus,
   WorkoutBlock,
@@ -23,19 +25,40 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-// Mapeo perfil → template. Devolverá null cuando todavía no haya plan para ese nivel
-// (e.g. advanced). El frontend muestra "tu plan está en camino".
+// Mapeo perfil → template. Cubre la matriz experience_level × goal_type.
+// Casos no contemplados devuelven null y el frontend muestra "tu plan está en camino".
+//
+// Advanced + weekly_days < 4 hace down-grade a calle_trail_base_3d porque el
+// único plan avanzado seedeado pide 4 días. Si en el futuro creamos variantes,
+// se ramifica acá.
 function pickTemplateCode(
-  experienceLevel: 'new' | 'base' | 'advanced'
+  experienceLevel: ExperienceLevel,
+  goalType: GoalType,
+  weeklyDays: number
 ): string | null {
-  switch (experienceLevel) {
-    case 'new':
-      return 'desde_cero_3d'
-    case 'base':
-      return 'nuevo_calle_3d'
-    case 'advanced':
-      return null
+  if (experienceLevel === 'new') {
+    // Por ahora todos los principiantes arrancan con run-walk.
+    // Cuando seedeemos algo específico para calle_trail principiante, ramificar acá.
+    return 'desde_cero_3d'
   }
+
+  if (experienceLevel === 'base') {
+    switch (goalType) {
+      case 'calle':
+        return 'nuevo_calle_3d'
+      case 'calle_trail':
+        return 'calle_trail_base_3d'
+      case 'trail':
+        return 'nuevo_montana_3d'
+    }
+  }
+
+  if (experienceLevel === 'advanced') {
+    if (weeklyDays >= 4) return 'calle_trail_avanzado_4d'
+    return 'calle_trail_base_3d'
+  }
+
+  return null
 }
 
 // Asigna un plan al usuario y materializa las user_sessions con fechas reales.
@@ -68,10 +91,12 @@ export async function assignPlan(userId: string): Promise<string | null> {
     return null
   }
 
-  // 3. Mapping de perfil → template. Por ahora solo dependemos de experience_level
-  //    (goal_type se ramificará cuando seedeemos más planes: calle_trail, trail).
-  //    advanced → null (planes pro vienen después).
-  const templateCode = pickTemplateCode(profile.experience_level)
+  // 3. Mapping de perfil → template.
+  const templateCode = pickTemplateCode(
+    profile.experience_level,
+    profile.goal_type,
+    profile.weekly_days
+  )
   if (!templateCode) return null
 
   const { data: template } = await supabase
@@ -105,7 +130,7 @@ export async function assignPlan(userId: string): Promise<string | null> {
     .order('week_number', { ascending: true })
     .order('day_index', { ascending: true })
   if (!tmplSessions || tmplSessions.length === 0) {
-    throw new Error('No hay template_sessions para nuevo_calle_3d')
+    throw new Error(`No hay template_sessions para ${templateCode}`)
   }
 
   // 6. Materializar user_sessions con scheduled_date.
