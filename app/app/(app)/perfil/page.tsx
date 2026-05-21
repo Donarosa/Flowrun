@@ -90,9 +90,17 @@ export default async function PerfilPage() {
       <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted font-semibold mb-2">
         Perfil
       </p>
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight mb-1">
-        {profile.name ?? profile.email.split('@')[0]}
-      </h1>
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink leading-tight">
+          {profile.name ?? profile.email.split('@')[0]}
+        </h1>
+        <Link
+          href="/perfil/editar"
+          className="shrink-0 text-[13px] text-trail font-semibold pt-2 hover:text-trail-deep transition"
+        >
+          Editar →
+        </Link>
+      </div>
       <p className="text-[13px] text-muted mb-7">{profile.email}</p>
 
       <section className="mb-6">
@@ -171,6 +179,12 @@ export default async function PerfilPage() {
             }
           />
         </div>
+        <Link
+          href="/perfil/cambiar-plan"
+          className="mt-3 w-full py-3.5 rounded-full bg-paper-2 text-ink font-semibold text-[14px] tracking-tight ring-1 ring-[var(--color-border)] hover:bg-cream transition flex items-center justify-center gap-1"
+        >
+          Cambiar mi plan →
+        </Link>
       </section>
 
       <div className="mt-10 flex justify-center">

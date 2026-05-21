@@ -105,6 +105,12 @@ function SessionRow({ session }: { session: PlanSessionSummary }) {
         ? '·'
         : null
 
+  const adapted = session.durationModifier !== 1
+  const adaptedLabel = adapted
+    ? `${session.durationModifier > 1 ? '+' : ''}${Math.round((session.durationModifier - 1) * 100)}%`
+    : null
+  const isSkipped = session.status === 'skipped'
+
   return (
     <li>
       <Link
@@ -117,6 +123,11 @@ function SessionRow({ session }: { session: PlanSessionSummary }) {
         <div className="flex-1 min-w-0">
           <div className="text-[14px] font-semibold text-ink leading-snug mb-1">
             {session.sessionName}
+            {isSkipped && (
+              <span className="ml-2 text-[10px] font-mono uppercase tracking-[0.08em] text-stone">
+                · saltada
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-muted">
             <span className="font-mono font-semibold text-trail">
@@ -124,6 +135,14 @@ function SessionRow({ session }: { session: PlanSessionSummary }) {
             </span>
             <span>·</span>
             <span className="tabular-nums">{session.totalDurationMin}′</span>
+            {adapted && (
+              <>
+                <span>·</span>
+                <span className="font-mono font-bold text-terracotta-deep">
+                  {adaptedLabel}
+                </span>
+              </>
+            )}
           </div>
         </div>
         {statusBadge && (

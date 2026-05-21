@@ -145,7 +145,9 @@ export type TodaySession = {
   name: string
   isDeload: boolean
   weekNumber: number
-  totalDurationMin: number
+  totalDurationMin: number // ya ajustada por duration_modifier
+  durationModifier: number
+  adaptationNote: string | null
   blocks: ResolvedBlock[]
 }
 
@@ -154,7 +156,9 @@ export type PlanSessionSummary = {
   status: SessionStatus
   scheduledDate: string
   sessionName: string
-  totalDurationMin: number
+  totalDurationMin: number // ya ajustada
+  durationModifier: number
+  adaptationNote: string | null
   isDeload: boolean
   blockCodes: string[]
   isToday: boolean
@@ -193,6 +197,8 @@ export async function getTodaySession(
     id: string
     status: SessionStatus
     scheduled_date: string
+    duration_modifier: number
+    adaptation_note: string | null
     template_session:
       | {
           session_name: string
@@ -218,6 +224,8 @@ export async function getTodaySession(
       id,
       status,
       scheduled_date,
+      duration_modifier,
+      adaptation_note,
       template_session:template_sessions (
         session_name,
         blocks,
@@ -236,6 +244,9 @@ export async function getTodaySession(
     ? rawSession.template_session[0]
     : rawSession.template_session
   if (!tmpl) return null
+
+  const modifier = Number(rawSession.duration_modifier ?? 1.0)
+  const adjustedTotal = Math.round(tmpl.total_duration_min * modifier)
 
   // Resolver code → name de los bloques.
   const codes = tmpl.blocks.map((b) => b.code)
@@ -257,11 +268,13 @@ export async function getTodaySession(
     name: tmpl.session_name,
     isDeload: tmpl.is_deload,
     weekNumber: tmpl.week_number,
-    totalDurationMin: tmpl.total_duration_min,
+    totalDurationMin: adjustedTotal,
+    durationModifier: modifier,
+    adaptationNote: rawSession.adaptation_note,
     blocks: tmpl.blocks.map((b) => ({
       code: b.code,
       name: nameByCode.get(b.code) ?? b.code,
-      durationMin: b.duration_min,
+      durationMin: Math.round(b.duration_min * modifier),
       note: b.note,
     })),
   }
@@ -278,6 +291,8 @@ export type SessionDetail = {
   isDeload: boolean
   weekNumber: number
   totalDurationMin: number
+  durationModifier: number
+  adaptationNote: string | null
   blocks: {
     code: string
     name: string
@@ -298,6 +313,8 @@ export async function getSessionById(
     status: SessionStatus
     scheduled_date: string
     completed_at: string | null
+    duration_modifier: number
+    adaptation_note: string | null
     user_plan:
       | { user_id: string }
       | { user_id: string }[]
@@ -328,6 +345,8 @@ export async function getSessionById(
       status,
       scheduled_date,
       completed_at,
+      duration_modifier,
+      adaptation_note,
       user_plan:user_plans ( user_id ),
       template_session:template_sessions (
         session_name,
@@ -349,6 +368,8 @@ export async function getSessionById(
     : row.template_session
   if (!tmpl) return null
 
+  const modifier = Number(row.duration_modifier ?? 1.0)
+
   const codes = tmpl.blocks.map((b) => b.code)
   const { data: blockRows } = await supabase
     .from('workout_blocks')
@@ -369,14 +390,16 @@ export async function getSessionById(
     name: tmpl.session_name,
     isDeload: tmpl.is_deload,
     weekNumber: tmpl.week_number,
-    totalDurationMin: tmpl.total_duration_min,
+    totalDurationMin: Math.round(tmpl.total_duration_min * modifier),
+    durationModifier: modifier,
+    adaptationNote: row.adaptation_note,
     blocks: tmpl.blocks.map((b) => {
       const meta = blockByCode.get(b.code)
       return {
         code: b.code,
         name: meta?.name ?? b.code,
         description: meta?.description ?? null,
-        durationMin: b.duration_min,
+        durationMin: Math.round(b.duration_min * modifier),
         note: b.note,
       }
     }),
@@ -417,6 +440,8 @@ export async function getPlanOverview(
     id: string
     status: SessionStatus
     scheduled_date: string
+    duration_modifier: number
+    adaptation_note: string | null
     template_session:
       | {
           session_name: string
@@ -442,6 +467,8 @@ export async function getPlanOverview(
       id,
       status,
       scheduled_date,
+      duration_modifier,
+      adaptation_note,
       template_session:template_sessions (
         session_name,
         blocks,
@@ -464,13 +491,16 @@ export async function getPlanOverview(
         ? r.template_session[0]
         : r.template_session
       if (!t) return null
+      const modifier = Number(r.duration_modifier ?? 1.0)
       return {
         weekNumber: t.week_number,
         userSessionId: r.id,
         status: r.status,
         scheduledDate: r.scheduled_date,
         sessionName: t.session_name,
-        totalDurationMin: t.total_duration_min,
+        totalDurationMin: Math.round(t.total_duration_min * modifier),
+        durationModifier: modifier,
+        adaptationNote: r.adaptation_note,
         isDeload: t.is_deload,
         blockCodes: t.blocks.map((b) => b.code),
         isToday: r.scheduled_date === today,
@@ -503,4 +533,54 @@ export async function getPlanOverview(
     startedOn: plan.started_on,
     weeks,
   }
+}
+
+// Rate limit y re-asignación de plan -------------------------------------
+
+export type ChangePlanCheck = {
+  allowed: boolean
+  reason?: string
+  nextAllowedAt?: string // ISO datetime
+  hoursRemaining?: number
+}
+
+// El usuario puede reasignar plan a lo sumo 1 vez cada 24h.
+// Basado en el created_at del plan activo (cada reasignación crea uno nuevo).
+export async function canChangePlan(userId: string): Promise<ChangePlanCheck> {
+  const supabase = await createClient()
+  const { data: plan } = await supabase
+    .from('user_plans')
+    .select('created_at')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle<{ created_at: string }>()
+
+  // Si no hay plan activo, permitir (es el primer plan).
+  if (!plan) return { allowed: true }
+
+  const createdMs = new Date(plan.created_at).getTime()
+  const nowMs = Date.now()
+  const elapsedH = (nowMs - createdMs) / (1000 * 60 * 60)
+  if (elapsedH >= 24) return { allowed: true }
+
+  const nextAllowedMs = createdMs + 24 * 60 * 60 * 1000
+  return {
+    allowed: false,
+    reason: 'Cambiaste tu plan hace menos de 24 horas.',
+    nextAllowedAt: new Date(nextAllowedMs).toISOString(),
+    hoursRemaining: Math.ceil(24 - elapsedH),
+  }
+}
+
+// Re-asigna plan: marca el activo como canceled y crea uno nuevo
+// según el perfil actual. No chequea rate limit — eso lo hace el caller.
+export async function reassignPlan(userId: string): Promise<string | null> {
+  const supabase = await createClient()
+  await supabase
+    .from('user_plans')
+    .update({ status: 'canceled' })
+    .eq('user_id', userId)
+    .eq('status', 'active')
+
+  return assignPlan(userId)
 }

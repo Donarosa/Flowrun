@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type {
   BreathingLevel,
+  LegsFatigueLevel,
   SessionIntent,
   TalkTestLevel,
 } from '@/types/database'
@@ -13,6 +14,8 @@ type Initial = {
   talkTest: TalkTestLevel
   breathing: BreathingLevel
   intent: SessionIntent
+  pain: boolean
+  legsFatigue: LegsFatigueLevel | null
   notes: string
 } | null
 
@@ -46,6 +49,16 @@ const INTENT_OPTIONS: { value: SessionIntent; label: string; sub: string }[] = [
   { value: 'trail', label: 'Trail', sub: 'Específico de terreno' },
 ]
 
+const FATIGUE_OPTIONS: {
+  value: LegsFatigueLevel
+  label: string
+  sub: string
+}[] = [
+  { value: 'low', label: 'Baja', sub: 'Piernas frescas' },
+  { value: 'medium', label: 'Media', sub: 'Algo cargadas' },
+  { value: 'high', label: 'Alta', sub: 'Muy cargadas' },
+]
+
 export function CheckinForm({
   userSessionId,
   initial,
@@ -63,13 +76,32 @@ export function CheckinForm({
   const [intent, setIntent] = useState<SessionIntent | null>(
     initial?.intent ?? null
   )
+  const [pain, setPain] = useState<boolean | null>(initial?.pain ?? null)
+  const [legsFatigue, setLegsFatigue] = useState<LegsFatigueLevel | null>(
+    initial?.legsFatigue ?? null
+  )
   const [notes, setNotes] = useState(initial?.notes ?? '')
   const [loading, setLoading] = useState(false)
 
-  const valid = rpe !== null && talkTest && breathing && intent
+  const valid =
+    rpe !== null &&
+    talkTest &&
+    breathing &&
+    intent &&
+    pain !== null &&
+    legsFatigue
 
   const onSubmit = async () => {
-    if (!valid || !rpe || !talkTest || !breathing || !intent) return
+    if (
+      !valid ||
+      !rpe ||
+      !talkTest ||
+      !breathing ||
+      !intent ||
+      pain === null ||
+      !legsFatigue
+    )
+      return
     setLoading(true)
     await saveCheckin({
       userSessionId,
@@ -77,6 +109,8 @@ export function CheckinForm({
       talkTest,
       breathing,
       intent,
+      pain,
+      legsFatigue,
       notes,
     })
   }
@@ -132,6 +166,31 @@ export function CheckinForm({
         />
       </Field>
 
+      <Field label="¿Tuviste dolor o molestia?">
+        <div className="grid grid-cols-2 gap-2">
+          <PainButton
+            value={false}
+            label="No"
+            selected={pain === false}
+            onSelect={() => setPain(false)}
+          />
+          <PainButton
+            value={true}
+            label="Sí"
+            selected={pain === true}
+            onSelect={() => setPain(true)}
+          />
+        </div>
+      </Field>
+
+      <Field label="Fatiga en piernas">
+        <OptionGroup
+          options={FATIGUE_OPTIONS}
+          value={legsFatigue}
+          onSelect={setLegsFatigue}
+        />
+      </Field>
+
       <Field label="Notas" helper="Opcional">
         <textarea
           value={notes}
@@ -155,6 +214,33 @@ export function CheckinForm({
             : 'Guardar y marcar hecha'}
       </button>
     </div>
+  )
+}
+
+function PainButton({
+  value,
+  label,
+  selected,
+  onSelect,
+}: {
+  value: boolean
+  label: string
+  selected: boolean
+  onSelect: () => void
+}) {
+  let className =
+    'py-3 rounded-xl text-[14px] font-semibold transition bg-paper-2 text-ink ring-1 ring-[var(--color-border)] hover:bg-cream'
+  if (selected && value) {
+    className =
+      'py-3 rounded-xl text-[14px] font-semibold transition bg-terracotta-tint text-terracotta-deep ring-2 ring-[var(--color-terracotta)]'
+  } else if (selected && !value) {
+    className =
+      'py-3 rounded-xl text-[14px] font-semibold transition bg-trail-tint text-ink ring-2 ring-[var(--color-trail)]'
+  }
+  return (
+    <button type="button" onClick={onSelect} className={className}>
+      {label}
+    </button>
   )
 }
 

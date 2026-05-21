@@ -8,6 +8,7 @@ import { PaywallBlock } from '@/components/subscription/paywall-block'
 import { SessionActions } from './actions-client'
 import type {
   BreathingLevel,
+  LegsFatigueLevel,
   SessionIntent,
   TalkTestLevel,
 } from '@/types/database'
@@ -58,6 +59,11 @@ const INTENT_LABEL: Record<SessionIntent, string> = {
   mejorar: 'Mejorar',
   trail: 'Trail',
 }
+const FATIGUE_LABEL: Record<LegsFatigueLevel, string> = {
+  low: 'Baja',
+  medium: 'Media',
+  high: 'Alta',
+}
 
 export default async function SessionPage({ params }: { params: Params }) {
   const { id } = await params
@@ -77,13 +83,20 @@ export default async function SessionPage({ params }: { params: Params }) {
         <span aria-hidden>←</span> Volver al plan
       </Link>
 
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-trail font-bold">
           Semana {session.weekNumber}
         </span>
         {session.isDeload && (
           <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-stone font-semibold">
             · Descarga
+          </span>
+        )}
+        {session.durationModifier !== 1 && (
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-terracotta-deep font-bold">
+            · Ajustada{' '}
+            {session.durationModifier > 1 ? '+' : ''}
+            {Math.round((session.durationModifier - 1) * 100)}%
           </span>
         )}
         {session.status === 'completed' && (
@@ -99,9 +112,15 @@ export default async function SessionPage({ params }: { params: Params }) {
       <p className="text-[13px] text-muted mb-2">
         {formatLongDate(session.scheduledDate)}
       </p>
-      <p className="text-[13px] text-muted mb-6">
+      <p className="text-[13px] text-muted mb-2">
         {session.totalDurationMin} minutos en total
       </p>
+      {session.adaptationNote && (
+        <p className="text-[12.5px] text-terracotta-deep font-medium mb-6">
+          {session.adaptationNote}
+        </p>
+      )}
+      {!session.adaptationNote && <div className="mb-4" />}
 
       <ul className="flex flex-col gap-3 mb-8">
         {session.blocks.map((b, i) => (
@@ -147,6 +166,13 @@ export default async function SessionPage({ params }: { params: Params }) {
               value={BREATHING_LABEL[checkin.breathing]}
             />
             <CheckinRow label="Objetivo" value={INTENT_LABEL[checkin.intent]} />
+            <CheckinRow label="Dolor" value={checkin.pain ? 'Sí' : 'No'} />
+            <CheckinRow
+              label="Fatiga piernas"
+              value={
+                checkin.legs_fatigue ? FATIGUE_LABEL[checkin.legs_fatigue] : '—'
+              }
+            />
           </dl>
           {checkin.notes && (
             <p className="text-[12.5px] text-ink leading-relaxed mt-3 pt-3 border-t border-trail/15">

@@ -41,6 +41,8 @@ export default async function CheckinPage({ params }: { params: Params }) {
                 talkTest: existing.talk_test,
                 breathing: existing.breathing,
                 intent: existing.intent,
+                pain: existing.pain,
+                legsFatigue: existing.legs_fatigue,
                 notes: existing.notes ?? '',
               }
             : null

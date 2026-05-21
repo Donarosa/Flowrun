@@ -6,12 +6,13 @@ export type GoalType = 'calle' | 'calle_trail' | 'trail'
 export type PerceivedBase = 'low' | 'medium' | 'solid'
 export type EffortMode = 'hr' | 'rpe' | 'talk_test'
 export type Gender = 'male' | 'female' | 'other' | 'prefer_not_to_say'
-export type PlanStatus = 'active' | 'paused' | 'completed'
+export type PlanStatus = 'active' | 'paused' | 'completed' | 'canceled'
 export type SessionStatus = 'pending' | 'completed' | 'skipped'
 export type BlockCategory = 'carrera' | 'trail' | 'fuerza' | 'movilidad'
 export type TalkTestLevel = 'phrases' | 'words' | 'none'
 export type BreathingLevel = 'easy' | 'medium' | 'hard'
 export type SessionIntent = 'disfrutar' | 'mejorar' | 'trail'
+export type LegsFatigueLevel = 'low' | 'medium' | 'high'
 export type SubscriptionStatus = 'trialing' | 'active' | 'canceled' | 'expired'
 export type SubscriptionPlan = 'monthly' | 'pack_3m'
 export type PaymentMethod = 'transfer' | 'card'
@@ -38,9 +39,22 @@ export type SessionCheckinRow = {
   talk_test: TalkTestLevel
   breathing: BreathingLevel
   intent: SessionIntent
+  pain: boolean
+  legs_fatigue: LegsFatigueLevel | null
   notes: string | null
   created_at: string
   updated_at: string
+}
+
+export type AdaptationLogRow = {
+  id: string
+  user_plan_id: string
+  week_number: number
+  rule_triggered: string
+  modifier_applied: number | null
+  sessions_modified: number
+  message_es: string
+  created_at: string
 }
 
 // Shape de los bloques embebidos en template_sessions.blocks (JSONB)
@@ -98,6 +112,8 @@ export type UserSessionRow = {
   scheduled_date: string
   status: SessionStatus
   completed_at: string | null
+  duration_modifier: number
+  adaptation_note: string | null
   created_at: string
   updated_at: string
 }
@@ -218,10 +234,17 @@ export type Database = {
         Row: UserSessionRow
         Insert: Omit<
           UserSessionRow,
-          'id' | 'created_at' | 'updated_at' | 'completed_at'
+          | 'id'
+          | 'created_at'
+          | 'updated_at'
+          | 'completed_at'
+          | 'duration_modifier'
+          | 'adaptation_note'
         > & {
           id?: string
           completed_at?: string | null
+          duration_modifier?: number
+          adaptation_note?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -255,6 +278,15 @@ export type Database = {
         Update: Partial<SubscriptionRow>
         Relationships: []
       }
+      adaptation_logs: {
+        Row: AdaptationLogRow
+        Insert: Omit<AdaptationLogRow, 'id' | 'created_at'> & {
+          id?: string
+          created_at?: string
+        }
+        Update: Partial<AdaptationLogRow>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -273,6 +305,7 @@ export type Database = {
       subscription_plan: SubscriptionPlan
       payment_method: PaymentMethod
       currency: Currency
+      legs_fatigue_level: LegsFatigueLevel
     }
     CompositeTypes: { [_ in never]: never }
   }

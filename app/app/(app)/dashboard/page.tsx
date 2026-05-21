@@ -3,7 +3,9 @@ import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
 import { getSubscription, getAccessState } from '@/lib/subscription'
+import { getLatestAdaptation } from '@/lib/adaptation'
 import { TrialBanner } from '@/components/subscription/trial-banner'
+import { AdaptationBanner } from '@/components/adaptation/adaptation-banner'
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -13,6 +15,7 @@ export default async function DashboardPage() {
   const session = await getTodaySession(user!.id)
   const subscription = await getSubscription(user!.id)
   const access = getAccessState(subscription)
+  const adaptation = await getLatestAdaptation(user!.id)
   const greeting = profile.name?.split(' ')[0] || profile.email.split('@')[0]
   const noPlanYet = profile.experience_level === 'advanced'
 
@@ -26,6 +29,7 @@ export default async function DashboardPage() {
       </h1>
 
       <TrialBanner access={access} />
+      <AdaptationBanner log={adaptation} />
 
       {session ? (
         <SessionCard session={session} />
@@ -46,6 +50,10 @@ export default async function DashboardPage() {
 
 function SessionCard({ session }: { session: TodaySession }) {
   const done = session.status === 'completed'
+  const adapted = session.durationModifier !== 1
+  const adaptedLabel = adapted
+    ? `${session.durationModifier > 1 ? '+' : ''}${Math.round((session.durationModifier - 1) * 100)}%`
+    : null
   return (
     <Link
       href={`/sesion/${session.userSessionId}`}
@@ -58,6 +66,11 @@ function SessionCard({ session }: { session: TodaySession }) {
         {session.isDeload && (
           <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-stone font-semibold">
             · Descarga
+          </span>
+        )}
+        {adapted && (
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-terracotta-deep font-bold">
+            · Ajustada {adaptedLabel}
           </span>
         )}
         {done && (

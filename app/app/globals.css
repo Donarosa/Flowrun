@@ -19,6 +19,12 @@
   --color-pine-deep: oklch(18% 0.06 145);
   --color-lichen: oklch(94% 0.018 145);
   --color-moss: oklch(88% 0.022 145);
+  --color-moss-soft: oklch(72% 0.045 145);
+  --color-stone: oklch(58% 0.012 90);
+
+  --color-terracotta: #C4826D;
+  --color-terracotta-deep: #8C5640;
+  --color-terracotta-tint: oklch(94% 0.025 40);
 
   --color-warn: oklch(78% 0.14 80);
   --color-alert: oklch(60% 0.18 25);
