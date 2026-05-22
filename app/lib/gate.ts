@@ -3,36 +3,99 @@ import type { SessionStatus } from '@/types/database'
 
 // ============================================================================
 // Gate criteria + graduación. Reemplaza la regla regular de adaptation en las
-// semanas que cierran un bloque del plan desde_cero_3d (A=1-2, B=3-4, C=5-6,
-// D=7-8). Evalúa adherencia + RPE + dolor sobre las 2 semanas del bloque.
+// semanas configuradas para cada plan (BlockDefinition.triggerWeek). Evalúa
+// adherencia + RPE + dolor sobre el rango weeks del bloque.
+//
+// Patrón para planes 8 semanas con deload sem 4 y sem 8:
+//   - Bloque intermedio 1: weeks [1,3] → trigger 3, modifier al bloque [5,7]
+//   - Bloque intermedio 2: weeks [5,7] → trigger 7, modifier al bloque [8,8]
+//   - Final:              weeks [1,8] → trigger 8, isFinal=true
+//
+// Patrón especial de desde_cero_3d (run-walk con 4 bloques de 2 sem cada uno):
+//   - A: [1,2] → trigger 2, next [3,4]
+//   - B: [3,4] → trigger 4, next [5,6]
+//   - C: [5,6] → trigger 6, next [7,8]
+//   - D: [7,8] → trigger 8, isFinal=true
 // ============================================================================
 
-type BlockLabel = 'A' | 'B' | 'C' | 'D'
-
 type BlockDefinition = {
-  label: BlockLabel
+  label: string
   weeks: [number, number]
-  nextBlockWeeks: [number, number] | null // null = bloque final
+  nextBlockWeeks: [number, number] | null // null cuando el "ajuste por failed" no aplica
+  triggerWeek?: number // semana en la que dispara el gate (default = weeks[1])
+  isFinal?: boolean // si pasa el gate y hay target → graduation_ready
 }
 
-const DESDE_CERO_BLOCKS: BlockDefinition[] = [
-  { label: 'A', weeks: [1, 2], nextBlockWeeks: [3, 4] },
-  { label: 'B', weeks: [3, 4], nextBlockWeeks: [5, 6] },
-  { label: 'C', weeks: [5, 6], nextBlockWeeks: [7, 8] },
-  { label: 'D', weeks: [7, 8], nextBlockWeeks: null },
-]
+function triggerWeekOf(b: BlockDefinition): number {
+  return b.triggerWeek ?? b.weeks[1]
+}
+
+const PLAN_GATE_DEFINITIONS: Record<string, BlockDefinition[]> = {
+  desde_cero_3d: [
+    { label: 'A', weeks: [1, 2], nextBlockWeeks: [3, 4] },
+    { label: 'B', weeks: [3, 4], nextBlockWeeks: [5, 6] },
+    { label: 'C', weeks: [5, 6], nextBlockWeeks: [7, 8] },
+    { label: 'D', weeks: [7, 8], nextBlockWeeks: null, isFinal: true },
+  ],
+  nuevo_calle_3d: [
+    { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
+    { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
+    { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
+  ],
+  calle_trail_base_3d: [
+    { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
+    { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
+    { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
+  ],
+  nuevo_montana_3d: [
+    { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
+    { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
+    { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
+  ],
+  calle_trail_avanzado_4d: [
+    { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
+    { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
+    { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
+  ],
+}
 
 const GATE_AVG_RPE_MAX = 4
 const GATE_ADHERENCE_MIN = 0.7
 const FAILED_MODIFIER = 0.9 // -10% al bloque siguiente cuando el gate falla
 
-const GATE_PLAN_CODES = new Set(['desde_cero_3d'])
+// Mapping de "qué plan viene después" por goal_type. Si no hay entrada, el
+// plan es tope (no hay siguiente) y el gate final loguea `plan_completed`.
+const GRADUATION_TARGET: Record<string, Record<string, string>> = {
+  desde_cero_3d: {
+    calle: 'nuevo_calle_3d',
+    calle_trail: 'calle_trail_base_3d',
+    trail: 'nuevo_montana_3d',
+  },
+  nuevo_calle_3d: {
+    calle_trail: 'calle_trail_base_3d',
+  },
+  calle_trail_base_3d: {
+    calle_trail: 'calle_trail_avanzado_4d',
+    trail: 'calle_trail_avanzado_4d',
+  },
+  nuevo_montana_3d: {
+    trail: 'calle_trail_avanzado_4d',
+    calle_trail: 'calle_trail_avanzado_4d',
+  },
+  // calle_trail_avanzado_4d: tope, sin target
+}
+
+function targetFor(templateCode: string, goal: string | null): string | null {
+  if (!goal) return null
+  return GRADUATION_TARGET[templateCode]?.[goal] ?? null
+}
 
 export type GateRule =
   | 'gate_passed'
   | 'gate_failed'
   | 'graduation_ready'
   | 'graduation_pending'
+  | 'plan_completed'
 
 type BlockMetrics = {
   totalSessions: number
@@ -96,10 +159,12 @@ export async function getGateBlockForSession(
 
   const template = Array.isArray(plan.template) ? plan.template[0] : plan.template
   if (!template) return null
-  if (!GATE_PLAN_CODES.has(template.code)) return null
+
+  const blocks = PLAN_GATE_DEFINITIONS[template.code]
+  if (!blocks) return null
 
   const week = tmpl.week_number
-  const block = DESDE_CERO_BLOCKS.find((b) => b.weeks[1] === week)
+  const block = blocks.find((b) => triggerWeekOf(b) === week)
   if (!block) return null
 
   // Cargar goal_type del usuario para la graduación.
@@ -145,7 +210,8 @@ export async function runGateIfNeeded(userSessionId: string): Promise<boolean> {
   if (existing) return true // Ya corrió. El gate "ganó" el slot de esta semana.
 
   const metrics = await computeBlockMetrics(context.userPlanId, context.block.weeks)
-  const decision = decideGate(metrics, context.block)
+  const hasGraduationTarget = !!targetFor(context.templateCode, context.goalType)
+  const decision = decideGate(metrics, context.block, hasGraduationTarget)
 
   let sessionsModified = 0
   if (decision.rule === 'gate_failed' && context.block.nextBlockWeeks) {
@@ -252,20 +318,28 @@ async function computeBlockMetrics(
 
 function decideGate(
   m: BlockMetrics,
-  block: BlockDefinition
+  block: BlockDefinition,
+  hasGraduationTarget: boolean
 ): { rule: GateRule; message_es: string } {
   const adherence =
     m.totalSessions > 0 ? m.completedSessions / m.totalSessions : 0
   const rpeOk = m.avgRpe === null ? true : m.avgRpe <= GATE_AVG_RPE_MAX
   const passed = rpeOk && !m.anyPain && adherence >= GATE_ADHERENCE_MIN
 
-  const isFinal = block.nextBlockWeeks === null
+  const isFinal = block.isFinal === true
 
   if (passed && isFinal) {
+    if (hasGraduationTarget) {
+      return {
+        rule: 'graduation_ready',
+        message_es:
+          'Cerraste el plan y tu cuerpo está respondiendo bien. Estás listo para pasar al próximo nivel.',
+      }
+    }
     return {
-      rule: 'graduation_ready',
+      rule: 'plan_completed',
       message_es:
-        'Cerraste el plan y tu cuerpo está respondiendo bien. Estás listo para pasar al próximo nivel.',
+        'Cerraste el plan completo con todas las luces verdes. Sos un crack — seguí construyendo desde acá.',
     }
   }
   if (!passed && isFinal) {
@@ -356,14 +430,6 @@ export type GraduationOffer = {
   message_es: string
 }
 
-const GRADUATION_TARGET: Record<string, Record<string, string>> = {
-  desde_cero_3d: {
-    calle: 'nuevo_calle_3d',
-    calle_trail: 'calle_trail_base_3d',
-    trail: 'nuevo_montana_3d',
-  },
-}
-
 export async function getPendingGraduation(
   userId: string
 ): Promise<GraduationOffer | null> {
@@ -403,9 +469,8 @@ export async function getPendingGraduation(
     .select('goal_type')
     .eq('id', userId)
     .maybeSingle<{ goal_type: string | null }>()
-  const goal = profile?.goal_type ?? 'calle'
 
-  const target = GRADUATION_TARGET[template.code]?.[goal]
+  const target = targetFor(template.code, profile?.goal_type ?? null)
   if (!target) return null
 
   return {
