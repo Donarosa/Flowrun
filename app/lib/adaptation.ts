@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { runGateIfNeeded } from '@/lib/gate'
 import type { AdaptationLogRow, SessionStatus } from '@/types/database'
 
 // ============================================================================
@@ -35,6 +36,11 @@ type WeekMetrics = {
 // adaptation_logs.unique(user_plan_id, week_number).
 export async function runWeeklyAdaptationIfNeeded(userSessionId: string) {
   const supabase = await createClient()
+
+  // Si la sesión cierra un bloque con gate (e.g. desde_cero_3d), el gate
+  // engine se ocupa: registra su propio log y absorbe el slot de la semana.
+  const gateRan = await runGateIfNeeded(userSessionId)
+  if (gateRan) return
 
   // Resolver user_plan + week de la sesión que se acaba de completar.
   type Row = {

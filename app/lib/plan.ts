@@ -609,3 +609,72 @@ export async function reassignPlan(userId: string): Promise<string | null> {
 
   return assignPlan(userId)
 }
+
+// Graduación: cancela el plan activo y asigna el target template directo,
+// saltando el pickTemplateCode. Lo usa el flow de "estás listo para tu
+// próximo plan" cuando el gate engine marca graduation_ready. weekly_days
+// del usuario sirve para mapear el scheduled_date (si el target tiene más
+// días de los que el user pidió, se usa el del target).
+export async function graduate(
+  userId: string,
+  targetTemplateCode: string
+): Promise<string | null> {
+  const supabase = await createClient()
+
+  const { data: template } = await supabase
+    .from('plan_templates')
+    .select('id, weekly_days')
+    .eq('code', targetTemplateCode)
+    .maybeSingle<{ id: string; weekly_days: number }>()
+  if (!template) throw new Error(`Template ${targetTemplateCode} no existe`)
+
+  await supabase
+    .from('user_plans')
+    .update({ status: 'canceled' })
+    .eq('user_id', userId)
+    .eq('status', 'active')
+
+  const startedOn = todayIso()
+  const { data: plan, error: planError } = await supabase
+    .from('user_plans')
+    .insert({
+      user_id: userId,
+      template_id: template.id,
+      started_on: startedOn,
+      status: 'active',
+    })
+    .select('id')
+    .single()
+  if (planError || !plan) {
+    throw new Error(planError?.message ?? 'No se pudo crear user_plan')
+  }
+
+  const { data: tmplSessions } = await supabase
+    .from('template_sessions')
+    .select('id, week_number, day_index')
+    .eq('template_id', template.id)
+    .order('week_number', { ascending: true })
+    .order('day_index', { ascending: true })
+  if (!tmplSessions || tmplSessions.length === 0) {
+    throw new Error(`No hay template_sessions para ${targetTemplateCode}`)
+  }
+
+  const offsets = DAY_OFFSETS[template.weekly_days] ?? DAY_OFFSETS[3]
+  const userSessions = tmplSessions.map((s) => {
+    const offsetInWeek = offsets[s.day_index - 1] ?? 0
+    const totalOffset = (s.week_number - 1) * 7 + offsetInWeek
+    return {
+      user_plan_id: plan.id,
+      template_session_id: s.id,
+      scheduled_date: addDays(startedOn, totalOffset),
+      status: 'pending' as SessionStatus,
+    }
+  })
+
+  const { error: sessionsError } = await supabase
+    .from('user_sessions')
+    .insert(userSessions)
+  if (sessionsError) throw new Error(sessionsError.message)
+
+  return plan.id
+}

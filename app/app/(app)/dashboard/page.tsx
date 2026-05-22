@@ -4,8 +4,10 @@ import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
 import { getSubscription, getAccessState } from '@/lib/subscription'
 import { getLatestAdaptation } from '@/lib/adaptation'
+import { getPendingGraduation } from '@/lib/gate'
 import { TrialBanner } from '@/components/subscription/trial-banner'
 import { AdaptationBanner } from '@/components/adaptation/adaptation-banner'
+import { GraduationBanner } from '@/components/adaptation/graduation-banner'
 
 export default async function DashboardPage() {
   const user = await getUser()
@@ -16,6 +18,7 @@ export default async function DashboardPage() {
   const subscription = await getSubscription(user!.id)
   const access = getAccessState(subscription)
   const adaptation = await getLatestAdaptation(user!.id)
+  const graduation = await getPendingGraduation(user!.id)
   const greeting = profile.name?.split(' ')[0] || profile.email.split('@')[0]
   const noPlanYet = profile.experience_level === 'advanced'
 
@@ -29,7 +32,11 @@ export default async function DashboardPage() {
       </h1>
 
       <TrialBanner access={access} />
-      <AdaptationBanner log={adaptation} />
+      {graduation ? (
+        <GraduationBanner offer={graduation} />
+      ) : (
+        <AdaptationBanner log={adaptation} />
+      )}
 
       {session ? (
         <SessionCard session={session} />
