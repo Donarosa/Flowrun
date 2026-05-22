@@ -41,8 +41,10 @@ function pickTemplateCode(
   weeklyDays: number
 ): string | null {
   if (experienceLevel === 'new') {
-    // Por ahora todos los principiantes arrancan con run-walk.
-    // Cuando seedeemos algo específico para calle_trail principiante, ramificar acá.
+    // new × calle_trail tiene plan propio (mezcla RW + técnica trail).
+    // new × calle y new × trail caen en desde_cero_3d (run-walk puro);
+    // el de trail puro no se da en el onboarding actual.
+    if (goalType === 'calle_trail') return 'nuevo_calletrail_3d'
     return 'desde_cero_3d'
   }
 

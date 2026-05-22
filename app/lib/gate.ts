@@ -37,6 +37,11 @@ const PLAN_GATE_DEFINITIONS: Record<string, BlockDefinition[]> = {
     { label: 'C', weeks: [5, 6], nextBlockWeeks: [7, 8] },
     { label: 'D', weeks: [7, 8], nextBlockWeeks: null, isFinal: true },
   ],
+  nuevo_calletrail_3d: [
+    { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
+    { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
+    { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
+  ],
   nuevo_calle_3d: [
     { label: 'Construcción', weeks: [1, 3], nextBlockWeeks: [5, 7] },
     { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
@@ -98,6 +103,10 @@ const FAILED_MODIFIER = 0.9 // -10% al bloque siguiente cuando el gate falla
 const GRADUATION_TARGET: Record<string, Record<string, string>> = {
   desde_cero_3d: {
     calle: 'nuevo_calle_3d',
+    calle_trail: 'calle_trail_base_3d',
+    trail: 'nuevo_montana_3d',
+  },
+  nuevo_calletrail_3d: {
     calle_trail: 'calle_trail_base_3d',
     trail: 'nuevo_montana_3d',
   },
