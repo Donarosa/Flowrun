@@ -10,9 +10,10 @@ type Props = {
 export function AdaptationBanner({ log }: Props) {
   if (!log) return null
 
-  // Heurística simple: mostramos siempre la última (no tenemos current_week
-  // computado en el plan todavía — ese refinamiento queda para el slice de
-  // gate criteria). Si el log tiene < 14 días, lo mostramos.
+  // Heurística simple: si el log tiene < 14 días, lo mostramos. Time-based
+  // y este es un Server Component que se renderiza por request — el "ahora"
+  // del servidor es lo que queremos.
+  // eslint-disable-next-line react-hooks/purity -- SSR per-request
   const ageMs = Date.now() - new Date(log.created_at).getTime()
   const ageDays = ageMs / (1000 * 60 * 60 * 24)
   if (ageDays > 14) return null
@@ -40,11 +41,19 @@ export function AdaptationBanner({ log }: Props) {
 }
 
 function pickTone(rule: string) {
-  if (rule === 'sustainable_progression') {
+  if (rule === 'sustainable_progression' || rule === 'gate_passed') {
     return {
       emoji: '🌿',
       bg: 'var(--color-lichen)',
       border: 'rgba(74,93,58,0.15)',
+      eyebrow: 'text-pine',
+    }
+  }
+  if (rule === 'plan_completed') {
+    return {
+      emoji: '⛰️',
+      bg: 'var(--color-lichen)',
+      border: 'rgba(74,93,58,0.25)',
       eyebrow: 'text-pine',
     }
   }
@@ -56,9 +65,13 @@ function pickTone(rule: string) {
       eyebrow: 'text-stone',
     }
   }
-  if (rule === 'fatigue_high') {
+  if (
+    rule === 'fatigue_high' ||
+    rule === 'gate_failed' ||
+    rule === 'graduation_pending'
+  ) {
     return {
-      emoji: '⚠️',
+      emoji: '⏳',
       bg: 'var(--color-terracotta-tint)',
       border: 'rgba(196,130,109,0.3)',
       eyebrow: 'text-terracotta-deep',
