@@ -80,6 +80,7 @@ export default async function SessionPage({ params }: { params: Params }) {
   const tip =
     profileData?.profile.experience_level && profileData?.profile.goal_type
       ? await getTipForSession({
+          userId: user!.id,
           userSessionId: session.userSessionId,
           blockCodes: session.blocks.map((b) => b.code),
           level: profileData.profile.experience_level,

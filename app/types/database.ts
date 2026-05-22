@@ -78,6 +78,13 @@ export type EducationTipRow = {
   created_at: string
 }
 
+export type UserSessionTipRow = {
+  user_session_id: string
+  user_id: string
+  tip_id: string
+  created_at: string
+}
+
 // Shape de los bloques embebidos en template_sessions.blocks (JSONB)
 export type SessionBlock = {
   code: string
@@ -317,6 +324,14 @@ export type Database = {
           created_at?: string
         }
         Update: Partial<EducationTipRow>
+        Relationships: []
+      }
+      user_session_tips: {
+        Row: UserSessionTipRow
+        Insert: Omit<UserSessionTipRow, 'created_at'> & {
+          created_at?: string
+        }
+        Update: Partial<UserSessionTipRow>
         Relationships: []
       }
     }
