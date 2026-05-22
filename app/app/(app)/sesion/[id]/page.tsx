@@ -126,7 +126,9 @@ export default async function SessionPage({ params }: { params: Params }) {
         {formatLongDate(session.scheduledDate)}
       </p>
       <p className="text-[13px] text-muted mb-2">
-        {session.totalDurationMin} minutos en total
+        {session.distanceLabel
+          ? `${session.distanceLabel} · ~${session.totalDurationMin} min`
+          : `${session.totalDurationMin} minutos en total`}
       </p>
       {session.adaptationNote && (
         <p className="text-[12.5px] text-terracotta-deep font-medium mb-6">

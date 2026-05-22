@@ -1,14 +1,16 @@
 import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
-import { canChangePlan } from '@/lib/plan'
+import { canChangePlan, listProPlans } from '@/lib/plan'
 import { CambiarPlanForm } from './form'
+import { ProPlansSection } from './pro-plans-section'
 
 export default async function CambiarPlanPage() {
   const user = await getUser()
   const data = await getProfileWithMetrics(user!.id)
   const profile = data!.profile
   const check = await canChangePlan(user!.id)
+  const proPlans = await listProPlans()
 
   return (
     <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
@@ -36,11 +38,14 @@ export default async function CambiarPlanPage() {
           nextAllowedAt={check.nextAllowedAt ?? null}
         />
       ) : (
-        <CambiarPlanForm
-          initialExperienceLevel={profile.experience_level}
-          initialGoalType={profile.goal_type}
-          initialWeeklyDays={profile.weekly_days}
-        />
+        <>
+          <CambiarPlanForm
+            initialExperienceLevel={profile.experience_level}
+            initialGoalType={profile.goal_type}
+            initialWeeklyDays={profile.weekly_days}
+          />
+          <ProPlansSection plans={proPlans} />
+        </>
       )}
     </main>
   )

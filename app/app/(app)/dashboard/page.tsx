@@ -91,7 +91,9 @@ function SessionCard({ session }: { session: TodaySession }) {
         {session.name}
       </h2>
       <p className="text-[13px] text-muted mb-5">
-        {session.totalDurationMin} minutos en total
+        {session.distanceLabel
+          ? `${session.distanceLabel} · ~${session.totalDurationMin} min`
+          : `${session.totalDurationMin} minutos en total`}
       </p>
 
       <ul className="flex flex-col gap-2">

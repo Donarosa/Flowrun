@@ -8,11 +8,15 @@ import type {
 } from '@/types/database'
 
 // Offset de días dentro de cada semana, según frecuencia.
-// Indexado por day_index del template (1, 2, 3, 4).
+// Indexado por day_index del template (1..N).
+// 5 y 6 días: usados por los planes pro (Sarah). Asumimos lunes descanso →
+// martes a sábado/domingo.
 const DAY_OFFSETS: Record<number, number[]> = {
   2: [0, 3],
   3: [0, 2, 4],
   4: [0, 1, 3, 5],
+  5: [0, 1, 2, 4, 5],
+  6: [0, 1, 2, 3, 4, 5],
 }
 
 function addDays(isoDate: string, days: number): string {
@@ -173,6 +177,7 @@ export type TodaySession = {
   totalDurationMin: number // ya ajustada por duration_modifier
   durationModifier: number
   adaptationNote: string | null
+  distanceLabel: string | null
   blocks: ResolvedBlock[]
 }
 
@@ -218,28 +223,21 @@ export async function getTodaySession(
     .maybeSingle()
   if (!plan) return null
 
+  type TemplateRow = {
+    session_name: string
+    blocks: SessionBlock[]
+    total_duration_min: number
+    is_deload: boolean
+    week_number: number
+    distance_label: string | null
+  }
   type SessionRow = {
     id: string
     status: SessionStatus
     scheduled_date: string
     duration_modifier: number
     adaptation_note: string | null
-    template_session:
-      | {
-          session_name: string
-          blocks: SessionBlock[]
-          total_duration_min: number
-          is_deload: boolean
-          week_number: number
-        }
-      | {
-          session_name: string
-          blocks: SessionBlock[]
-          total_duration_min: number
-          is_deload: boolean
-          week_number: number
-        }[]
-      | null
+    template_session: TemplateRow | TemplateRow[] | null
   }
 
   const { data: rawSession } = await supabase
@@ -256,7 +254,8 @@ export async function getTodaySession(
         blocks,
         total_duration_min,
         is_deload,
-        week_number
+        week_number,
+        distance_label
       )
     `
     )
@@ -296,6 +295,7 @@ export async function getTodaySession(
     totalDurationMin: adjustedTotal,
     durationModifier: modifier,
     adaptationNote: rawSession.adaptation_note,
+    distanceLabel: tmpl.distance_label,
     blocks: tmpl.blocks.map((b) => ({
       code: b.code,
       name: nameByCode.get(b.code) ?? b.code,
@@ -318,6 +318,7 @@ export type SessionDetail = {
   totalDurationMin: number
   durationModifier: number
   adaptationNote: string | null
+  distanceLabel: string | null
   blocks: {
     code: string
     name: string
@@ -333,6 +334,14 @@ export async function getSessionById(
 ): Promise<SessionDetail | null> {
   const supabase = await createClient()
 
+  type TemplateRow = {
+    session_name: string
+    blocks: SessionBlock[]
+    total_duration_min: number
+    is_deload: boolean
+    week_number: number
+    distance_label: string | null
+  }
   type Row = {
     id: string
     status: SessionStatus
@@ -340,26 +349,8 @@ export async function getSessionById(
     completed_at: string | null
     duration_modifier: number
     adaptation_note: string | null
-    user_plan:
-      | { user_id: string }
-      | { user_id: string }[]
-      | null
-    template_session:
-      | {
-          session_name: string
-          blocks: SessionBlock[]
-          total_duration_min: number
-          is_deload: boolean
-          week_number: number
-        }
-      | {
-          session_name: string
-          blocks: SessionBlock[]
-          total_duration_min: number
-          is_deload: boolean
-          week_number: number
-        }[]
-      | null
+    user_plan: { user_id: string } | { user_id: string }[] | null
+    template_session: TemplateRow | TemplateRow[] | null
   }
 
   const { data: row } = await supabase
@@ -378,7 +369,8 @@ export async function getSessionById(
         blocks,
         total_duration_min,
         is_deload,
-        week_number
+        week_number,
+        distance_label
       )
     `
     )
@@ -418,6 +410,7 @@ export async function getSessionById(
     totalDurationMin: Math.round(tmpl.total_duration_min * modifier),
     durationModifier: modifier,
     adaptationNote: row.adaptation_note,
+    distanceLabel: tmpl.distance_label,
     blocks: tmpl.blocks.map((b) => {
       const meta = blockByCode.get(b.code)
       return {
@@ -608,6 +601,41 @@ export async function reassignPlan(userId: string): Promise<string | null> {
     .eq('status', 'active')
 
   return assignPlan(userId)
+}
+
+// Lista de planes pro (is_pro=true) para mostrar en cambiar-plan.
+export type ProPlanSummary = {
+  code: string
+  name: string
+  description: string | null
+  weeklyDays: number
+  totalWeeks: number
+}
+
+export async function listProPlans(): Promise<ProPlanSummary[]> {
+  const supabase = await createClient()
+  const { data: rows } = await supabase
+    .from('plan_templates')
+    .select('code, name, description, weekly_days, total_weeks')
+    .eq('is_pro', true)
+    .order('total_weeks', { ascending: true })
+    .returns<
+      {
+        code: string
+        name: string
+        description: string | null
+        weekly_days: number
+        total_weeks: number
+      }[]
+    >()
+
+  return (rows ?? []).map((r) => ({
+    code: r.code,
+    name: r.name,
+    description: r.description,
+    weeklyDays: r.weekly_days,
+    totalWeeks: r.total_weeks,
+  }))
 }
 
 // Graduación: cancela el plan activo y asigna el target template directo,

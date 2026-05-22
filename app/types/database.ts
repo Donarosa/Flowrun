@@ -103,6 +103,7 @@ export type PlanTemplate = {
   experience_level: ExperienceLevel
   weekly_days: number
   total_weeks: number
+  is_pro: boolean
 }
 
 export type TemplateSession = {
@@ -114,6 +115,7 @@ export type TemplateSession = {
   blocks: SessionBlock[]
   total_duration_min: number
   is_deload: boolean
+  distance_label: string | null
 }
 
 export type UserPlanRow = {
