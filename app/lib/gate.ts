@@ -57,6 +57,36 @@ const PLAN_GATE_DEFINITIONS: Record<string, BlockDefinition[]> = {
     { label: 'Carga', weeks: [5, 7], nextBlockWeeks: [8, 8] },
     { label: 'Final', weeks: [1, 8], nextBlockWeeks: null, triggerWeek: 8, isFinal: true },
   ],
+  // Planes pro Sarah McCormack. Race prep: gates en el cierre de la fase
+  // base y pre-taper, plus chequeo final en race week.
+  trail_10k: [
+    { label: 'Base', weeks: [1, 4], nextBlockWeeks: [5, 9] },
+    { label: 'Pre-taper', weeks: [5, 9], nextBlockWeeks: [10, 10], triggerWeek: 9 },
+    { label: 'Race week', weeks: [1, 10], nextBlockWeeks: null, triggerWeek: 10, isFinal: true },
+  ],
+  trail_half: [
+    { label: 'Base', weeks: [1, 4], nextBlockWeeks: [5, 9] },
+    { label: 'Pre-taper', weeks: [5, 9], nextBlockWeeks: [10, 10], triggerWeek: 9 },
+    { label: 'Race week', weeks: [1, 10], nextBlockWeeks: null, triggerWeek: 10, isFinal: true },
+  ],
+  trail_marathon: [
+    { label: 'Base', weeks: [1, 5], nextBlockWeeks: [6, 11] },
+    { label: 'Pico', weeks: [6, 11], nextBlockWeeks: [12, 15], triggerWeek: 11 },
+    { label: 'Pre-taper', weeks: [12, 15], nextBlockWeeks: [16, 16], triggerWeek: 15 },
+    { label: 'Race week', weeks: [1, 16], nextBlockWeeks: null, triggerWeek: 16, isFinal: true },
+  ],
+  '50_mile_beginner': [
+    { label: 'Base', weeks: [1, 5], nextBlockWeeks: [6, 11] },
+    { label: 'Volumen', weeks: [6, 11], nextBlockWeeks: [12, 15], triggerWeek: 11 },
+    { label: 'Pre-taper', weeks: [12, 15], nextBlockWeeks: [16, 16], triggerWeek: 15 },
+    { label: 'Race week', weeks: [1, 16], nextBlockWeeks: null, triggerWeek: 16, isFinal: true },
+  ],
+  '100k': [
+    { label: 'Base', weeks: [1, 5], nextBlockWeeks: [6, 11] },
+    { label: 'Volumen', weeks: [6, 11], nextBlockWeeks: [12, 15], triggerWeek: 11 },
+    { label: 'Pre-taper', weeks: [12, 15], nextBlockWeeks: [16, 16], triggerWeek: 15 },
+    { label: 'Race week', weeks: [1, 16], nextBlockWeeks: null, triggerWeek: 16, isFinal: true },
+  ],
 }
 
 const GATE_AVG_RPE_MAX = 4
