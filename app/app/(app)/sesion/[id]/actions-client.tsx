@@ -42,21 +42,30 @@ export function SessionActions({
     })
   }
 
-  // Si ya está hecha, opciones: editar check-in (si tiene) o deshacer.
   if (done) {
     return (
-      <div className="flex flex-col gap-2">
+      <div>
+        <div className="flex justify-between items-center font-mono text-[10px] tracking-[0.12em] uppercase text-muted font-semibold mb-2.5">
+          <span>Sesión hecha</span>
+          <span className="text-pine">Lista ✓</span>
+        </div>
         <Link
           href={`/sesion/${userSessionId}/checkin`}
-          className="w-full py-4 rounded-full bg-paper-2 text-ink font-semibold text-[15px] tracking-tight text-center shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-cream transition"
+          className="w-full flex items-center justify-between text-white font-semibold text-[14.5px] tracking-[-0.005em] rounded-[13px] px-5 min-h-[48px] bg-gradient-to-b from-trail to-trail-deep shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(20,30,20,0.1),0_6px_14px_-6px_rgba(61,107,63,0.5)] hover:brightness-[1.03] transition"
         >
-          {hasCheckin ? 'Editar check-in' : 'Agregar check-in'}
+          <span>{hasCheckin ? 'Editar check-in' : 'Agregar check-in'}</span>
+          <span
+            aria-hidden
+            className="font-mono w-7 h-7 rounded-[9px] bg-white/15 flex items-center justify-center text-[13px] font-medium"
+          >
+            →
+          </span>
         </Link>
         <button
           type="button"
           onClick={onUndo}
           disabled={pending}
-          className="py-3 text-[13px] text-muted font-medium hover:text-ink transition disabled:opacity-50"
+          className="w-full text-center mt-2.5 font-mono text-[10px] tracking-[0.1em] uppercase text-soft font-semibold hover:text-muted transition disabled:opacity-50"
         >
           {pending ? 'Deshaciendo…' : 'Deshacer · marcar como pendiente'}
         </button>
@@ -65,18 +74,39 @@ export function SessionActions({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <Link
-        href={`/sesion/${userSessionId}/checkin`}
-        className="w-full py-4 rounded-full bg-trail text-white font-semibold text-[15px] tracking-tight text-center hover:bg-trail-deep transition"
-      >
-        Hice esta sesión →
-      </Link>
+    <div>
+      <div className="flex justify-between items-center font-mono text-[10px] tracking-[0.12em] uppercase text-muted font-semibold mb-2.5">
+        <span>Próximo paso</span>
+        <span className="text-trail">Check-in</span>
+      </div>
+      <div className="grid grid-cols-[auto_1fr] gap-2 items-stretch">
+        <button
+          type="button"
+          onClick={onQuickDone}
+          disabled={pending}
+          className="bg-paper-2 border border-border text-muted font-mono font-semibold text-[14px] rounded-[13px] px-3.5 min-h-[48px] min-w-[48px] flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] hover:bg-cream transition disabled:opacity-50"
+          aria-label={pending ? 'Guardando' : 'Marcar sin check-in'}
+        >
+          {pending ? '…' : '···'}
+        </button>
+        <Link
+          href={`/sesion/${userSessionId}/checkin`}
+          className="flex items-center justify-between gap-2 text-white font-semibold text-[14.5px] tracking-[-0.005em] rounded-[13px] pl-5 pr-4 min-h-[48px] bg-gradient-to-b from-trail to-trail-deep shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(20,30,20,0.1),0_6px_14px_-6px_rgba(61,107,63,0.5)] hover:brightness-[1.03] transition"
+        >
+          <span>Hice esta sesión</span>
+          <span
+            aria-hidden
+            className="font-mono w-7 h-7 rounded-[9px] bg-white/15 flex items-center justify-center text-[13px] font-medium"
+          >
+            →
+          </span>
+        </Link>
+      </div>
       <button
         type="button"
         onClick={onQuickDone}
         disabled={pending}
-        className="py-3 text-[13px] text-muted font-medium hover:text-ink transition disabled:opacity-50"
+        className="w-full text-center mt-2.5 font-mono text-[10px] tracking-[0.1em] uppercase text-soft font-semibold hover:text-muted transition disabled:opacity-50"
       >
         {pending ? 'Guardando…' : 'Saltar check-in · marcar hecha'}
       </button>

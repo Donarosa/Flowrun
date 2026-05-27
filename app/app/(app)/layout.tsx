@@ -16,10 +16,10 @@ export default async function AppLayout({
 
   return (
     <div className="flex-1 flex flex-col bg-cream min-h-screen">
-      <header className="px-7 py-5 max-w-md mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <LogoMark className="w-7 h-7 text-trail" />
-          <span className="font-semibold text-ink tracking-tight">
+      <header className="px-6 pt-4 pb-3 max-w-md mx-auto w-full">
+        <div className="flex items-center gap-[9px]">
+          <LogoMark className="w-[30px] h-[30px] text-trail" />
+          <span className="text-[18px] font-semibold tracking-[-0.03em] text-ink lowercase">
             flow<span className="text-trail">run</span>
           </span>
         </div>

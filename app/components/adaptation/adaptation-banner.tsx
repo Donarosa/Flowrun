@@ -4,15 +4,9 @@ type Props = {
   log: AdaptationLogRow | null
 }
 
-// Mensaje del coach: aparece cuando hay una adaptación reciente y todavía
-// estamos en la semana que recibió el ajuste (week_number + 1).
-// Si no aplica, no renderiza nada.
 export function AdaptationBanner({ log }: Props) {
   if (!log) return null
 
-  // Heurística simple: si el log tiene < 14 días, lo mostramos. Time-based
-  // y este es un Server Component que se renderiza por request — el "ahora"
-  // del servidor es lo que queremos.
   // eslint-disable-next-line react-hooks/purity -- SSR per-request
   const ageMs = Date.now() - new Date(log.created_at).getTime()
   const ageDays = ageMs / (1000 * 60 * 60 * 24)
@@ -22,16 +16,17 @@ export function AdaptationBanner({ log }: Props) {
 
   return (
     <article
-      className={`rounded-2xl p-4 mb-5 shadow-[inset_0_0_0_1px_${tone.border}]`}
-      style={{ backgroundColor: tone.bg }}
+      className={`rounded-[14px] border px-4 py-3 mb-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] ${tone.wrap}`}
     >
       <div className="flex items-start gap-3">
-        <span className="text-base shrink-0">{tone.emoji}</span>
+        <span aria-hidden className="text-base shrink-0 mt-px">
+          {tone.emoji}
+        </span>
         <div className="flex-1 min-w-0">
           <p
-            className={`font-mono text-[10px] tracking-[0.14em] uppercase font-bold mb-1.5 ${tone.eyebrow}`}
+            className={`font-mono text-[9.5px] tracking-[0.18em] uppercase font-bold mb-1.5 ${tone.eyebrow}`}
           >
-            Mensaje del Profe
+            Mensaje del profe
           </p>
           <p className="text-[13px] text-ink leading-snug">{log.message_es}</p>
         </div>
@@ -44,24 +39,21 @@ function pickTone(rule: string) {
   if (rule === 'sustainable_progression' || rule === 'gate_passed') {
     return {
       emoji: '🌿',
-      bg: 'var(--color-lichen)',
-      border: 'rgba(74,93,58,0.15)',
+      wrap: 'bg-lichen border-lichen-deep',
       eyebrow: 'text-pine',
     }
   }
   if (rule === 'plan_completed') {
     return {
       emoji: '⛰️',
-      bg: 'var(--color-lichen)',
-      border: 'rgba(74,93,58,0.25)',
+      wrap: 'bg-lichen border-lichen-deep',
       eyebrow: 'text-pine',
     }
   }
   if (rule === 'low_adherence') {
     return {
       emoji: '🪶',
-      bg: 'var(--color-paper-2)',
-      border: 'var(--color-border)',
+      wrap: 'bg-paper-2 border-border',
       eyebrow: 'text-stone',
     }
   }
@@ -72,15 +64,13 @@ function pickTone(rule: string) {
   ) {
     return {
       emoji: '⏳',
-      bg: 'var(--color-terracotta-tint)',
-      border: 'rgba(196,130,109,0.3)',
+      wrap: 'bg-terracotta-tint border-terracotta-deep/30',
       eyebrow: 'text-terracotta-deep',
     }
   }
   return {
     emoji: '🌱',
-    bg: 'var(--color-paper-2)',
-    border: 'var(--color-border)',
+    wrap: 'bg-paper-2 border-border',
     eyebrow: 'text-trail',
   }
 }

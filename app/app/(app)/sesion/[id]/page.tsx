@@ -15,33 +15,51 @@ import type {
   TalkTestLevel,
 } from '@/types/database'
 
-const DAYS_ES = [
-  'Domingo',
-  'Lunes',
-  'Martes',
-  'Miércoles',
-  'Jueves',
-  'Viernes',
-  'Sábado',
-]
-const MONTHS_ES = [
-  'enero',
-  'febrero',
-  'marzo',
-  'abril',
-  'mayo',
-  'junio',
-  'julio',
-  'agosto',
-  'septiembre',
-  'octubre',
-  'noviembre',
-  'diciembre',
+const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+const MONTHS_SHORT = [
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
 ]
 
-function formatLongDate(iso: string): string {
+function formatShortDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`)
-  return `${DAYS_ES[d.getUTCDay()]} ${d.getUTCDate()} de ${MONTHS_ES[d.getUTCMonth()]}`
+  return `${DAYS_SHORT[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS_SHORT[d.getUTCMonth()]}`
+}
+
+const BLOCK_ZONE: Record<string, string> = {
+  RS: 'Z1—Z2',
+  RW: 'Z1',
+  SC: 'Z2—Z3',
+  FE: 'Z3',
+  SMC: 'Z2—Z3',
+  FK: 'Z2—Z3',
+  TE: 'Z3',
+  PR: 'Z2—Z3',
+  HF: 'Z3—Z4',
+  HK: 'Z1',
+  RC: 'Z3—Z4',
+  SU: 'Z2',
+}
+
+function dominantZones(codes: string[]): string {
+  const zones = new Set<string>()
+  for (const c of codes) {
+    const z = BLOCK_ZONE[c]
+    if (!z) continue
+    z.split('—').forEach((p) => zones.add(p))
+  }
+  if (zones.size === 0) return ''
+  return Array.from(zones).sort().join(' · ')
 }
 
 type Params = Promise<{ id: string }>
@@ -88,101 +106,94 @@ export default async function SessionPage({ params }: { params: Params }) {
         })
       : null
 
-  return (
-    <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
-      <Link
-        href="/plan"
-        className="inline-flex items-center gap-1 text-[13px] text-muted font-medium mb-4 hover:text-ink transition"
-      >
-        <span aria-hidden>←</span> Volver al plan
-      </Link>
+  const zoneSummary = dominantZones(session.blocks.map((b) => b.code))
+  const adapted = session.durationModifier !== 1
+  const adaptedLabel = adapted
+    ? `${session.durationModifier > 1 ? '+' : ''}${Math.round((session.durationModifier - 1) * 100)}%`
+    : null
 
-      <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-trail font-bold">
-          Semana {session.weekNumber}
+  return (
+    <main className="px-6 pt-1 pb-8 max-w-md mx-auto w-full">
+      <div className="flex items-center gap-2.5 mt-1.5 mb-3.5">
+        <Link
+          href="/plan"
+          className="w-[34px] h-[34px] rounded-[11px] bg-paper-2 border border-border shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] flex items-center justify-center font-mono text-[14px] text-fg font-medium hover:bg-cream transition"
+          aria-label="Volver al plan"
+        >
+          ←
+        </Link>
+        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted font-semibold">
+          Semana {session.weekNumber} · Sesión
+          {session.isDeload && ' · Descarga'}
         </span>
-        {session.isDeload && (
-          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-stone font-semibold">
-            · Descarga
-          </span>
+      </div>
+
+      <h1 className="text-[26px] font-semibold tracking-[-0.03em] text-ink leading-[1.08] mb-1.5 text-balance">
+        {session.name}
+      </h1>
+
+      <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-[0.1em] uppercase text-muted font-semibold mb-[18px]">
+        <span>{formatShortDate(session.scheduledDate)}</span>
+        <Dot />
+        <span>{session.totalDurationMin} min</span>
+        {zoneSummary && (
+          <>
+            <Dot />
+            <span>{zoneSummary}</span>
+          </>
         )}
-        {session.durationModifier !== 1 && (
-          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-terracotta-deep font-bold">
-            · Ajustada{' '}
-            {session.durationModifier > 1 ? '+' : ''}
-            {Math.round((session.durationModifier - 1) * 100)}%
-          </span>
+        {adapted && (
+          <>
+            <Dot />
+            <span className="text-terracotta-deep font-bold">
+              Ajustada {adaptedLabel}
+            </span>
+          </>
         )}
         {session.status === 'completed' && (
-          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold ml-auto">
-            ✓ Hecha
-          </span>
+          <span className="ml-auto text-pine font-bold">✓ Hecha</span>
         )}
       </div>
 
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink leading-tight mb-1">
-        {session.name}
-      </h1>
-      <p className="text-[13px] text-muted mb-2">
-        {formatLongDate(session.scheduledDate)}
-      </p>
-      <p className="text-[13px] text-muted mb-2">
-        {session.distanceLabel
-          ? `${session.distanceLabel} · ~${session.totalDurationMin} min`
-          : `${session.totalDurationMin} minutos en total`}
-      </p>
       {session.adaptationNote && (
-        <p className="text-[12.5px] text-terracotta-deep font-medium mb-6">
-          {session.adaptationNote}
-        </p>
+        <div className="border border-terracotta-deep/30 bg-terracotta-tint rounded-[14px] px-4 py-3 mb-3">
+          <p className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-terracotta-deep font-bold mb-1.5">
+            Ajuste del coach
+          </p>
+          <p className="text-[12.5px] text-ink leading-[1.5]">
+            {session.adaptationNote}
+          </p>
+        </div>
       )}
-      {!session.adaptationNote && <div className="mb-4" />}
 
-      <ul className="flex flex-col gap-3 mb-8">
+      <div className="flex flex-col gap-3 mb-3.5">
         {session.blocks.map((b, i) => (
-          <li
-            key={`${b.code}-${i}`}
-            className="bg-paper-2 rounded-2xl p-4 shadow-[inset_0_0_0_1px_var(--color-border)]"
-          >
-            <div className="flex items-baseline gap-2 mb-1.5">
-              <span className="font-mono text-[11px] tracking-[0.04em] text-trail font-bold">
-                {b.code}
-              </span>
-              <span className="text-[15px] font-semibold text-ink flex-1">
-                {b.name}
-              </span>
-              <span className="text-[13px] font-semibold text-ink tabular-nums">
-                {b.durationMin}′
-              </span>
-            </div>
-            {b.description && (
-              <p className="text-[12.5px] text-muted leading-relaxed mb-2">
-                {b.description}
-              </p>
-            )}
-            {b.note && (
-              <div className="bg-cream rounded-xl px-3 py-2 mt-2">
-                <p className="text-[12.5px] text-ink leading-snug">{b.note}</p>
-              </div>
-            )}
-          </li>
+          <BlockCard key={`${b.code}-${i}`} block={b} />
         ))}
-      </ul>
+      </div>
 
       {tip && (
-        <aside className="bg-moss-soft rounded-2xl p-4 mb-6 shadow-[inset_0_0_0_1px_var(--color-moss-soft)]">
-          <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold mb-2">
-            {tipCategoryLabel(tip.category)}
-          </p>
-          <p className="text-[13.5px] text-ink leading-relaxed">
+        <aside
+          className="rounded-[14px] border border-lichen-deep px-4 py-3 mb-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+          style={{
+            background:
+              'linear-gradient(180deg, var(--color-lichen) 0%, oklch(91% 0.02 145) 100%)',
+          }}
+        >
+          <div className="flex items-center gap-2 mb-2 font-mono text-[9.5px] tracking-[0.18em] uppercase text-trail-deep font-bold">
+            <InfoIcon />
+            <span>{tipCategoryLabel(tip.category)}</span>
+          </div>
+          <p className="text-[12.5px] text-ink leading-[1.5] tracking-[-0.005em]">
             {tip.contentEs}
           </p>
         </aside>
       )}
 
       {checkin && (
-        <section className="bg-trail-tint rounded-2xl p-4 mb-6 shadow-[inset_0_0_0_1px_var(--color-trail-tint)]">
-          <h3 className="font-mono text-[10px] tracking-[0.14em] uppercase text-trail font-bold mb-3">
+        <section className="rounded-[14px] border border-trail-tint bg-trail-tint px-4 py-3.5 mb-3.5">
+          <h3 className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-trail font-bold mb-3 flex items-center gap-2.5">
+            <span aria-hidden className="w-[14px] h-[1.5px] bg-trail rounded-[1px]" />
             Tu check-in
           </h3>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[12.5px]">
@@ -202,34 +213,103 @@ export default async function SessionPage({ params }: { params: Params }) {
             />
           </dl>
           {checkin.notes && (
-            <p className="text-[12.5px] text-ink leading-relaxed mt-3 pt-3 border-t border-trail/15">
+            <p className="text-[12.5px] text-ink leading-[1.5] mt-3 pt-3 border-t border-trail/15">
               {checkin.notes}
             </p>
           )}
         </section>
       )}
 
-      {locked ? (
-        <PaywallBlock
-          title="Tu acceso terminó"
-          body="Suscribite para volver a marcar sesiones y hacer check-ins."
-        />
-      ) : (
-        <SessionActions
-          userSessionId={session.userSessionId}
-          status={session.status}
-          hasCheckin={!!checkin}
-        />
-      )}
+      <div className="mt-2 -mx-6 px-6 pt-3.5 pb-1 border-t border-hair bg-gradient-to-t from-cream via-cream/85 to-transparent">
+        {locked ? (
+          <PaywallBlock
+            title="Tu acceso terminó"
+            body="Suscribite para volver a marcar sesiones y hacer check-ins."
+          />
+        ) : (
+          <SessionActions
+            userSessionId={session.userSessionId}
+            status={session.status}
+            hasCheckin={!!checkin}
+          />
+        )}
+      </div>
     </main>
+  )
+}
+
+function BlockCard({
+  block,
+}: {
+  block: {
+    code: string
+    name: string
+    description: string | null
+    durationMin: number
+    note?: string
+  }
+}) {
+  const zone = BLOCK_ZONE[block.code]
+  return (
+    <article className="bg-paper-2 border border-border rounded-[14px] overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
+      <header className="flex justify-between items-center px-4 py-[11px] bg-cream border-b border-border">
+        <span className="font-mono text-[9.5px] tracking-[0.16em] uppercase text-trail font-bold">
+          {block.code}
+          {zone && <span className="text-muted font-semibold ml-1.5">· {zone}</span>}
+        </span>
+        <span className="font-mono text-[11px] font-bold text-ink tracking-[0.02em] tabular-nums">
+          {block.durationMin}′
+        </span>
+      </header>
+      <div className="px-4 py-3">
+        <h3 className="text-[15px] font-semibold text-ink tracking-[-0.018em] leading-[1.25] mb-1.5">
+          {block.name}
+        </h3>
+        {block.description && (
+          <p className="text-[12.5px] text-muted leading-[1.5] tracking-[-0.005em]">
+            {block.description}
+          </p>
+        )}
+        {block.note && (
+          <div className="mt-2.5 pl-3 border-l-2 border-lichen-deep">
+            <p className="text-[12px] text-ink leading-[1.45]">{block.note}</p>
+          </div>
+        )}
+      </div>
+    </article>
   )
 }
 
 function CheckinRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-muted text-[11px]">{label}</dt>
-      <dd className="text-ink font-semibold">{value}</dd>
+      <dt className="text-muted text-[10.5px] font-medium">{label}</dt>
+      <dd className="text-ink font-semibold mt-0.5">{value}</dd>
     </div>
+  )
+}
+
+function Dot() {
+  return (
+    <span aria-hidden className="w-[3px] h-[3px] bg-soft rounded-full" />
+  )
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="13"
+      height="13"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4M12 8h.01" />
+    </svg>
   )
 }
