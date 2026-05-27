@@ -3,6 +3,7 @@ import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics, isOnboardingComplete } from '@/lib/profile'
 import { LogoMark } from '@/components/brand/logo-mark'
 import { TabBar } from '@/components/nav/tab-bar'
+import { SupportChat } from '@/components/support/support-chat'
 
 export default async function AppLayout({
   children,
@@ -27,6 +28,7 @@ export default async function AppLayout({
       <div className="flex-1 pb-24">{children}</div>
 
       <TabBar />
+      <SupportChat />
     </div>
   )
 }
