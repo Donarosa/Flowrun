@@ -57,6 +57,30 @@ export default async function DiagPage() {
     result.client_creation_threw = String(e)
   }
 
+  // Raw fetch to Supabase REST to check key format issues
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const r = await fetch(`${url}/rest/v1/profiles?select=id&limit=1`, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+      },
+      cache: 'no-store',
+    })
+    result.raw_fetch = {
+      status: r.status,
+      statusText: r.statusText,
+      body: (await r.text()).slice(0, 500),
+      url_starts: url.slice(0, 20),
+      key_starts: key.slice(0, 12),
+      url_ends_clean: !url.endsWith('\n') && !url.endsWith(' '),
+      key_ends_clean: !key.endsWith('\n') && !key.endsWith(' '),
+    }
+  } catch (e) {
+    result.raw_fetch_threw = String(e)
+  }
+
   return (
     <pre className="text-[12px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 overflow-x-auto">
       {JSON.stringify(result, null, 2)}
