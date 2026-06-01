@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+type Step = { icon: React.ReactNode; content: React.ReactNode }
+
 export default function InstalarPage() {
   return (
     <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
@@ -26,32 +28,44 @@ export default function InstalarPage() {
           icon={<AppleIcon />}
           label="iPhone · Safari"
           steps={[
-            (
-              <>
-                Tocá el botón <strong className="text-ink">Compartir</strong>{' '}
-                <ShareIconInline /> en la barra de abajo.
-              </>
-            ),
-            (
-              <>
-                Deslizá hacia abajo y tocá{' '}
-                <strong className="text-ink">
-                  Agregar a pantalla de inicio
-                </strong>
-                .
-              </>
-            ),
-            (
-              <>
-                Tocá <strong className="text-ink">Agregar</strong> arriba a la
-                derecha.
-              </>
-            ),
-            (
-              <>
-                Listo: el ícono de FlowRun queda en tu pantalla de inicio.
-              </>
-            ),
+            {
+              icon: <ShareIcon />,
+              content: (
+                <>
+                  Tocá el botón <strong className="text-ink">Compartir</strong>{' '}
+                  en la barra de abajo.
+                </>
+              ),
+            },
+            {
+              icon: <ScrollIcon />,
+              content: (
+                <>
+                  Deslizá hacia abajo y tocá{' '}
+                  <strong className="text-ink">
+                    Agregar a pantalla de inicio
+                  </strong>
+                  .
+                </>
+              ),
+            },
+            {
+              icon: <AddSquareIcon />,
+              content: (
+                <>
+                  Tocá <strong className="text-ink">Agregar</strong> arriba a la
+                  derecha.
+                </>
+              ),
+            },
+            {
+              icon: <HomeIcon />,
+              content: (
+                <>
+                  Listo: el ícono de FlowRun queda en tu pantalla de inicio.
+                </>
+              ),
+            },
           ]}
           note="Recomendado en iPhone. Si estás en otro navegador, mirá la opción de abajo."
         />
@@ -60,36 +74,48 @@ export default function InstalarPage() {
           icon={<AppleIcon />}
           label="iPhone · Chrome"
           steps={[
-            (
-              <>
-                Tocá el menú{' '}
-                <span aria-hidden className="font-bold text-ink">
-                  ⋯
-                </span>{' '}
-                abajo a la derecha.
-              </>
-            ),
-            (
-              <>
-                Tocá <strong className="text-ink">Compartir…</strong> (se abre
-                el menú de iOS).
-              </>
-            ),
-            (
-              <>
-                Deslizá y tocá{' '}
-                <strong className="text-ink">
-                  Agregar a pantalla de inicio
-                </strong>
-                .
-              </>
-            ),
-            (
-              <>
-                Confirmá con <strong className="text-ink">Agregar</strong>{' '}
-                arriba a la derecha.
-              </>
-            ),
+            {
+              icon: <DotsHorizontalIcon />,
+              content: (
+                <>
+                  Tocá el menú{' '}
+                  <span aria-hidden className="font-bold text-ink">
+                    ⋯
+                  </span>{' '}
+                  abajo a la derecha.
+                </>
+              ),
+            },
+            {
+              icon: <ShareIcon />,
+              content: (
+                <>
+                  Tocá <strong className="text-ink">Compartir…</strong> (se abre
+                  el menú de iOS).
+                </>
+              ),
+            },
+            {
+              icon: <ScrollIcon />,
+              content: (
+                <>
+                  Deslizá y tocá{' '}
+                  <strong className="text-ink">
+                    Agregar a pantalla de inicio
+                  </strong>
+                  .
+                </>
+              ),
+            },
+            {
+              icon: <AddSquareIcon />,
+              content: (
+                <>
+                  Confirmá con <strong className="text-ink">Agregar</strong>{' '}
+                  arriba a la derecha.
+                </>
+              ),
+            },
           ]}
           note="Si no ves la opción, actualizá Chrome a la última versión desde la App Store."
         />
@@ -98,34 +124,44 @@ export default function InstalarPage() {
           icon={<AndroidIcon />}
           label="Android · Chrome"
           steps={[
-            (
-              <>
-                Tocá el menú{' '}
-                <span aria-hidden className="font-bold text-ink">
-                  ⋮
-                </span>{' '}
-                arriba a la derecha.
-              </>
-            ),
-            (
-              <>
-                Tocá{' '}
-                <strong className="text-ink">
-                  Agregar a pantalla principal
-                </strong>{' '}
-                o <strong className="text-ink">Instalar app</strong>.
-              </>
-            ),
-            (
-              <>
-                Confirmá tocando{' '}
-                <strong className="text-ink">Agregar</strong> o{' '}
-                <strong className="text-ink">Instalar</strong>.
-              </>
-            ),
-            (
-              <>El ícono te queda en la pantalla principal.</>
-            ),
+            {
+              icon: <DotsVerticalIcon />,
+              content: (
+                <>
+                  Tocá el menú{' '}
+                  <span aria-hidden className="font-bold text-ink">
+                    ⋮
+                  </span>{' '}
+                  arriba a la derecha.
+                </>
+              ),
+            },
+            {
+              icon: <AddSquareIcon />,
+              content: (
+                <>
+                  Tocá{' '}
+                  <strong className="text-ink">
+                    Agregar a pantalla principal
+                  </strong>{' '}
+                  o <strong className="text-ink">Instalar app</strong>.
+                </>
+              ),
+            },
+            {
+              icon: <CheckIcon />,
+              content: (
+                <>
+                  Confirmá tocando{' '}
+                  <strong className="text-ink">Agregar</strong> o{' '}
+                  <strong className="text-ink">Instalar</strong>.
+                </>
+              ),
+            },
+            {
+              icon: <HomeIcon />,
+              content: <>El ícono te queda en la pantalla principal.</>,
+            },
           ]}
           note="También funciona desde Firefox y Samsung Internet con un menú parecido."
         />
@@ -147,7 +183,7 @@ function PlatformDetails({
 }: {
   icon: React.ReactNode
   label: string
-  steps: React.ReactNode[]
+  steps: Step[]
   note?: string
 }) {
   return (
@@ -172,12 +208,15 @@ function PlatformDetails({
           {steps.map((step, i) => (
             <li
               key={i}
-              className="grid grid-cols-[26px_1fr] items-start gap-2 text-[13.5px] text-muted leading-[1.5]"
+              className="grid grid-cols-[36px_1fr] items-start gap-3 text-[13.5px] text-muted leading-[1.5]"
             >
-              <span className="font-mono text-[11px] text-trail font-bold tracking-[0.04em] pt-0.5">
-                {String(i + 1).padStart(2, '0')}
+              <span className="relative w-9 h-9 rounded-xl bg-cream ring-1 ring-[var(--color-border)] flex items-center justify-center text-trail shrink-0">
+                {step.icon}
+                <span className="absolute -top-1 -right-1 font-mono text-[9px] font-bold tracking-[0.02em] bg-trail text-cream rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                  {i + 1}
+                </span>
               </span>
-              <span>{step}</span>
+              <span className="pt-1.5">{step.content}</span>
             </li>
           ))}
         </ol>
@@ -221,27 +260,131 @@ function AndroidIcon() {
   )
 }
 
-function ShareIconInline() {
+function ShareIcon() {
   return (
-    <span
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden
-      className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-[5px] bg-cream align-text-bottom -translate-y-px ml-0.5"
     >
-      <svg
-        viewBox="0 0 24 24"
-        width="11"
-        height="11"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2.2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-trail"
-      >
-        <path d="M12 3v12" />
-        <path d="m8 7 4-4 4 4" />
-        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-      </svg>
-    </span>
+      <path d="M12 3v12" />
+      <path d="m8 7 4-4 4 4" />
+      <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    </svg>
+  )
+}
+
+function ScrollIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 5v14" />
+      <path d="m6 13 6 6 6-6" />
+    </svg>
+  )
+}
+
+function AddSquareIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3.5" y="3.5" width="17" height="17" rx="3.5" />
+      <path d="M12 8v8" />
+      <path d="M8 12h8" />
+    </svg>
+  )
+}
+
+function HomeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="m3 11 9-8 9 8" />
+      <path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" />
+      <path d="M10 21v-6h4v6" />
+    </svg>
+  )
+}
+
+function DotsHorizontalIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="currentColor"
+      aria-hidden
+    >
+      <circle cx="5.5" cy="12" r="1.6" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="18.5" cy="12" r="1.6" />
+    </svg>
+  )
+}
+
+function DotsVerticalIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="currentColor"
+      aria-hidden
+    >
+      <circle cx="12" cy="5.5" r="1.6" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="12" cy="18.5" r="1.6" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   )
 }

@@ -22,6 +22,13 @@ export function SupportChat() {
     }
   }, [open, status])
 
+  // Abrir el panel desde cualquier parte de la app vía window event.
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    window.addEventListener('flowrun:open-support', handler)
+    return () => window.removeEventListener('flowrun:open-support', handler)
+  }, [])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!message.trim() || !email.trim()) return
@@ -58,29 +65,7 @@ export function SupportChat() {
 
   return (
     <>
-      {/* Botón flotante (FAB), alineado a la columna de la app, por encima del TabBar */}
-      <div className="fixed inset-x-0 bottom-[88px] z-40 pointer-events-none">
-        <div className="max-w-md mx-auto px-6 flex justify-end">
-          <button
-            type="button"
-            aria-label={open ? 'Cerrar soporte' : 'Abrir soporte'}
-            onClick={() => setOpen((v) => !v)}
-            className="pointer-events-auto w-14 h-14 rounded-full bg-trail text-cream shadow-[0_8px_24px_-6px_rgba(43,79,45,0.5)] flex items-center justify-center transition-transform active:scale-95 hover:bg-trail-deep"
-          >
-            {open ? (
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-                <path d="M6 6l12 12M18 6L6 18" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20.5l1.4-5.2a8.5 8.5 0 1 1 16.6-3.8Z" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Panel del chat */}
+      {/* Panel del chat (sin FAB: se abre desde el CTA en Perfil vía window event) */}
       {open && (
         <>
           <div

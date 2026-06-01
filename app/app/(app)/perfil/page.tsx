@@ -3,6 +3,7 @@ import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getSubscription, getAccessState } from '@/lib/subscription'
 import { LogoutButton } from '@/components/auth/logout-button'
+import { SupportButton } from './support-button'
 import { COUNTRIES } from '@/lib/countries'
 import type {
   EffortMode,
@@ -187,7 +188,7 @@ export default async function PerfilPage() {
         </Link>
       </section>
 
-      <section className="mb-6">
+      <section className="mb-3">
         <Link
           href="/perfil/instalar"
           className="group flex items-center gap-3 rounded-2xl p-4 bg-gradient-to-br from-trail to-trail-deep text-white shadow-[0_1px_2px_rgba(20,30,20,0.08),0_8px_18px_-10px_rgba(61,107,63,0.5)] hover:brightness-[1.04] transition"
@@ -210,6 +211,10 @@ export default async function PerfilPage() {
             →
           </span>
         </Link>
+      </section>
+
+      <section className="mb-6">
+        <SupportButton />
       </section>
 
       <div className="mt-10 flex justify-center">

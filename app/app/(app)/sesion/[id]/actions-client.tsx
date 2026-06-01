@@ -84,10 +84,17 @@ export function SessionActions({
           type="button"
           onClick={onQuickDone}
           disabled={pending}
-          className="bg-paper-2 border border-border text-muted font-mono font-semibold text-[14px] rounded-[13px] px-3.5 min-h-[48px] min-w-[48px] flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] hover:bg-cream transition disabled:opacity-50"
-          aria-label={pending ? 'Guardando' : 'Marcar sin check-in'}
+          className="bg-paper-2 border border-border text-muted font-semibold text-[13px] tracking-[-0.005em] rounded-[13px] px-3.5 min-h-[48px] inline-flex items-center justify-center gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] hover:bg-cream hover:text-ink transition disabled:opacity-50"
+          aria-label={pending ? 'Guardando' : 'Marcar hecha sin check-in'}
         >
-          {pending ? '…' : '···'}
+          {pending ? (
+            <span className="font-mono">…</span>
+          ) : (
+            <>
+              <CheckIcon />
+              <span>Hecha</span>
+            </>
+          )}
         </button>
         <Link
           href={`/sesion/${userSessionId}/checkin`}
@@ -102,14 +109,27 @@ export function SessionActions({
           </span>
         </Link>
       </div>
-      <button
-        type="button"
-        onClick={onQuickDone}
-        disabled={pending}
-        className="w-full text-center mt-2.5 font-mono text-[10px] tracking-[0.1em] uppercase text-soft font-semibold hover:text-muted transition disabled:opacity-50"
-      >
-        {pending ? 'Guardando…' : 'Saltar check-in · marcar hecha'}
-      </button>
+      <p className="text-center mt-2.5 font-mono text-[10px] tracking-[0.1em] uppercase text-soft font-medium">
+        Marcá hecha · o sumá tu check-in
+      </p>
     </div>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   )
 }
