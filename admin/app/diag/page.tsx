@@ -90,11 +90,16 @@ export default async function DiagPage() {
         tries.push({ label: path, target, body: `THREW: ${e}` })
       }
     }
+    const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const rawKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     result.raw_fetch = {
-      url_chars: process.env.NEXT_PUBLIC_SUPABASE_URL!.length,
+      url_chars: rawUrl.length,
       url_cleaned_chars: url.length,
+      url_first_codes: [...rawUrl.slice(0, 3)].map((c) => c.charCodeAt(0)),
+      url_last_codes: [...rawUrl.slice(-3)].map((c) => c.charCodeAt(0)),
       url_host: url.replace(/^https?:\/\//, '').split('.')[0],
-      key_starts: key.slice(0, 12),
+      key_first_codes: [...rawKey.slice(0, 3)].map((c) => c.charCodeAt(0)),
+      key_last_codes: [...rawKey.slice(-3)].map((c) => c.charCodeAt(0)),
       key_chars: key.length,
       tries,
     }
