@@ -47,7 +47,7 @@ export default async function SuscripcionPage() {
         <CancelButton periodEnd={access.periodEnd} />
       )}
 
-      <PlansGrid isArgentina={isArgentina} />
+      <PlansGrid isArgentina={isArgentina} userEmail={user!.email!} />
 
       <p className="text-[12px] text-muted leading-relaxed mt-8 text-center">
         Pago seguro · cancelás cuando querés · sin contratos
