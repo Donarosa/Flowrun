@@ -2,6 +2,7 @@ import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getSubscription, getAccessState } from '@/lib/subscription'
 import { PlansGrid } from './plans-grid'
+import { CancelButton } from './cancel-button'
 
 export default async function SuscripcionPage() {
   const user = await getUser()
@@ -41,6 +42,10 @@ export default async function SuscripcionPage() {
         {access.status === 'expired' &&
           'Elegí tu plan para volver a entrenar.'}
       </p>
+
+      {access.status === 'paid' && (
+        <CancelButton periodEnd={access.periodEnd} />
+      )}
 
       <PlansGrid isArgentina={isArgentina} />
 

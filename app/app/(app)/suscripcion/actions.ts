@@ -2,17 +2,23 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
-import { PRICING } from '@/lib/subscription'
+import { cancelCommetSubscription, createCommetCheckout } from '@/lib/commet'
 import type {
   Currency,
   PaymentMethod,
   SubscriptionPlan,
 } from '@/types/database'
 
-// Mock de pago. Marca la subscription como active, setea plan/método/moneda/
-// monto y extiende current_period_end según los días del plan.
-// El backend real (Stripe / MP) reemplazará esto sin cambiar la interfaz UI.
+// Crea una sesión de checkout en Commet y redirige al usuario al pago.
+// La fila en `subscriptions` queda como está (trialing) hasta que llegue el
+// webhook `subscription.activated` o `payment.received` — ahí se marca
+// `active` con plan/monto/fin de período.
+//
+// paymentMethod/currency vienen de los botones de la UI por compat: por
+// ahora Commet ofrece el método al usuario en su propio checkout, así que
+// no los usamos del lado server.
 export async function subscribePlan(input: {
   plan: SubscriptionPlan
   paymentMethod: PaymentMethod
@@ -23,33 +29,49 @@ export async function subscribePlan(input: {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('No auth')
+  if (!user.email) throw new Error('Usuario sin email')
 
-  const pricing = PRICING[input.plan]
-  const amount = input.currency === 'ARS' ? pricing.ars : pricing.usd
+  // Obtener country del profile para que Commet aplique los regional prices
+  // (ej. AR → ARS). Sin esto el checkout defaultea a USD.
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('country')
+    .eq('id', user.id)
+    .single()
 
-  // Calcular nueva fecha de fin: a partir de hoy, NO se extiende encima del trial.
-  // Esto es coherente con la idea "pagás → arrancan los días pagos desde ahora".
-  const today = new Date()
-  const periodEnd = new Date(today)
-  periodEnd.setUTCDate(periodEnd.getUTCDate() + pricing.days)
-  const periodEndIso = periodEnd.toISOString().slice(0, 10)
+  // Calcular la URL de retorno (success) según el host actual.
+  const h = await headers()
+  const proto = h.get('x-forwarded-proto') ?? 'https'
+  const host =
+    h.get('x-forwarded-host') ?? h.get('host') ?? 'app.flowrun.site'
+  const successUrl = `${proto}://${host}/suscripcion?ok=1`
 
-  const { error } = await supabase
-    .from('subscriptions')
-    .update({
-      status: 'active',
-      plan: input.plan,
-      payment_method: input.paymentMethod,
-      currency: input.currency,
-      amount,
-      current_period_end: periodEndIso,
-    })
-    .eq('user_id', user.id)
-  if (error) throw new Error(error.message)
+  const { checkoutUrl } = await createCommetCheckout({
+    userId: user.id,
+    userEmail: user.email,
+    plan: input.plan,
+    successUrl,
+    country: profile?.country ?? null,
+  })
 
-  revalidatePath('/dashboard')
-  revalidatePath('/plan')
-  revalidatePath('/perfil')
+  redirect(checkoutUrl)
+}
+
+// Cancela la suscripción del user al final del período actual. Mantiene
+// acceso hasta current_period_end. Cuando Commet llegue al final del período
+// disparará el webhook subscription.canceled y el handler marcará la fila
+// como 'canceled'.
+export async function cancelSubscription(): Promise<{ periodEnd: string | null }> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error('No auth')
+
+  const result = await cancelCommetSubscription({ userId: user.id })
+
   revalidatePath('/suscripcion')
-  redirect('/perfil')
+  revalidatePath('/perfil')
+  revalidatePath('/dashboard')
+  return { periodEnd: result.periodEnd }
 }

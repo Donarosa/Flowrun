@@ -2,13 +2,14 @@ import Link from 'next/link'
 import { getUser } from '@/lib/supabase/get-user'
 import { getProfileWithMetrics } from '@/lib/profile'
 import { getTodaySession, type TodaySession } from '@/lib/plan'
-import { getSubscription, getAccessState } from '@/lib/subscription'
+import { getSubscription, getAccessState, isLocked } from '@/lib/subscription'
 import { getLatestAdaptation } from '@/lib/adaptation'
 import { getPendingGraduation } from '@/lib/gate'
 import { getWeeklySummary, type WeeklySummary } from '@/lib/weekly'
 import { TrialBanner } from '@/components/subscription/trial-banner'
 import { AdaptationBanner } from '@/components/adaptation/adaptation-banner'
 import { GraduationBanner } from '@/components/adaptation/graduation-banner'
+import { PaywallBlock } from '@/components/subscription/paywall-block'
 
 const DAYS_LONG = [
   'Domingo',
@@ -29,15 +30,37 @@ export default async function DashboardPage() {
   const user = await getUser()
   const data = await getProfileWithMetrics(user!.id)
   const profile = data!.profile
+  const greeting = profile.name?.split(' ')[0] || profile.email.split('@')[0]
+
+  const subscription = await getSubscription(user!.id)
+
+  // Gate por vencimiento: si el trial o el plan venció, no fetcheamos lo
+  // pesado — mostramos kicker + saludo + PaywallBlock y listo.
+  if (isLocked(subscription)) {
+    return (
+      <main className="px-6 pt-1 pb-8 max-w-md mx-auto w-full">
+        <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-trail font-semibold mb-2 flex items-center gap-2.5">
+          <span aria-hidden className="w-[18px] h-[1.5px] bg-trail rounded-[1px]" />
+          Hoy · {todayKicker()}
+        </p>
+        <h1 className="text-[30px] font-semibold tracking-[-0.035em] text-ink leading-[1.08] mb-[22px]">
+          Hola, <span className="text-trail">{greeting}</span>
+          <span className="text-trail">.</span>
+        </h1>
+        <PaywallBlock
+          title="Tu acceso a FlowRun terminó"
+          body="Suscribite y arrancás de nuevo donde dejaste. Tu plan adaptativo te espera."
+        />
+      </main>
+    )
+  }
 
   const session = await getTodaySession(user!.id)
-  const subscription = await getSubscription(user!.id)
   const access = getAccessState(subscription)
   const adaptation = await getLatestAdaptation(user!.id)
   const graduation = await getPendingGraduation(user!.id)
   const weekly = await getWeeklySummary(user!.id)
 
-  const greeting = profile.name?.split(' ')[0] || profile.email.split('@')[0]
   const noPlanYet = profile.experience_level === 'advanced'
 
   return (

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { runWeeklyAdaptationIfNeeded } from '@/lib/adaptation'
+import { requireActiveAccess } from '@/lib/subscription'
 import type {
   BreathingLevel,
   LegsFatigueLevel,
@@ -18,6 +19,7 @@ export async function markSessionDone(userSessionId: string) {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('No auth')
+  await requireActiveAccess(user.id)
 
   const { error } = await supabase
     .from('user_sessions')
@@ -53,6 +55,7 @@ export async function saveCheckin(input: {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('No auth')
+  await requireActiveAccess(user.id)
 
   const { error: checkinError } = await supabase
     .from('session_checkins')
@@ -95,6 +98,7 @@ export async function markSessionPending(userSessionId: string) {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('No auth')
+  await requireActiveAccess(user.id)
 
   const { error } = await supabase
     .from('user_sessions')

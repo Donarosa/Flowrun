@@ -12,7 +12,7 @@ export const PRICING: Record<
   { ars: number; usd: number; days: number; labelEs: string }
 > = {
   monthly: { ars: 7000, usd: 500, days: 30, labelEs: 'Mensual' },
-  pack_3m: { ars: 18000, usd: 1200, days: 90, labelEs: 'Pack 3 meses' },
+  pack_3m: { ars: 16800, usd: 1200, days: 90, labelEs: 'Pack 3 meses' },
 }
 
 export async function getSubscription(
@@ -73,5 +73,15 @@ export function getAccessState(sub: SubscriptionRow | null): AccessState {
     daysLeft,
     plan: sub.plan,
     periodEnd: sub.current_period_end,
+  }
+}
+
+// Guard para usar en server actions: si la suscripción venció, lanza y corta
+// la ejecución. Defensa en profundidad — la UI ya bloquea con PaywallBlock,
+// pero esto protege contra invocaciones directas a la action.
+export async function requireActiveAccess(userId: string): Promise<void> {
+  const sub = await getSubscription(userId)
+  if (isLocked(sub)) {
+    throw new Error('SUBSCRIPTION_EXPIRED')
   }
 }

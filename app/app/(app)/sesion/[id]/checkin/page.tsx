@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { getUser } from '@/lib/supabase/get-user'
 import { getSessionById } from '@/lib/plan'
 import { getSessionCheckin } from '@/lib/checkin'
+import { getSubscription, isLocked } from '@/lib/subscription'
+import { PaywallBlock } from '@/components/subscription/paywall-block'
 import { CheckinForm } from './form'
 
 type Params = Promise<{ id: string }>
@@ -12,6 +14,30 @@ export default async function CheckinPage({ params }: { params: Params }) {
   const user = await getUser()
   const session = await getSessionById(id, user!.id)
   if (!session) notFound()
+
+  const subscription = await getSubscription(user!.id)
+  if (isLocked(subscription)) {
+    return (
+      <main className="px-7 pt-2 pb-10 max-w-md mx-auto w-full">
+        <Link
+          href={`/sesion/${id}`}
+          className="inline-flex items-center gap-1 text-[13px] text-muted font-medium mb-4 hover:text-ink transition"
+        >
+          <span aria-hidden>←</span> Volver
+        </Link>
+        <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-trail font-semibold mb-2">
+          Check-in · 20 segundos
+        </p>
+        <h1 className="text-2xl font-extrabold tracking-tight text-ink leading-tight mb-4">
+          ¿Cómo te sentiste?
+        </h1>
+        <PaywallBlock
+          title="Suscribite para guardar el check-in"
+          body="Los check-ins son parte de la suscripción y alimentan el motor de adaptación."
+        />
+      </main>
+    )
+  }
 
   const existing = await getSessionCheckin(id)
 

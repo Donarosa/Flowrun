@@ -37,14 +37,14 @@ const PLAN_INFO: Record<
   pack_3m: {
     label: 'Pack 3 meses',
     headline: 'Más ahorro',
-    ars: 18000,
+    ars: 16800,
     usd: 12,
     duration: '/ 3 meses',
     perks: [
       'Mismo acceso completo que el mensual',
-      '14% off pagando en ARS · 20% off en USD',
-      'Pago único, sin renovación automática',
-      'Tope máximo: 3 meses por compra',
+      '20% off comparado con pagar 3 meses sueltos',
+      'Se renueva cada 3 meses',
+      'Cancelás cuando querés',
     ],
     isPack: true,
   },
