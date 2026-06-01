@@ -187,10 +187,57 @@ export default async function PerfilPage() {
         </Link>
       </section>
 
+      <section className="mb-6">
+        <Link
+          href="/perfil/instalar"
+          className="group flex items-center gap-3 rounded-2xl p-4 bg-gradient-to-br from-trail to-trail-deep text-white shadow-[0_1px_2px_rgba(20,30,20,0.08),0_8px_18px_-10px_rgba(61,107,63,0.5)] hover:brightness-[1.04] transition"
+        >
+          <span className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+            <PhoneDownloadIcon />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[15px] font-semibold tracking-[-0.012em]">
+              Instalar app
+            </p>
+            <p className="text-[12px] text-white/75 mt-0.5">
+              Acceso directo en tu pantalla de inicio
+            </p>
+          </div>
+          <span
+            aria-hidden
+            className="font-mono w-7 h-7 rounded-[9px] bg-white/15 flex items-center justify-center text-[13px] font-medium transition-transform group-hover:translate-x-0.5"
+          >
+            →
+          </span>
+        </Link>
+      </section>
+
       <div className="mt-10 flex justify-center">
         <LogoutButton />
       </div>
     </main>
+  )
+}
+
+function PhoneDownloadIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-white"
+      aria-hidden
+    >
+      <rect x="6" y="2" width="12" height="20" rx="3" />
+      <path d="M12 7v8" />
+      <path d="m9 12 3 3 3-3" />
+      <path d="M11 19h2" />
+    </svg>
   )
 }
 
