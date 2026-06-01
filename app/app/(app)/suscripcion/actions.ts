@@ -43,7 +43,7 @@ export async function subscribePlan(input: {
   const h = await headers()
   const proto = h.get('x-forwarded-proto') ?? 'https'
   const host =
-    h.get('x-forwarded-host') ?? h.get('host') ?? 'app.flowrun.site'
+    h.get('x-forwarded-host') ?? h.get('host') ?? 'app.flowrun.fun'
   const successUrl = `${proto}://${host}/suscripcion?ok=1`
 
   const { checkoutUrl } = await createCommetCheckout({

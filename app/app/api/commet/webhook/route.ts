@@ -6,7 +6,7 @@ import type { Currency, SubscriptionPlan } from '@/types/database'
 
 // POST /api/commet/webhook
 // Configurar este URL en el dashboard de Commet (sección Webhooks):
-//   https://app.flowrun.site/api/commet/webhook
+//   https://app.flowrun.fun/api/commet/webhook
 // El secret que muestre Commet va a COMMET_WEBHOOK_SECRET.
 export async function POST(request: Request) {
   // Necesitamos el body como string para verificar la firma.
