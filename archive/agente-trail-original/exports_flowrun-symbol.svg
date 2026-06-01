@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="flowrun symbol">
+  <title>flowrun — symbol</title>
+  <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" fill="none" stroke="#3D6B3F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="42" cy="14" r="5" fill="#3D6B3F"/>
+</svg>

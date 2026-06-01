@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ritmo Real – Prototipo</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #2D6A4F;
+  --primary-dark: #1B4332;
+  --primary-light: #52B788;
+  --bg: #F8FAF9;
+  --card: #ffffff;
+  --text: #1B4332;
+  --muted: #6B8F7E;
+  --border: #D0E4DA;
+  --red: #C0392B;
+  --amber: #D97706;
+  --amber-bg: #FFFBEB;
+  --green-ok: #059669;
+  --radius: 10px;
+  --tr: 200ms ease;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #CBD5CC;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+  animation: slideIn var(--tr) forwards;
+}
+.screen.active { display: flex; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-left { animation: slideInLeft var(--tr) forwards; }
+
+/* ---- HEADER ---- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text);
+  padding: 4px;
+  line-height: 1;
+}
+.top-bar h2 { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+
+/* ---- PROGRESS BAR ---- */
+.progress-wrap { margin-bottom: 20px; }
+.progress-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.progress-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ---- TYPOGRAPHY ---- */
+h1 { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.25; }
+h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+h3 { font-size: 15px; font-weight: 600; color: var(--text); }
+p  { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.subtitle { font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+/* ---- CARDS / OPTIONS ---- */
+.option-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color var(--tr), background var(--tr);
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+}
+.option-card:hover { border-color: var(--primary); background: #EFF7F3; }
+.option-card.selected { border-color: var(--primary); background: #EFF7F3; }
+.option-card .icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+.option-card .label { flex: 1; }
+.option-card .check { color: var(--primary); font-size: 16px; flex-shrink: 0; }
+
+/* ---- INPUTS ---- */
+.input-group { margin-bottom: 14px; }
+.input-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
+input[type="text"], input[type="date"], input[type="number"], input[type="email"], textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--card);
+  outline: none;
+  transition: border-color var(--tr);
+  font-family: inherit;
+}
+input:focus, textarea:focus { border-color: var(--primary); }
+
+/* ---- BUTTONS ---- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: opacity var(--tr), transform var(--tr);
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { opacity: 0.92; }
+.btn-secondary { background: var(--card); color: var(--text); border: 1.5px solid var(--border); }
+.btn-sm { padding: 9px 14px; font-size: 13px; width: auto; }
+.mt { margin-top: 12px; }
+.mt2 { margin-top: 20px; }
+
+/* ---- PILLS ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #EFF7F3;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-amber { background: var(--amber-bg); border-color: #FCD34D; color: var(--amber); }
+.pill-red { background: #FEF2F2; border-color: #FCA5A5; color: var(--red); }
+.pills-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
+/* ---- SESSION CARD ---- */
+.session-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color var(--tr), box-shadow var(--tr);
+}
+.session-card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(45,106,79,0.1); }
+.session-card.completed { opacity: 0.7; cursor: default; }
+.session-card.skipped { opacity: 0.5; cursor: default; }
+.session-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.session-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.session-card-day { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.session-status { font-size: 18px; }
+.session-meta { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+/* ---- WEEK VIEW HEADER ---- */
+.week-header {
+  background: var(--primary);
+  color: white;
+  margin: -20px -16px 16px;
+  padding: 20px 16px 16px;
+}
+.week-header.pro-header { background: var(--primary-dark); }
+.week-header h2 { color: white; font-size: 17px; }
+.week-header .plan-name { font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
+.week-header .week-badge { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+.week-header .race-target { font-size: 12px; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 5px 10px; margin-top: 8px; }
+.week-header .method-badge { font-size: 11px; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 4px 10px; margin-top: 8px; display: inline-block; }
+
+.week-progress { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+/* ---- WEEK NAV ---- */
+.week-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.week-nav button {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+}
+.week-nav button:disabled { opacity: 0.4; cursor: default; }
+.week-total { font-size: 12px; color: var(--muted); text-align: center; }
+
+/* ---- DELOAD ---- */
+.deload-banner {
+  background: var(--amber-bg);
+  border: 1px solid #FCD34D;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--amber);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* ---- PAYWALL BANNER ---- */
+.paywall-banner {
+  background: #EFF7F3;
+  border: 1.5px solid var(--primary-light);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text);
+}
+.paywall-banner strong { display: block; margin-bottom: 2px; font-size: 13px; }
+.paywall-banner span { color: var(--muted); font-size: 12px; }
+
+/* ---- CHECK-IN ---- */
+.checkin-question { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 0; }
+.checkin-question h2 { font-size: 20px; margin-bottom: 24px; }
+.star-row { display: flex; gap: 10px; margin-top: 8px; }
+.star-btn {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.star-btn:hover { transform: scale(1.2); }
+
+/* ---- FEEDBACK ---- */
+.feedback-indicator {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+}
+.feedback-green { background: #D1FAE5; }
+.feedback-yellow { background: #FEF3C7; }
+.feedback-red { background: #FEE2E2; }
+
+/* ---- LOADING ---- */
+.loading-screen { align-items: center; justify-content: center; text-align: center; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- PRO METRICS ---- */
+.tab-bar {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+  margin-top: -4px;
+}
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 8px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-family: inherit;
+  font-weight: 500;
+}
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.metric-box {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+}
+.metric-box .val { font-size: 22px; font-weight: 700; color: var(--text); }
+.metric-box .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Zone bars */
+.zone-bar-wrap { margin-bottom: 10px; }
+.zone-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+.zone-bar-track { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
+.zone-bar-fill { height: 100%; background: var(--primary); border-radius: 6px; }
+
+/* ---- COMPLETED BANNER ---- */
+.completed-banner {
+  background: #D1FAE5;
+  border: 1.5px solid #6EE7B7;
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--green-ok);
+  margin-bottom: 12px;
+}
+
+/* ---- REINICIAR ---- */
+.reset-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+  margin-top: 12px;
+}
+
+/* ---- SESSION DETAIL ---- */
+.session-detail-block {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.session-detail-block h3 { margin-bottom: 6px; }
+.session-detail-block p { font-size: 13px; }
+
+/* ---- MULTISELECT ---- */
+.multi-option {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--tr), background var(--tr);
+  font-family: inherit;
+}
+.multi-option.selected { border-color: var(--primary); background: #EFF7F3; }
+
+.spacer { flex: 1; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+.info-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text); padding: 6px 0; border-bottom: 1px solid var(--border); }
+.info-row:last-child { border-bottom: none; }
+.info-row span { color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ============================================================
+     SCREEN: ENTRY
+     ============================================================ -->
+<div class="screen active" id="s-entry">
+  <div style="padding-top: 16px;">
+    <div style="text-align:center; margin-bottom: 24px;">
+      <div style="font-size: 32px; margin-bottom: 8px;">🏔️</div>
+      <h1 style="font-size: 24px;">Ritmo Real</h1>
+      <p class="subtitle">Entrenamiento que se adapta a vos</p>
+    </div>
+    <h2 style="margin-bottom: 6px;">¿Qué tipo de corredor sos?</h2>
+    <p class="subtitle" style="margin-bottom: 20px;">Queremos conocerte para diseñar tu plan</p>
+
+    <button class="option-card" onclick="startFlow(1)">
+      <span class="icon">🏃</span>
+      <span class="label">No corro / Empiezo de cero</span>
+    </button>
+    <button class="option-card" onclick="startFlow(2)">
+      <span class="icon">🏙️→⛰️</span>
+      <span class="label">Corro en calle y quiero ir a la montaña</span>
+    </button>
+    <button class="option-card" onclick="startFlow(3)">
+      <span class="icon">⛰️</span>
+      <span class="label">Corro en montaña y quiero planes específicos</span>
+    </button>
+    <button class="option-card" onclick="startFlow(3)">
+      <span class="icon">🏆</span>
+      <span class="label">Montaña — quiero planes de profesionales</span>
+    </button>
+  </div>
+  <div class="spacer"></div>
+  <button class="reset-btn" onclick="resetAll()">Reiniciar todo</button>
+</div>
+
+<!-- ============================================================
+     FLOW 1: NUEVO — Steps
+     ============================================================ -->
+<div class="screen" id="s-f1-step">
+  <div class="top-bar">
+    <button class="back-btn" onclick="f1Back()">←</button>
+    <h2 id="f1-top-title">Empezar</h2>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="f1-prog-label">Paso 1 de 5</div>
+    <div class="progress-track"><div class="progress-fill" id="f1-prog-fill" style="width:20%"></div></div>
+  </div>
+  <div id="f1-content"></div>
+  <div class="spacer"></div>
+  <button class="btn btn-primary mt" id="f1-next-btn" onclick="f1Next()">Continuar</button>
+</div>
+
+<!-- ============================================================
+     FLOW 2: CALLE A MONTAÑA — Steps
+     ============================================================ -->
+<div class="screen" id="s-f2-step">
+  <div class="top-bar">
+    <button class="back-btn" onclick="f2Back()">←</button>
+    <h2 id="f2-top-title">Transición Calle→Montaña</h2>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="f2-prog-label">Paso 1 de 6</div>
+    <div class="progress-track"><div class="progress-fill" id="f2-prog-fill" style="width:17%"></div></div>
+  </div>
+  <div id="f2-content"></div>
+  <div class="spacer"></div>
+  <button class="btn btn-primary mt" id="f2-next-btn" onclick="f2Next()">Continuar</button>
+</div>
+
+<!-- ============================================================
+     FLOW 3: PRO — Steps
+     ============================================================ -->
+<div class="screen" id="s-f3-step">
+  <div class="top-bar">
+    <button class="back-btn" onclick="f3Back()">←</button>
+    <h2 id="f3-top-title">Plan Pro</h2>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="f3-prog-label">Paso 1 de 6</div>
+    <div class="progress-track"><div class="progress-fill" id="f3-prog-fill" style="width:17%"></div></div>
+  </div>
+  <div id="f3-content"></div>
+  <div class="spacer"></div>
+  <button class="btn btn-primary mt" id="f3-next-btn" onclick="f3Next()">Continuar</button>
+</div>
+
+<!-- ============================================================
+     LOADING SCREEN
+     ============================================================ -->
+<div class="screen loading-screen" id="s-loading">
+  <div class="spinner"></div>
+  <h2 id="loading-title" style="margin-bottom:8px;">Armando tu plan...</h2>
+  <p id="loading-sub">Analizando tu perfil</p>
+</div>
+
+<!-- ============================================================
+     WEEK VIEW (shared)
+     ============================================================ -->
+<div class="screen" id="s-week">
+  <div class="week-header" id="week-header">
+    <div class="plan-name" id="wh-plan-name">Plan Nuevo Calle</div>
+    <h2 id="wh-user-name">Hola, corredor</h2>
+    <div class="week-badge" id="wh-week-badge">Semana 1 · Construir Hábito</div>
+    <div id="wh-extra-badge" style="display:none"></div>
+  </div>
+
+  <div id="week-paywall-banner" style="display:none">
+    <div class="paywall-banner">
+      <strong>⏳ Primeras 2 semanas gratis</strong>
+      <span>Después: $5.000 ARS/mes o $12.000/3 meses</span>
+    </div>
+  </div>
+
+  <div id="week-deload-banner" style="display:none">
+    <div class="deload-banner">↓ Semana de descarga — reducí la carga</div>
+  </div>
+
+  <div id="week-completed-banner" style="display:none">
+    <div class="completed-banner">🎉 ¡Semana completada!</div>
+  </div>
+
+  <div id="pro-tabs" style="display:none">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('plan')">Plan</button>
+      <button class="tab-btn" onclick="showTab('metrics')">Métricas Pro</button>
+    </div>
+  </div>
+
+  <div id="tab-plan">
+    <div class="week-progress" id="week-progress-txt">0/3 sesiones completadas</div>
+    <div id="session-cards-wrap"></div>
+    <div class="week-nav">
+      <button id="week-prev-btn" onclick="weekNav(-1)">← Anterior</button>
+      <div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;" id="week-label-center">Semana 1</div>
+        <div class="week-total" id="week-total-min"></div>
+      </div>
+      <button id="week-next-btn" onclick="weekNav(1)">Siguiente →</button>
+    </div>
+  </div>
+
+  <div id="tab-metrics" style="display:none">
+    <div id="pro-metrics-content"></div>
+  </div>
+
+  <div style="margin-top:16px;">
+    <button class="reset-btn" onclick="resetAll()">Reiniciar</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SESSION DETAIL
+     ============================================================ -->
+<div class="screen" id="s-session">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('s-week')">←</button>
+    <h2 id="sd-title">Sesión</h2>
+  </div>
+  <div id="sd-content"></div>
+  <div class="spacer"></div>
+  <button class="btn btn-primary mt" id="sd-complete-btn" onclick="startCheckin()">Completar Sesión ✓</button>
+  <button class="btn btn-secondary mt" onclick="skipSession()">Saltar sesión</button>
+</div>
+
+<!-- ============================================================
+     CHECK-IN
+     ============================================================ -->
+<div class="screen" id="s-checkin">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('s-session')">←</button>
+    <h2>Check-in rápido</h2>
+  </div>
+  <div id="checkin-content" class="checkin-question"></div>
+</div>
+
+<!-- ============================================================
+     FEEDBACK
+     ============================================================ -->
+<div class="screen" id="s-feedback">
+  <div id="feedback-content" style="padding-top:20px; display:flex; flex-direction:column; align-items:center; min-height:80vh; justify-content:center;"></div>
+  <button class="btn btn-primary" onclick="showScreen('s-week')">Volver al plan</button>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  flow: 0,        // 1, 2, 3
+  step: 0,
+  answers: {},    // onboarding answers
+  planId: '',
+  planLabel: '',
+  method: '',
+  methodDist: '',
+  currentWeek: 1,
+  currentSessionIdx: null,
+  checkinStep: 0,
+  checkinData: {},
+  userName: '',
+  proMode: false,
+};
+
+// Session completions: key = "planId_weekNum_dayIdx" → "done" | "skip"
+function getCompletions() {
+  try { return JSON.parse(localStorage.getItem('rr_completions') || '{}'); } catch(e) { return {}; }
+}
+function setCompletion(key, val) {
+  const c = getCompletions(); c[key] = val;
+  localStorage.setItem('rr_completions', JSON.stringify(c));
+}
+function getCompletion(week, dayIdx) {
+  const c = getCompletions();
+  return c[`${S.planId}_${week}_${dayIdx}`] || 'pending';
+}
+
+// Save/restore state
+function saveState() {
+  localStorage.setItem('rr_state', JSON.stringify(S));
+}
+function loadState() {
+  try {
+    const d = JSON.parse(localStorage.getItem('rr_state') || 'null');
+    if (d && d.planId) { Object.assign(S, d); return true; }
+  } catch(e) {}
+  return false;
+}
+
+function resetAll() {
+  localStorage.removeItem('rr_state');
+  localStorage.removeItem('rr_completions');
+  Object.assign(S, { flow:0, step:0, answers:{}, planId:'', planLabel:'', method:'', methodDist:'',
+    currentWeek:1, currentSessionIdx:null, checkinStep:0, checkinData:{}, userName:'', proMode:false });
+  showScreen('s-entry');
+}
+
+// ============================================================
+// PLAN DATA
+// ============================================================
+const BLOCK_INFO = {
+  RS:  { obj: "Corré a ritmo conversacional.", struct: "5' calentamiento → {X}' Ritmo Real → 5' vuelta a calma", tip: "Si vas rápido, bajá. El objetivo es comodidad." },
+  RA:  { obj: "Movimiento suave sin fatiga.", struct: "{X}' trote suave o caminata rápida", tip: "Menos es más hoy." },
+  RP:  { obj: "Empezás suave, terminás firme.", struct: "10' suave → {X}' Ritmo Real → 5-8' más rápido → 5' calma", tip: "El cierre firme debe ser controlado." },
+  TL:  { obj: "Rodaje largo conversacional.", struct: "10' calentamiento → {X}' Ritmo Real sostenido → 5' calma", tip: "Si no podés hablar, bajá el ritmo." },
+  TLM: { obj: "Tirada larga en montaña, por sensación.", struct: "10' calentamiento → {X}' montaña sostenible → caminá subidas → 5' calma", tip: "Caminar subidas es válido." },
+  SC:  { obj: "Subidas conversacionales.", struct: "10' calentamiento → 6-10 reps subida fuerte + bajada → 5' calma", tip: "La bajada es parte del ejercicio." },
+  SF:  { obj: "Subidas intensas pero controladas.", struct: "10' calentamiento → 4-6 reps subida firme 2-3' + bajada → 5' calma", tip: "Frases cortas en subida. Si no, bajá." },
+  TB:  { obj: "Técnica de bajada.", struct: "Bajadas controladas, pisada suave, cadencia corta", tip: "Pasos cortos y rápidos, no frenes con rodillas." },
+  SMC: { obj: "Trail simulado en ciudad.", struct: "10' calentamiento → {X}' circuito urbano 70% Ritmo Real → 5' calma", tip: "Escaleras y rampas cerca de casa." },
+  CF:  { obj: "Caminata fuerte con desnivel.", struct: "{X}' caminata a paso firme con desnivel", tip: "Caminar fuerte en subida = entrenamiento trail." },
+  FG:  { obj: "Sentadillas, estocadas, plancha, puente glúteo.", struct: "3×8-12 reps cada ejercicio", tip: "Calidad > cantidad." },
+  FE:  { obj: "Sentadilla lenta, step downs, excéntricos.", struct: "3×8-10 reps con fase lenta (4s)", tip: "La fase lenta protege bajadas." },
+  PL:  { obj: "Saltos suaves, skipping, multisaltos.", struct: "3×6-8 reps, aterrizaje suave", tip: "Aterrizá suave. Si hay dolor, pará." },
+  RW:  { obj: "Alternar trote y caminata. Sin presión.", struct: "5' caminata fácil → 20' (1' trote + 4' caminata) → 5' vuelta a calma", tip: "Caminar no es hacer trampa. Es parte del plan." },
+  MF:  { obj: "Movilidad y flexibilidad.", struct: "{X}' rutina completa de movilidad", tip: "Estos días construyen la base invisible." },
+  IU:  { obj: "Intervalos a umbral controlado.", struct: "10' calentamiento → 4-5×4' firme / 2' recup → 5' calma", tip: "Frases cortas OK. Palabras sueltas = bajá." },
+  ST:  { obj: "Aceleraciones cortas.", struct: "4-6×20s aceleración + 1' trote suave", tip: "No es sprint. Acelerá gradual." },
+};
+
+// Parse block string like "FG 15+MF 5=20" → [{code,min}...]
+function parseBlocks(str) {
+  // format: "CODE MIN+CODE MIN=TOTAL" or "CODE MIN"
+  const total_part = str.includes('=') ? str.split('=')[0] : str;
+  return total_part.split('+').map(s => {
+    const parts = s.trim().split(' ');
+    return { code: parts[0], min: parseInt(parts[1]) };
+  });
+}
+function blockTotal(str) {
+  if (str.includes('=')) return parseInt(str.split('=')[1]);
+  const blocks = parseBlocks(str);
+  return blocks.reduce((s,b) => s + b.min, 0);
+}
+
+// phases helper
+function getPhase(planId, week) {
+  const phases = {
+    desde_cero_3d:        [[1,2,'Adaptación'],[3,4,'Primeros Trotes'],[5,6,'Construir Base'],[7,8,'Consolidar']],
+    nuevo_calle_3d:       [[1,2,'Construir Hábito'],[3,4,'Construir Base'],[5,6,'Consolidar'],[7,8,'Probar Límites']],
+    nuevo_montana_3d:     [[1,2,'Adaptación'],[3,4,'Base Trail'],[5,6,'Montaña'],[7,8,'Resistencia']],
+    calle_trail_base_3d:  [[1,4,'Base Aeróbica'],[5,8,'Transición Trail'],[9,12,'Montaña Real']],
+    calle_trail_avanzado_4d: [[1,4,'Base Sólida'],[5,8,'Montaña Específica'],[9,12,'Peak & Simulacro']],
+  };
+  const arr = phases[planId] || [];
+  for (const [s,e,name] of arr) { if (week >= s && week <= e) return name; }
+  return '';
+}
+function isDeload(planId, week) {
+  const map = { desde_cero_3d:[4,8], nuevo_calle_3d:[4,8], nuevo_montana_3d:[4,8], calle_trail_base_3d:[4,8,12], calle_trail_avanzado_4d:[4,8,12] };
+  return (map[planId]||[]).includes(week);
+}
+
+const PLANS = {
+  desde_cero_3d: {
+    label: 'Plan Desde Cero',
+    weeks: 8,
+    days: 3,
+    data: [
+      [ // W1
+        { name:'Empezar a Moverse',     blocks:'RW 30' },
+        { name:'Fuerza Básica',         blocks:'FG 15+MF 5=20' },
+        { name:'Segundo Paso',          blocks:'RW 30' },
+      ],[ // W2
+        { name:'Moverse Más',           blocks:'RW 30' },
+        { name:'Fuerza Básica',         blocks:'FG 15+MF 5=20' },
+        { name:'Avanzar',               blocks:'RW 35' },
+      ],[ // W3
+        { name:'Trote Continuo Intro',  blocks:'RA 25' },
+        { name:'Fuerza + Core',         blocks:'FG 25' },
+        { name:'Run-Walk Largo',        blocks:'RW 35' },
+      ],[ // W4 DELOAD
+        { name:'Recuperación',          blocks:'RA 20' },
+        { name:'Movilidad',             blocks:'MF 15' },
+        { name:'Caminata Activa',       blocks:'RW 25' },
+      ],[ // W5
+        { name:'Rodaje Suave',          blocks:'RS 25' },
+        { name:'Fuerza',                blocks:'FG 25' },
+        { name:'Run-Walk Progresivo',   blocks:'RW 35' },
+      ],[ // W6
+        { name:'Rodaje Base',           blocks:'RS 30' },
+        { name:'Fuerza',                blocks:'FG 25' },
+        { name:'Rodaje Sostenible',     blocks:'RS 35' },
+      ],[ // W7
+        { name:'Rodaje Firme',          blocks:'RS 35' },
+        { name:'Fuerza',                blocks:'FG 20+PL 10=30' },
+        { name:'Tu Primer Test',        blocks:'TL 40' },
+      ],[ // W8 DELOAD
+        { name:'Regenerativo',          blocks:'RA 20' },
+        { name:'Movilidad',             blocks:'MF 15' },
+        { name:'Rodaje Celebración',    blocks:'RS 25' },
+      ],
+    ]
+  },
+  nuevo_calle_3d: {
+    label: 'Nuevo Calle 8 semanas',
+    weeks: 8,
+    days: 3,
+    data: [
+      [ // W1
+        { name:'Empezar a Moverse',    blocks:'RA 25' },
+        { name:'Fuerza Base',          blocks:'FG 15+MF 5=20' },
+        { name:'Primer Rodaje',        blocks:'RS 25' },
+      ],[ // W2
+        { name:'Moverse Más',          blocks:'RA 25' },
+        { name:'Fuerza Base',          blocks:'FG 15+MF 5=20' },
+        { name:'Rodaje Sostenible',    blocks:'RS 30' },
+      ],[ // W3
+        { name:'Rodaje Suave',         blocks:'RS 25' },
+        { name:'Fuerza + Core',        blocks:'FG 25' },
+        { name:'Rodaje Creciendo',     blocks:'RS 35' },
+      ],[ // W4 DELOAD
+        { name:'Recuperación',         blocks:'RA 20' },
+        { name:'Movilidad',            blocks:'MF 15' },
+        { name:'Rodaje Suave',         blocks:'RS 25' },
+      ],[ // W5
+        { name:'Rodaje Base',          blocks:'RS 30' },
+        { name:'Fuerza',               blocks:'FG 25' },
+        { name:'Rodaje + Progresivo',  blocks:'RP 35' },
+      ],[ // W6
+        { name:'Rodaje Base',          blocks:'RS 35' },
+        { name:'Fuerza',               blocks:'FG 25' },
+        { name:'Rodaje Largo',         blocks:'TL 45' },
+      ],[ // W7
+        { name:'Rodaje Firme',         blocks:'RS 35' },
+        { name:'Fuerza',               blocks:'FG 20+PL 10=30' },
+        { name:'Tu Primer Test',       blocks:'TL 50' },
+      ],[ // W8 DELOAD
+        { name:'Regenerativo',         blocks:'RA 20' },
+        { name:'Movilidad',            blocks:'MF 15' },
+        { name:'Rodaje Celebración',   blocks:'RS 30' },
+      ],
+    ]
+  },
+  nuevo_montana_3d: {
+    label: 'Nuevo Montaña 8 semanas',
+    weeks: 8,
+    days: 3,
+    data: [
+      [
+        { name:'Base Aeróbica',           blocks:'RS 25' },
+        { name:'Preparar el Cuerpo',      blocks:'FE 15+FG 10=25' },
+        { name:'Primer Contacto Trail',   blocks:'CF 20+RA 15=35' },
+      ],[
+        { name:'Base Aeróbica',           blocks:'RS 30' },
+        { name:'Fuerza Trail',            blocks:'FE 15+FG 10=25' },
+        { name:'Subidas Suaves',          blocks:'SC 20+CF 15=35' },
+      ],[
+        { name:'Rodaje + Terreno',        blocks:'RS 30' },
+        { name:'Fuerza Excéntrica',       blocks:'FE 25' },
+        { name:'Trail Mixto',             blocks:'SMC 35' },
+      ],[
+        { name:'Recuperación',            blocks:'RA 20' },
+        { name:'Movilidad',               blocks:'MF 15' },
+        { name:'Caminata Montaña',        blocks:'CF 30' },
+      ],[
+        { name:'Rodaje Base',             blocks:'RS 35' },
+        { name:'Fuerza + Bajadas',        blocks:'FE 20+TB 10=30' },
+        { name:'Subidas Progresivas',     blocks:'SC 35' },
+      ],[
+        { name:'Rodaje Sostenible',       blocks:'RS 35' },
+        { name:'Fuerza Trail',            blocks:'FE 20+PL 10=30' },
+        { name:'Tirada Trail',            blocks:'TLM 50' },
+      ],[
+        { name:'Rodaje + Terreno',        blocks:'RS 40' },
+        { name:'Fuerza Completa',         blocks:'FE 20+FG 10=30' },
+        { name:'Tu Primer Trail Largo',   blocks:'TLM 60' },
+      ],[
+        { name:'Regenerativo',            blocks:'RA 20' },
+        { name:'Movilidad',               blocks:'MF 15' },
+        { name:'Trail Suave',             blocks:'CF 20+RA 15=35' },
+      ],
+    ]
+  },
+  calle_trail_base_3d: {
+    label: 'Calle a Montaña Base 12 semanas',
+    weeks: 12,
+    days: 3,
+    data: [
+      [
+        { name:'Base Aeróbica',           blocks:'RS 40' },
+        { name:'Trail en Ciudad',         blocks:'SMC 40' },
+        { name:'Tirada Sostenible',       blocks:'TL 55' },
+      ],[
+        { name:'Base + Strides',          blocks:'RS 35+ST 10=45' },
+        { name:'Trail Ciudad + Fuerza',   blocks:'SMC 35+FE 15=50' },
+        { name:'Tirada',                  blocks:'TL 60' },
+      ],[
+        { name:'Base Aeróbica',           blocks:'RS 35+ST 10=45' },
+        { name:'Subidas Intro',           blocks:'SC 30+FE 15=45' },
+        { name:'Tirada Ondulada',         blocks:'TL 65' },
+      ],[
+        { name:'Rodaje Suave',            blocks:'RS 35' },
+        { name:'Movilidad + Fuerza',      blocks:'MF 15+FE 15=30' },
+        { name:'Rodaje Fácil',            blocks:'RS 40' },
+      ],[
+        { name:'Base + Progresivo',       blocks:'RP 50' },
+        { name:'Subidas Sostenidas',      blocks:'SC 30+TB 15=45' },
+        { name:'Tirada Montaña',          blocks:'TLM 70' },
+      ],[
+        { name:'Base Aeróbica',           blocks:'RS 35+ST 10=45' },
+        { name:'Subidas + Bajadas',       blocks:'SC 25+TB 15+FE 10=50' },
+        { name:'Tirada Montaña',          blocks:'TLM 80' },
+      ],[
+        { name:'Progresivo Trail',        blocks:'RP 50' },
+        { name:'Subidas Largas',          blocks:'SC 50' },
+        { name:'Larga Montaña',           blocks:'TLM 85' },
+      ],[
+        { name:'Rodaje Suave',            blocks:'RS 35' },
+        { name:'Movilidad',               blocks:'MF 15+FE 15=30' },
+        { name:'Trail Fácil',             blocks:'TLM 60' },
+      ],[
+        { name:'Rodaje + Umbral',         blocks:'RP 50' },
+        { name:'Subidas + Técnica',       blocks:'SC 35+TB 15=50' },
+        { name:'Larga Montaña',           blocks:'TLM 95' },
+      ],[
+        { name:'Base Aeróbica',           blocks:'RS 35+ST 10=45' },
+        { name:'Subidas Fuertes',         blocks:'SF 25+TB 20=45' },
+        { name:'Larga Montaña',           blocks:'TLM 105' },
+      ],[
+        { name:'Rodaje Pre-Simulacro',    blocks:'RS 35' },
+        { name:'Fuerza Trail',            blocks:'FE 20+PL 10=30' },
+        { name:'SIMULACRO',               blocks:'TLM 120' },
+      ],[
+        { name:'Regenerativo',            blocks:'RA 25' },
+        { name:'Movilidad',               blocks:'MF 20' },
+        { name:'Trail Celebración',       blocks:'TLM 60' },
+      ],
+    ]
+  },
+  calle_trail_avanzado_4d: {
+    label: 'Avanzado 4 días 12 semanas',
+    weeks: 12,
+    days: 4,
+    data: [
+      [
+        { name:'Rodaje + Strides',        blocks:'RS 40+ST 10=50' },
+        { name:'Subidas Específicas',     blocks:'SC 35+TB 15=50' },
+        { name:'Fuerza Trail',            blocks:'FE 15+PL 10+FG 10=35' },
+        { name:'Larga Montaña',           blocks:'TLM 90' },
+      ],[
+        { name:'Progresivo',              blocks:'RP 55' },
+        { name:'Subidas + Bajadas',       blocks:'SC 35+TB 20=55' },
+        { name:'Fuerza',                  blocks:'FE 20+PL 15=35' },
+        { name:'Larga',                   blocks:'TLM 95' },
+      ],[
+        { name:'Base + Strides',          blocks:'RS 40+ST 10=50' },
+        { name:'Subidas Largas',          blocks:'SC 55' },
+        { name:'Fuerza',                  blocks:'FE 20+FG 15=35' },
+        { name:'Larga Montaña',           blocks:'TLM 100' },
+      ],[
+        { name:'Rodaje Suave',            blocks:'RS 35' },
+        { name:'Movilidad',               blocks:'MF 20' },
+        { name:'Fuerza Light',            blocks:'FE 20' },
+        { name:'Trail Fácil',             blocks:'TLM 65' },
+      ],[
+        { name:'Progresivo Firme',        blocks:'RP 55' },
+        { name:'Subidas + Técnica',       blocks:'SC 35+TB 20=55' },
+        { name:'Fuerza',                  blocks:'FE 20+PL 15=35' },
+        { name:'Larga',                   blocks:'TLM 110' },
+      ],[
+        { name:'Base Aeróbica',           blocks:'RS 40+ST 10=50' },
+        { name:'Subidas Fuertes Intro',   blocks:'SF 30+TB 20=50' },
+        { name:'Fuerza',                  blocks:'FE 20+PL 15=35' },
+        { name:'Larga Montaña',           blocks:'TLM 115' },
+      ],[
+        { name:'Progresivo',              blocks:'RP 55' },
+        { name:'Subidas Sostenidas',      blocks:'SC 55' },
+        { name:'Fuerza Trail',            blocks:'FE 20+FG 15=35' },
+        { name:'Larga',                   blocks:'TLM 120' },
+      ],[
+        { name:'Rodaje Suave',            blocks:'RS 35' },
+        { name:'Movilidad',               blocks:'MF 20' },
+        { name:'Fuerza Light',            blocks:'FE 20' },
+        { name:'Trail Fácil',             blocks:'TLM 75' },
+      ],[
+        { name:'Umbral Suave',            blocks:'IU 50' },
+        { name:'Subidas Fuertes',         blocks:'SF 35+TB 20=55' },
+        { name:'Fuerza',                  blocks:'FE 20+PL 15=35' },
+        { name:'Larga Montaña',           blocks:'TLM 130' },
+      ],[
+        { name:'Base + Strides',          blocks:'RS 40+ST 10=50' },
+        { name:'Subidas Largas',          blocks:'SC 55' },
+        { name:'Fuerza',                  blocks:'FE 20+PL 15=35' },
+        { name:'Larga',                   blocks:'TLM 140' },
+      ],[
+        { name:'Umbral Controlado',       blocks:'IU 50' },
+        { name:'Subidas Fuertes',         blocks:'SF 30+TB 20=50' },
+        { name:'Fuerza Mantenimiento',    blocks:'FE 25' },
+        { name:'SIMULACRO',               blocks:'TLM 150' },
+      ],[
+        { name:'Regenerativo',            blocks:'RA 25' },
+        { name:'Movilidad',               blocks:'MF 20' },
+        { name:'Fuerza Light',            blocks:'FE 20' },
+        { name:'Trail Celebración',       blocks:'TLM 70' },
+      ],
+    ]
+  },
+};
+
+// ============================================================
+// SCREEN MANAGER
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ============================================================
+// FLOW ROUTING
+// ============================================================
+function startFlow(n) {
+  S.flow = n;
+  S.step = 0;
+  S.answers = {};
+  if (n === 1) { renderF1Step(); showScreen('s-f1-step'); }
+  if (n === 2) { renderF2Step(); showScreen('s-f2-step'); }
+  if (n === 3) { renderF3Step(); showScreen('s-f3-step'); }
+}
+
+// ============================================================
+// FLOW 1: NUEVO
+// ============================================================
+const F1_STEPS = [
+  { title: 'Sobre vos', total: 5 },       // 0: nombre + fecha
+  { title: '¿Qué querés lograr?', total: 5 },   // 1
+  { title: '¿Corrés hoy?', total: 5 },    // 2
+  { title: 'Días disponibles', total: 5 }, // 3
+  { title: 'Frecuencia cardíaca', total: 5 }, // 4
+];
+
+function renderF1Step() {
+  const step = S.step;
+  const info = F1_STEPS[step];
+  document.getElementById('f1-top-title').textContent = info.title;
+  document.getElementById('f1-prog-label').textContent = `Paso ${step+1} de ${info.total}`;
+  document.getElementById('f1-prog-fill').style.width = `${((step+1)/info.total)*100}%`;
+
+  let html = '';
+  if (step === 0) {
+    html = `
+      <h2 style="margin-bottom:8px;">¿Cómo te llamás?</h2>
+      <p style="margin-bottom:20px;">Empecemos por conocerte</p>
+      <div class="input-group">
+        <label>Tu nombre</label>
+        <input type="text" id="f1-nombre" placeholder="Nombre" value="${S.answers.nombre||''}">
+      </div>
+      <div class="input-group">
+        <label>Fecha de nacimiento</label>
+        <input type="date" id="f1-fecha" value="${S.answers.fecha||''}">
+      </div>`;
+  } else if (step === 1) {
+    const opts = [
+      { val:'calle', icon:'🏙️', label:'Empezar a correr en calle' },
+      { val:'montana', icon:'⛰️', label:'Empezar a correr en montaña' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Qué querés lograr?</h2>
+      <p style="margin-bottom:20px;">Esto define la estructura de tu plan</p>
+      ${opts.map(o => `
+        <button class="option-card ${S.answers.objetivo===o.val?'selected':''}" onclick="f1Select('objetivo','${o.val}',this)">
+          <span class="icon">${o.icon}</span>
+          <span class="label">${o.label}</span>
+          ${S.answers.objetivo===o.val?'<span class="check">✓</span>':''}
+        </button>`).join('')}`;
+  } else if (step === 2) {
+    const opts = [
+      { val:'nocorro', label:'No corro — Nunca o hace más de 6 meses' },
+      { val:'nada', label:'Nada / muy poco' },
+      { val:'camino', label:'Camino bastante' },
+      { val:'irregular', label:'Algo corro pero irregular' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Corrés algo hoy?</h2>
+      <p style="margin-bottom:20px;">Sé honesto, no hay respuesta mala</p>
+      ${opts.map(o => `
+        <button class="option-card ${S.answers.actividad===o.val?'selected':''}" onclick="f1Select('actividad','${o.val}',this)">
+          <span class="label">${o.label}</span>
+          ${S.answers.actividad===o.val?'<span class="check">✓</span>':''}
+        </button>`).join('')}`;
+  } else if (step === 3) {
+    const opts = ['2 días','3 días','4 días'];
+    html = `<h2 style="margin-bottom:8px;">¿Cuántos días podés dedicar?</h2>
+      <p style="margin-bottom:20px;">Por semana</p>
+      ${opts.map(o => `
+        <button class="option-card ${S.answers.dias===o?'selected':''}" onclick="f1Select('dias','${o}',this)">
+          <span class="label">${o}</span>
+          ${S.answers.dias===o?'<span class="check">✓</span>':''}
+        </button>`).join('')}`;
+  } else if (step === 4) {
+    const hasSi = S.answers.hr === 'si';
+    html = `<h2 style="margin-bottom:8px;">¿Tenés reloj con FC?</h2>
+      <p style="margin-bottom:20px;">Para calibrar tu zona 2</p>
+      <button class="option-card ${hasSi?'selected':''}" onclick="f1SelectHR('si')">
+        <span class="label">Sí, tengo reloj con frecuencia cardíaca</span>
+        ${hasSi?'<span class="check">✓</span>':''}
+      </button>
+      <button class="option-card ${S.answers.hr==='no'?'selected':''}" onclick="f1SelectHR('no')">
+        <span class="label">No, uso sensaciones</span>
+        ${S.answers.hr==='no'?'<span class="check">✓</span>':''}
+      </button>
+      ${hasSi ? `
+        <div class="input-group" style="margin-top:14px;">
+          <label>Tu zona 2 (bpm)</label>
+          <input type="number" id="f1-zona2" placeholder="ej. 130-145" value="${S.answers.zona2||''}">
+        </div>` : ''}
+      ${S.answers.hr==='no' ? `
+        <div style="background:#EFF7F3;border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:14px;font-size:13px;color:var(--muted);">
+          ℹ️ Usamos sensaciones (estimamos zona 2 con: 220 − edad)
+        </div>` : ''}`;
+  }
+  document.getElementById('f1-content').innerHTML = html;
+}
+
+function f1SelectHR(val) {
+  S.answers.hr = val;
+  renderF1Step();
+}
+
+function f1Select(key, val, btn) {
+  S.answers[key] = val;
+  renderF1Step();
+}
+
+function f1Next() {
+  if (S.step === 0) {
+    const n = document.getElementById('f1-nombre');
+    const f = document.getElementById('f1-fecha');
+    if (!n || !n.value.trim()) { alert('Ingresá tu nombre'); return; }
+    S.answers.nombre = n.value.trim();
+    S.answers.fecha = f ? f.value : '';
+  } else if (S.step === 1 && !S.answers.objetivo) {
+    alert('Elegí una opción'); return;
+  } else if (S.step === 2 && !S.answers.actividad) {
+    alert('Elegí una opción'); return;
+  } else if (S.step === 3 && !S.answers.dias) {
+    alert('Elegí una opción'); return;
+  } else if (S.step === 4 && !S.answers.hr) {
+    alert('Elegí una opción'); return;
+  }
+  if (S.step === 4) {
+    // Save HR zone2 input if present
+    const z2 = document.getElementById('f1-zona2');
+    if (z2) S.answers.zona2 = z2.value;
+    assignPlanF1();
+    return;
+  }
+  S.step++;
+  renderF1Step();
+}
+
+function f1Back() {
+  if (S.step === 0) { showScreen('s-entry'); return; }
+  S.step--;
+  renderF1Step();
+}
+
+function assignPlanF1() {
+  S.userName = S.answers.nombre;
+  if (S.answers.actividad === 'nocorro') {
+    S.planId = 'desde_cero_3d';
+  } else {
+    S.planId = S.answers.objetivo === 'montana' ? 'nuevo_montana_3d' : 'nuevo_calle_3d';
+  }
+  S.planLabel = PLANS[S.planId].label;
+  S.proMode = false;
+  S.currentWeek = 1;
+  S.method = '';
+  S.methodDist = '';
+  showLoading('Estamos armando tu plan...', 'Analizando tu perfil', goToWeekView);
+}
+
+// ============================================================
+// FLOW 2: CALLE A MONTAÑA
+// ============================================================
+const F2_STEPS = [
+  { title: 'Sobre vos',          total: 6 },
+  { title: 'Tu nivel actual',    total: 6 },
+  { title: 'Experiencia trail',  total: 6 },
+  { title: 'Preocupaciones',     total: 6 },
+  { title: 'Objetivo',           total: 6 },
+  { title: 'Zona 2',             total: 6 },
+];
+
+function renderF2Step() {
+  const step = S.step;
+  const info = F2_STEPS[step];
+  document.getElementById('f2-top-title').textContent = info.title;
+  document.getElementById('f2-prog-label').textContent = `Paso ${step+1} de ${info.total}`;
+  document.getElementById('f2-prog-fill').style.width = `${((step+1)/info.total)*100}%`;
+
+  let html = '';
+  if (step === 0) {
+    html = `
+      <h2 style="margin-bottom:8px;">¿Cómo te llamás?</h2>
+      <p style="margin-bottom:20px;">Empecemos</p>
+      <div class="input-group"><label>Tu nombre</label><input type="text" id="f2-nombre" placeholder="Nombre" value="${S.answers.nombre||''}"></div>
+      <div class="input-group"><label>Fecha de nacimiento</label><input type="date" id="f2-fecha" value="${S.answers.fecha||''}"></div>`;
+  } else if (step === 1) {
+    const opts = [
+      { val:'low', label:'2-3 veces/sem, 30-40 min' },
+      { val:'mid', label:'3-4 veces/sem, 40-60 min' },
+      { val:'high', label:'4+ veces, tiradas largas' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Cuánto corrés hoy?</h2>
+      <p style="margin-bottom:20px;">Tu volumen semanal actual</p>
+      ${opts.map(o => `<button class="option-card ${S.answers.nivel===o.val?'selected':''}" onclick="f2Select('nivel','${o.val}')">
+        <span class="label">${o.label}</span>${S.answers.nivel===o.val?'<span class="check">✓</span>':''}
+      </button>`).join('')}`;
+  } else if (step === 2) {
+    const opts = [
+      { val:'nunca', label:'Nunca corrí en montaña' },
+      { val:'alguna', label:'Alguna vez' },
+      { val:'pocas', label:'Pocas veces' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Corriste en montaña?</h2>
+      <p style="margin-bottom:20px;">Experiencia en trail</p>
+      ${opts.map(o => `<button class="option-card ${S.answers.montaña===o.val?'selected':''}" onclick="f2Select('montaña','${o.val}')">
+        <span class="label">${o.label}</span>${S.answers.montaña===o.val?'<span class="check">✓</span>':''}
+      </button>`).join('')}`;
+  } else if (step === 3) {
+    const opts = ['Bajadas / rodillas','Subidas / me agoto','No sé a qué ritmo ir','Lesionarme'];
+    const sel = S.answers.preocupaciones || [];
+    html = `<h2 style="margin-bottom:8px;">¿Qué te preocupa?</h2>
+      <p style="margin-bottom:12px;">Podés elegir varias</p>
+      ${opts.map(o => `<button class="multi-option ${sel.includes(o)?'selected':''}" onclick="f2ToggleMulti('preocupaciones','${o}',this)">${o}</button>`).join('')}`;
+  } else if (step === 4) {
+    const tieneObj = S.answers.tieneObjetivo;
+    html = `<h2 style="margin-bottom:8px;">¿Tenés objetivo de carrera?</h2>
+      <p style="margin-bottom:16px;">Una carrera específica en mente</p>
+      <button class="option-card ${tieneObj==='si'?'selected':''}" onclick="f2SelectObj('si')">
+        <span class="label">Sí, tengo carrera específica</span>${tieneObj==='si'?'<span class="check">✓</span>':''}
+      </button>
+      <button class="option-card ${tieneObj==='no'?'selected':''}" onclick="f2SelectObj('no')">
+        <span class="label">No, plan continuo</span>${tieneObj==='no'?'<span class="check">✓</span>':''}
+      </button>
+      ${tieneObj==='si' ? `
+        <div class="input-group" style="margin-top:14px;">
+          <label>Nombre de la carrera</label>
+          <input type="text" id="f2-race-name" placeholder="ej. Ultra Trail Bariloche" value="${S.answers.raceName||''}">
+        </div>
+        <div class="input-group">
+          <label>Fecha de la carrera</label>
+          <input type="date" id="f2-race-date" value="${S.answers.raceDate||''}">
+        </div>` : ''}`;
+  } else if (step === 5) {
+    html = `<h2 style="margin-bottom:8px;">Zona 2: ¿cómo medís tu esfuerzo?</h2>
+      <p style="margin-bottom:16px;">Para personalizar tus intensidades</p>
+      <button class="option-card ${S.answers.hrMethod==='fc'?'selected':''}" onclick="f2SelectHR('fc')">
+        <span class="label">Frecuencia cardíaca (tengo reloj)</span>${S.answers.hrMethod==='fc'?'<span class="check">✓</span>':''}
+      </button>
+      <button class="option-card ${S.answers.hrMethod==='sensacion'?'selected':''}" onclick="f2SelectHR('sensacion')">
+        <span class="label">Sensaciones (estimamos 220 − edad)</span>${S.answers.hrMethod==='sensacion'?'<span class="check">✓</span>':''}
+      </button>
+      ${S.answers.hrMethod==='fc' ? `
+        <div class="input-group" style="margin-top:14px;">
+          <label>Rango FC zona 2 (bpm)</label>
+          <input type="number" id="f2-hr-range" placeholder="ej. 130" value="${S.answers.hrRange||''}">
+        </div>` : ''}`;
+  }
+  document.getElementById('f2-content').innerHTML = html;
+}
+
+function f2Select(key, val) { S.answers[key] = val; renderF2Step(); }
+function f2SelectObj(val) { S.answers.tieneObjetivo = val; renderF2Step(); }
+function f2SelectHR(val) { S.answers.hrMethod = val; renderF2Step(); }
+function f2ToggleMulti(key, val) {
+  if (!S.answers[key]) S.answers[key] = [];
+  const idx = S.answers[key].indexOf(val);
+  if (idx >= 0) S.answers[key].splice(idx, 1); else S.answers[key].push(val);
+  renderF2Step();
+}
+
+function f2Next() {
+  if (S.step === 0) {
+    const n = document.getElementById('f2-nombre');
+    if (!n || !n.value.trim()) { alert('Ingresá tu nombre'); return; }
+    S.answers.nombre = n.value.trim();
+    const f = document.getElementById('f2-fecha');
+    if (f) S.answers.fecha = f.value;
+  } else if (S.step === 1 && !S.answers.nivel) { alert('Elegí tu nivel'); return; }
+  else if (S.step === 2 && !S.answers.montaña) { alert('Elegí tu experiencia'); return; }
+  else if (S.step === 3 && (!S.answers.preocupaciones || !S.answers.preocupaciones.length)) { alert('Elegí al menos una'); return; }
+  else if (S.step === 4 && !S.answers.tieneObjetivo) { alert('Elegí una opción'); return; }
+  else if (S.step === 5 && !S.answers.hrMethod) { alert('Elegí cómo medís tu esfuerzo'); return; }
+
+  if (S.step === 4 && S.answers.tieneObjetivo === 'si') {
+    const rn = document.getElementById('f2-race-name');
+    const rd = document.getElementById('f2-race-date');
+    if (rn) S.answers.raceName = rn.value;
+    if (rd) S.answers.raceDate = rd.value;
+  }
+  if (S.step === 5) {
+    const hr = document.getElementById('f2-hr-range');
+    if (hr) S.answers.hrRange = hr.value;
+    assignPlanF2(); return;
+  }
+  S.step++;
+  renderF2Step();
+}
+
+function f2Back() {
+  if (S.step === 0) { showScreen('s-entry'); return; }
+  S.step--;
+  renderF2Step();
+}
+
+function assignPlanF2() {
+  S.userName = S.answers.nombre;
+  S.planId = S.answers.nivel === 'high' ? 'calle_trail_avanzado_4d' : 'calle_trail_base_3d';
+  S.planLabel = PLANS[S.planId].label;
+  S.proMode = false;
+  S.currentWeek = 1;
+  S.method = '';
+  S.methodDist = '';
+  showLoading('Generando tu plan de transición...', 'Analizando tu perfil', goToWeekView);
+}
+
+// ============================================================
+// FLOW 3: PRO
+// ============================================================
+const F3_STEPS = [
+  { title: 'Sobre vos',           total: 6 },
+  { title: 'Tipo de corredor',    total: 6 },
+  { title: 'Tu objetivo',         total: 6 },
+  { title: 'Días de entreno',     total: 6 },
+  { title: 'Datos de rendimiento',total: 6 },
+  { title: 'Método',              total: 6 },
+];
+
+const METHODS = [
+  { val:'kilian',     label:'Método Kilian',     desc:'Volumen + Vertical',               dist:'75% Z2 desnivel + 15% SF + 10% TB' },
+  { val:'polarizado', label:'Método Polarizado',  desc:'80/20 — la ciencia dice',          dist:'80% Z1-Z2 + 20% Z4-Z5' },
+  { val:'piramidal',  label:'Método Piramidal',   desc:'Base + Umbral gradual',            dist:'70% Z1-Z2 + 20% Z3 + 10% Z4-Z5' },
+  { val:'adaptativo', label:'Adaptativo',         desc:'La app decide según tu respuesta', dist:'Piramidal adaptable por respuesta' },
+];
+
+function renderF3Step() {
+  const step = S.step;
+  const info = F3_STEPS[step];
+  document.getElementById('f3-top-title').textContent = info.title;
+  document.getElementById('f3-prog-label').textContent = `Paso ${step+1} de ${info.total}`;
+  document.getElementById('f3-prog-fill').style.width = `${((step+1)/info.total)*100}%`;
+
+  let html = '';
+  if (step === 0) {
+    html = `
+      <h2 style="margin-bottom:8px;">¿Cómo te llamás?</h2>
+      <p style="margin-bottom:20px;">Cuenta de atleta avanzado</p>
+      <div class="input-group"><label>Tu nombre</label><input type="text" id="f3-nombre" placeholder="Nombre" value="${S.answers.nombre||''}"></div>
+      <div class="input-group"><label>Fecha de nacimiento</label><input type="date" id="f3-fecha" value="${S.answers.fecha||''}"></div>`;
+  } else if (step === 1) {
+    const opts = [
+      { val:'ultra', label:'Trail/Ultra competitivo' },
+      { val:'recreativo', label:'Trail recreativo avanzado' },
+      { val:'calle', label:'Calle competitivo' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Qué tipo de corredor sos?</h2>
+      <p style="margin-bottom:16px;">Tu perfil de competición</p>
+      ${opts.map(o => `<button class="option-card ${S.answers.tipoPro===o.val?'selected':''}" onclick="f3Select('tipoPro','${o.val}')">
+        <span class="label">${o.label}</span>${S.answers.tipoPro===o.val?'<span class="check">✓</span>':''}
+      </button>`).join('')}`;
+  } else if (step === 2) {
+    const opts = [
+      { val:'carrera', label:'Carrera específica + fecha' },
+      { val:'umbral', label:'Mejorar umbral/rendimiento' },
+      { val:'mantener', label:'Mantener nivel + disfrutar' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Cuál es tu objetivo?</h2>
+      <p style="margin-bottom:16px;"></p>
+      ${opts.map(o => `<button class="option-card ${S.answers.objetivo3===o.val?'selected':''}" onclick="f3SelectObj('${o.val}')">
+        <span class="label">${o.label}</span>${S.answers.objetivo3===o.val?'<span class="check">✓</span>':''}
+      </button>`).join('')}
+      ${S.answers.objetivo3==='carrera' ? `
+        <div class="input-group" style="margin-top:14px;"><label>Carrera</label><input type="text" id="f3-race-name" placeholder="Nombre de la carrera" value="${S.answers.raceName3||''}"></div>
+        <div class="input-group"><label>Fecha</label><input type="date" id="f3-race-date" value="${S.answers.raceDate3||''}"></div>` : ''}`;
+  } else if (step === 3) {
+    const opts = [
+      { val:'4-5', label:'4-5 días de entrenamiento' },
+      { val:'6+', label:'6+ días (alto volumen)' },
+    ];
+    html = `<h2 style="margin-bottom:8px;">¿Cuántos días entrenás?</h2>
+      <p style="margin-bottom:16px;">Por semana</p>
+      ${opts.map(o => `<button class="option-card ${S.answers.diasPro===o.val?'selected':''}" onclick="f3Select('diasPro','${o.val}')">
+        <span class="label">${o.label}</span>${S.answers.diasPro===o.val?'<span class="check">✓</span>':''}
+      </button>`).join('')}`;
+  } else if (step === 4) {
+    html = `<h2 style="margin-bottom:8px;">Datos de rendimiento</h2>
+      <p style="margin-bottom:16px;">Para calibrar tus zonas e intensidades</p>
+      <div class="input-group"><label>Ritmo fácil (min/km)</label><input type="text" id="f3-ritmo-facil" placeholder="ej. 5:30" value="${S.answers.ritmoFacil||''}"></div>
+      <div class="input-group"><label>Ritmo umbral (min/km)</label><input type="text" id="f3-ritmo-umbral" placeholder="ej. 4:30" value="${S.answers.ritmoUmbral||''}"></div>
+      <div class="input-group"><label>FC zona 2 + umbral (bpm)</label><input type="text" id="f3-fc" placeholder="ej. 140 / 165" value="${S.answers.fcZona||''}"></div>`;
+  } else if (step === 5) {
+    html = `<h2 style="margin-bottom:8px;">Elegí tu método</h2>
+      <p style="margin-bottom:16px;">Define la distribución de tus entrenamientos</p>
+      ${METHODS.map(m => `
+        <button class="option-card ${S.answers.method===m.val?'selected':''}" onclick="f3Select('method','${m.val}')">
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px;">${m.label}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">${m.desc}</div>
+            ${S.answers.method===m.val ? `<div style="font-size:11px;color:var(--primary);margin-top:4px;font-weight:500;">${m.dist}</div>` : ''}
+          </div>
+          ${S.answers.method===m.val?'<span class="check">✓</span>':''}
+        </button>`).join('')}`;
+  }
+  document.getElementById('f3-content').innerHTML = html;
+}
+
+function f3Select(key, val) { S.answers[key] = val; renderF3Step(); }
+function f3SelectObj(val) {
+  S.answers.objetivo3 = val;
+  renderF3Step();
+}
+
+function f3Next() {
+  if (S.step === 0) {
+    const n = document.getElementById('f3-nombre');
+    if (!n || !n.value.trim()) { alert('Ingresá tu nombre'); return; }
+    S.answers.nombre = n.value.trim();
+    const f = document.getElementById('f3-fecha'); if(f) S.answers.fecha = f.value;
+  } else if (S.step === 1 && !S.answers.tipoPro) { alert('Elegí una opción'); return; }
+  else if (S.step === 2 && !S.answers.objetivo3) { alert('Elegí una opción'); return; }
+  else if (S.step === 3 && !S.answers.diasPro) { alert('Elegí una opción'); return; }
+  else if (S.step === 5 && !S.answers.method) { alert('Elegí un método'); return; }
+
+  if (S.step === 2 && S.answers.objetivo3 === 'carrera') {
+    const rn = document.getElementById('f3-race-name'); if(rn) S.answers.raceName3 = rn.value;
+    const rd = document.getElementById('f3-race-date'); if(rd) S.answers.raceDate3 = rd.value;
+  }
+  if (S.step === 4) {
+    const rf = document.getElementById('f3-ritmo-facil'); if(rf) S.answers.ritmoFacil = rf.value;
+    const ru = document.getElementById('f3-ritmo-umbral'); if(ru) S.answers.ritmoUmbral = ru.value;
+    const fc = document.getElementById('f3-fc'); if(fc) S.answers.fcZona = fc.value;
+  }
+  if (S.step === 5) {
+    assignPlanF3(); return;
+  }
+  S.step++;
+  renderF3Step();
+}
+
+function f3Back() {
+  if (S.step === 0) { showScreen('s-entry'); return; }
+  S.step--;
+  renderF3Step();
+}
+
+function assignPlanF3() {
+  S.userName = S.answers.nombre;
+  S.planId = 'calle_trail_avanzado_4d';
+  const methodObj = METHODS.find(m => m.val === S.answers.method) || METHODS[0];
+  S.method = methodObj.label;
+  S.methodDist = methodObj.dist;
+  S.planLabel = `${methodObj.label} — Avanzado`;
+  S.proMode = true;
+  S.currentWeek = 1;
+  const distText = S.methodDist;
+  showLoading('Generando tu plan...', distText, goToWeekView);
+}
+
+// ============================================================
+// LOADING
+// ============================================================
+function showLoading(title, sub, callback) {
+  document.getElementById('loading-title').textContent = title;
+  document.getElementById('loading-sub').textContent = sub;
+  showScreen('s-loading');
+  setTimeout(callback, 2000);
+}
+
+// ============================================================
+// WEEK VIEW
+// ============================================================
+function goToWeekView() {
+  saveState();
+  renderWeekView();
+  showScreen('s-week');
+}
+
+function renderWeekView() {
+  const plan = PLANS[S.planId];
+  const weekData = plan.data[S.currentWeek - 1];
+  const phase = getPhase(S.planId, S.currentWeek);
+  const deload = isDeload(S.planId, S.currentWeek);
+
+  // Header
+  const header = document.getElementById('week-header');
+  header.className = 'week-header' + (S.proMode ? ' pro-header' : '');
+  document.getElementById('wh-plan-name').textContent = S.planLabel;
+  document.getElementById('wh-user-name').textContent = S.userName || 'Corredor';
+  if (S.planId === 'desde_cero_3d') {
+    const bloqueLetters = ['A','A','B','B','C','C','D','D'];
+    const bloque = bloqueLetters[S.currentWeek - 1] || 'A';
+    document.getElementById('wh-week-badge').textContent = `Bloque ${bloque} · ${phase}`;
+  } else {
+    document.getElementById('wh-week-badge').textContent = `Semana ${S.currentWeek} · ${phase}`;
+  }
+
+  // Extra badge (race or method)
+  const extraBadge = document.getElementById('wh-extra-badge');
+  if (S.flow === 2 && S.answers.tieneObjetivo === 'si' && S.answers.raceName) {
+    extraBadge.style.display = 'block';
+    extraBadge.innerHTML = `<div class="race-target">🎯 ${S.answers.raceName}${S.answers.raceDate ? ' · ' + S.answers.raceDate : ''}</div>`;
+  } else if (S.flow === 3 && S.methodDist) {
+    extraBadge.style.display = 'block';
+    extraBadge.innerHTML = `<div class="method-badge">${S.method}: ${S.methodDist}</div>`;
+  } else {
+    extraBadge.style.display = 'none';
+  }
+
+  // Banners
+  const paywallBanner = document.getElementById('week-paywall-banner');
+  paywallBanner.style.display = (S.flow === 1 && S.currentWeek > 2) ? 'block' : 'none';
+
+  const deloadBanner = document.getElementById('week-deload-banner');
+  deloadBanner.style.display = deload ? 'block' : 'none';
+
+  // Session completion count
+  let done = 0;
+  weekData.forEach((_, i) => { if (getCompletion(S.currentWeek, i) !== 'pending') done++; });
+  const total = weekData.length;
+  document.getElementById('week-progress-txt').textContent = `${done}/${total} sesiones completadas`;
+
+  const completedBanner = document.getElementById('week-completed-banner');
+  completedBanner.style.display = (done === total) ? 'block' : 'none';
+
+  // Pro tabs
+  const proTabs = document.getElementById('pro-tabs');
+  proTabs.style.display = S.proMode ? 'block' : 'none';
+
+  // Session cards
+  const wrap = document.getElementById('session-cards-wrap');
+  wrap.innerHTML = weekData.map((sess, i) => {
+    const status = getCompletion(S.currentWeek, i);
+    const statusIcon = status === 'done' ? '✅' : status === 'skip' ? '⏭️' : '⬜';
+    const blocks = parseBlocks(sess.blocks);
+    const totalMin = blockTotal(sess.blocks);
+    const blockPills = blocks.map(b => `<span class="pill">${b.code} ${b.min}'</span>`).join('');
+    const cardClass = status === 'done' ? 'completed' : status === 'skip' ? 'skipped' : '';
+    const clickable = status === 'pending' ? `onclick="openSession(${i})"` : '';
+    return `
+      <div class="session-card ${cardClass}" ${clickable}>
+        <div class="session-card-top">
+          <div>
+            <div class="session-card-day">Día ${i+1}</div>
+            <div class="session-card-title">${sess.name}</div>
+          </div>
+          <span class="session-status">${statusIcon}</span>
+        </div>
+        <div class="pills-wrap" style="margin-top:8px;">${blockPills}</div>
+        <div class="session-meta">${totalMin} min total</div>
+      </div>`;
+  }).join('');
+
+  // Week nav
+  document.getElementById('week-prev-btn').disabled = S.currentWeek <= 1;
+  document.getElementById('week-next-btn').disabled = S.currentWeek >= plan.weeks;
+  document.getElementById('week-label-center').textContent = `Semana ${S.currentWeek} de ${plan.weeks}`;
+
+  const totalWeekMin = weekData.reduce((s, sess) => s + blockTotal(sess.blocks), 0);
+  document.getElementById('week-total-min').textContent = `${totalWeekMin} min esta semana`;
+
+  // Pro metrics
+  if (S.proMode) renderProMetrics();
+}
+
+function weekNav(dir) {
+  S.currentWeek = Math.max(1, Math.min(PLANS[S.planId].weeks, S.currentWeek + dir));
+  saveState();
+  renderWeekView();
+  document.getElementById('s-week').classList.add('slide-left');
+  setTimeout(() => document.getElementById('s-week').classList.remove('slide-left'), 300);
+}
+
+function showTab(tab) {
+  document.getElementById('tab-plan').style.display = tab === 'plan' ? 'block' : 'none';
+  document.getElementById('tab-metrics').style.display = tab === 'metrics' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='plan')||(i===1&&tab==='metrics')));
+}
+
+function renderProMetrics() {
+  const methodObj = METHODS.find(m => m.val === S.answers.method) || METHODS[0];
+  let zones = [];
+  if (methodObj.val === 'kilian')     zones = [{z:'Z2 desnivel',pct:75},{z:'SF',pct:15},{z:'TB',pct:10}];
+  if (methodObj.val === 'polarizado') zones = [{z:'Z1-Z2',pct:80},{z:'Z4-Z5',pct:20}];
+  if (methodObj.val === 'piramidal')  zones = [{z:'Z1-Z2',pct:70},{z:'Z3',pct:20},{z:'Z4-Z5',pct:10}];
+  if (methodObj.val === 'adaptativo') zones = [{z:'Z1-Z2',pct:65},{z:'Z3',pct:25},{z:'Z4-Z5',pct:10}];
+
+  const plan = PLANS[S.planId];
+  let totalVol = 0;
+  plan.data.slice(0, S.currentWeek).forEach(wk => wk.forEach(s => { totalVol += blockTotal(s.blocks); }));
+  const curWeekVol = plan.data[S.currentWeek-1].reduce((s,x) => s + blockTotal(x.blocks), 0);
+
+  document.getElementById('pro-metrics-content').innerHTML = `
+    <div class="metrics-grid">
+      <div class="metric-box"><div class="val">${curWeekVol}'</div><div class="lbl">Volumen semana</div></div>
+      <div class="metric-box"><div class="val">${S.answers.ritmoFacil||'—'}</div><div class="lbl">Ritmo fácil</div></div>
+      <div class="metric-box"><div class="val">${S.answers.ritmoUmbral||'—'}</div><div class="lbl">Umbral (min/km)</div></div>
+      <div class="metric-box"><div class="val">${S.answers.fcZona||'—'}</div><div class="lbl">FC Z2/Umbral</div></div>
+    </div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;">
+      <h3 style="margin-bottom:12px;">Distribución de zonas — ${methodObj.label}</h3>
+      ${zones.map(z => `
+        <div class="zone-bar-wrap">
+          <div class="zone-bar-label"><span>${z.z}</span><span>${z.pct}%</span></div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%"></div></div>
+        </div>`).join('')}
+    </div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;">
+      <h3 style="margin-bottom:8px;">Carga acumulada</h3>
+      <div class="info-row"><span>Semanas completadas</span><strong>${S.currentWeek} / ${plan.weeks}</strong></div>
+      <div class="info-row"><span>Volumen total (min)</span><strong>${totalVol}'</strong></div>
+      <div class="info-row"><span>Estimado umbral</span><strong>${S.answers.ritmoUmbral ? S.answers.ritmoUmbral + ' min/km' : 'Pendiente'}</strong></div>
+      <div class="info-row"><span>Carga semanal</span><strong>${curWeekVol < 120 ? '🟢 Normal' : curWeekVol < 180 ? '🟡 Alta' : '🔴 Muy alta'}</strong></div>
+    </div>`;
+}
+
+// ============================================================
+// SESSION DETAIL
+// ============================================================
+function openSession(idx) {
+  S.currentSessionIdx = idx;
+  const plan = PLANS[S.planId];
+  const sess = plan.data[S.currentWeek - 1][idx];
+  document.getElementById('sd-title').textContent = sess.name;
+
+  const blocks = parseBlocks(sess.blocks);
+  const mainBlock = blocks[0];
+  const info = BLOCK_INFO[mainBlock.code] || {};
+  const totalMin = blockTotal(sess.blocks);
+
+  let structureHTML = blocks.map(b => {
+    const bi = BLOCK_INFO[b.code] || {};
+    const struct = bi.struct ? bi.struct.replace('{X}', b.min) : `${b.min}' ${b.code}`;
+    return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span class="pill">${b.code} ${b.min}'</span>
+        <div style="flex:1;font-size:13px;color:var(--muted);">${struct}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('sd-content').innerHTML = `
+    <div style="margin-bottom:8px;">
+      <span style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Semana ${S.currentWeek} · Día ${idx+1}</span>
+    </div>
+    <div class="session-detail-block">
+      <h3>🎯 Objetivo</h3>
+      <p>${info.obj || 'Completar la sesión según el plan.'}</p>
+    </div>
+    <div class="session-detail-block">
+      <h3>Estructura · ${totalMin} min</h3>
+      ${structureHTML}
+    </div>
+    <div class="session-detail-block">
+      <h3>💡 Tip</h3>
+      <p>${info.tip || 'Escuchá tu cuerpo.'}</p>
+    </div>`;
+
+  showScreen('s-session');
+}
+
+function skipSession() {
+  setCompletion(`${S.planId}_${S.currentWeek}_${S.currentSessionIdx}`, 'skip');
+  renderWeekView();
+  showScreen('s-week');
+}
+
+// ============================================================
+// CHECK-IN
+// ============================================================
+const CHECKIN_QUESTIONS_DEFAULT = [
+  {
+    id: 'conversacion',
+    q: '¿Pudiste mantener una conversación durante el trote?',
+    type: 'options',
+    opts: ['Sí, sin problema','A veces','No, muy difícil'],
+    vals: ['si','aveces','no'],
+  },
+  {
+    id: 'rpe',
+    q: 'Esfuerzo percibido (RPE)',
+    type: 'stars',
+    opts: ['1','2','3','4','5'],
+  },
+  {
+    id: 'molestia',
+    q: '¿Alguna molestia física?',
+    type: 'options_input',
+    opts: ['No, todo bien','Sí, tengo algo'],
+    vals: ['no','si'],
+  },
+  {
+    id: 'disfrute',
+    q: '¿Disfrutaste la sesión?',
+    type: 'options',
+    opts: ['😊 Sí','😐 Más o menos','😕 No'],
+    vals: ['si','masomenos','no'],
+  },
+];
+
+const CHECKIN_QUESTIONS_CERO = [
+  {
+    id: 'bloques',
+    q: '¿Pudiste completar los bloques de trote?',
+    type: 'options',
+    opts: ['Sí','Casi','No'],
+    vals: ['si','casi','no'],
+  },
+  {
+    id: 'sentimiento',
+    q: '¿Cómo te sentiste?',
+    type: 'options',
+    opts: ['😊 Bien','😐 Regular','😟 Mal'],
+    vals: ['bien','regular','mal'],
+  },
+  {
+    id: 'dolor',
+    q: '¿Dolor o molestia?',
+    type: 'options',
+    opts: ['No 👍','Sí'],
+    vals: ['no','si'],
+  },
+];
+
+function getCheckinQuestions() {
+  return S.planId === 'desde_cero_3d' ? CHECKIN_QUESTIONS_CERO : CHECKIN_QUESTIONS_DEFAULT;
+}
+const CHECKIN_QUESTIONS = CHECKIN_QUESTIONS_DEFAULT;
+
+function startCheckin() {
+  S.checkinStep = 0;
+  S.checkinData = {};
+  showScreen('s-checkin');
+  renderCheckinStep();
+}
+
+function renderCheckinStep() {
+  const q = getCheckinQuestions()[S.checkinStep];
+  let html = `<h2 style="margin-bottom:24px;">${q.q}</h2>`;
+
+  if (q.type === 'options' || q.type === 'options_input') {
+    html += q.opts.map((opt, i) => `
+      <button class="option-card" onclick="checkinAnswer('${q.id}','${q.vals[i]}',${i})">
+        <span class="label">${opt}</span>
+      </button>`).join('');
+    if (q.type === 'options_input' && S.checkinData[q.id] === 'si') {
+      html += `<div class="input-group" style="margin-top:12px;"><label>¿Dónde?</label><input type="text" id="molestia-loc" placeholder="ej. rodilla derecha" value="${S.checkinData.molestiaLoc||''}"></div>`;
+    }
+  } else if (q.type === 'stars') {
+    html += `<div class="star-row">`;
+    for (let i = 1; i <= 5; i++) {
+      html += `<button class="star-btn" onclick="checkinStar(${i})" title="${i}">${i <= (S.checkinData.rpe||0) ? '⭐' : '☆'}</button>`;
+    }
+    html += `</div>`;
+    if (S.checkinData.rpe) {
+      html += `<p style="margin-top:12px;font-size:14px;color:var(--primary);font-weight:600;">RPE: ${S.checkinData.rpe}/5</p>`;
+    }
+  }
+  document.getElementById('checkin-content').innerHTML = html;
+}
+
+function checkinAnswer(id, val, optIdx) {
+  S.checkinData[id] = val;
+  if (id === 'molestia' && val === 'si') { renderCheckinStep(); return; }
+  if (id === 'molestia' && val === 'no') { nextCheckin(); return; }
+  // save molestia loc if present
+  const locInput = document.getElementById('molestia-loc');
+  if (locInput) S.checkinData.molestiaLoc = locInput.value;
+  nextCheckin();
+}
+
+function checkinStar(n) {
+  S.checkinData.rpe = n;
+  // Auto advance after brief delay
+  renderCheckinStep();
+  setTimeout(nextCheckin, 400);
+}
+
+function nextCheckin() {
+  S.checkinStep++;
+  if (S.checkinStep >= getCheckinQuestions().length) {
+    showFeedback(); return;
+  }
+  renderCheckinStep();
+}
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+function showFeedback() {
+  // Mark session done
+  setCompletion(`${S.planId}_${S.currentWeek}_${S.currentSessionIdx}`, 'done');
+  renderWeekView();
+
+  let color = 'green', icon = '💚', msg = '', detail = '';
+
+  if (S.planId === 'desde_cero_3d') {
+    // Feedback for nivel Cero
+    const bloques = S.checkinData.bloques;
+    const sentimiento = S.checkinData.sentimiento;
+    const dolor = S.checkinData.dolor;
+
+    if (bloques === 'si' && sentimiento === 'bien') {
+      color = 'green'; icon = '🎉';
+      msg = '¡Gran sesión!';
+      detail = 'Completaste tu sesión run-walk. Así se construye base. ¡Cada bloque de trote cuenta!';
+    } else if (bloques === 'no' || sentimiento === 'mal') {
+      color = 'red'; icon = '⚠️';
+      msg = 'Fue difícil hoy.';
+      detail = 'No pasa nada. Ajustamos la próxima. Lo importante es que saliste.';
+    } else {
+      color = 'yellow'; icon = '👍';
+      msg = 'Buen avance.';
+      detail = 'Completaste tu sesión run-walk. Así se construye base. ¡Cada bloque de trote cuenta!';
+    }
+
+    if (dolor === 'si') {
+      detail += ' Ojo con el dolor — si persiste, consultá antes de la próxima sesión.';
+    }
+
+    document.getElementById('feedback-content').innerHTML = `
+      <div class="feedback-indicator feedback-${color}">
+        <span>${icon}</span>
+      </div>
+      <h2 style="margin-bottom:8px;text-align:center;">${msg}</h2>
+      <p style="text-align:center;max-width:300px;margin-bottom:24px;">${detail}</p>
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;width:100%;max-width:320px;">
+        <div class="info-row"><span>Bloques de trote</span><strong>${bloques==='si'?'✅ Sí':bloques==='casi'?'⚡ Casi':'❌ No'}</strong></div>
+        <div class="info-row"><span>Sensación</span><strong>${sentimiento==='bien'?'😊 Bien':sentimiento==='regular'?'😐 Regular':'😟 Mal'}</strong></div>
+        <div class="info-row"><span>Dolor</span><strong>${dolor==='si'?'⚠️ Sí':'✅ Sin dolor'}</strong></div>
+      </div>`;
+  } else {
+    // Default feedback
+    const rpe = S.checkinData.rpe || 3;
+    const conv = S.checkinData.conversacion;
+
+    if (rpe <= 2 && conv === 'si') {
+      color = 'green'; icon = '😎';
+      msg = '¡Perfecto! Zona 2 ideal.';
+      detail = 'Tu ritmo fue conversacional y el esfuerzo fue bajo. Seguís construyendo base aeróbica.';
+    } else if (rpe >= 4 || conv === 'no') {
+      color = 'red'; icon = '⚠️';
+      msg = 'Fue muy exigente.';
+      detail = 'La próxima, bajá el ritmo un poco. El objetivo es que puedas hablar cómodamente.';
+    } else {
+      color = 'yellow'; icon = '👍';
+      msg = 'Bien, en rango.';
+      detail = 'Esfuerzo moderado. Si fue difícil mantener la conversación, bajá un poco más el ritmo.';
+    }
+
+    if (S.checkinData.molestia === 'si') {
+      detail += ` Ojo con la molestia en ${S.checkinData.molestiaLoc||'el área indicada'} — si persiste, consultá.`;
+    }
+
+    document.getElementById('feedback-content').innerHTML = `
+      <div class="feedback-indicator feedback-${color}">
+        <span>${icon}</span>
+      </div>
+      <h2 style="margin-bottom:8px;text-align:center;">${msg}</h2>
+      <p style="text-align:center;max-width:300px;margin-bottom:24px;">${detail}</p>
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;width:100%;max-width:320px;">
+        <div class="info-row"><span>RPE</span><strong>${rpe}/5 ${'⭐'.repeat(rpe)}</strong></div>
+        <div class="info-row"><span>Conversación</span><strong>${conv==='si'?'✅ Sí':conv==='aveces'?'⚡ A veces':'❌ No'}</strong></div>
+        <div class="info-row"><span>Molestias</span><strong>${S.checkinData.molestia==='si'?'⚠️ '+( S.checkinData.molestiaLoc||'Sí'):'✅ Sin molestias'}</strong></div>
+        <div class="info-row"><span>Disfruté</span><strong>${S.checkinData.disfrute==='si'?'😊':S.checkinData.disfrute==='masomenos'?'😐':'😕'}</strong></div>
+      </div>`;
+  }
+
+  showScreen('s-feedback');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  if (loadState() && S.planId) {
+    // Restore to week view
+    goToWeekView();
+  } else {
+    showScreen('s-entry');
+  }
+});
+</script>
+</body>
+</html>

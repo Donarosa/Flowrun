@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowRun · Sistema de Planes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #4A5D3A;
+    --moss-deep: #3A4A2D;
+    --moss-soft: #7A9E6B;
+    --moss-tint: #E8EEE3;
+    --deep: #1B3A4B;
+    --deep-soft: #2D5066;
+    --deep-tint: #E1E8ED;
+    --stone: #8C8578;
+    --sand: #F5F2ED;
+    --sand-warm: #ECE6DC;
+    --ink: #2C2C2C;
+    --terracotta: #C4826D;
+    --terracotta-tint: #F5E4DE;
+    --sky: #A8C4D4;
+    --line: rgba(44,44,44,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--sand);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 72px 56px 120px; }
+
+  /* HEADER */
+  .header {
+    padding-bottom: 56px; border-bottom: 1px solid var(--line); margin-bottom: 64px;
+  }
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--stone); margin-bottom: 24px;
+  }
+  .brand-mark { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .brand-symbol {
+    width: 52px; height: 52px; background: var(--moss); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; color: var(--sand);
+  }
+  .brand-symbol svg { width: 60%; height: 60%; }
+  .brand-name { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+  .brand-name em { font-style: normal; color: var(--stone); font-weight: 400; }
+
+  h1 {
+    font-size: 48px; line-height: 1.05; letter-spacing: -0.025em;
+    font-weight: 700; color: var(--deep); margin-bottom: 24px; max-width: 900px;
+  }
+  .lead { font-size: 18px; color: var(--ink); max-width: 740px; }
+
+  .summary-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line);
+  }
+  .summary-stat .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px; font-weight: 700; color: var(--moss);
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .summary-stat .label {
+    font-size: 12px; color: var(--stone); margin-top: 8px;
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+  }
+
+  /* SECTIONS */
+  section { margin-bottom: 88px; }
+  .section-head { margin-bottom: 36px; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.1em; margin-bottom: 12px;
+  }
+  h2 {
+    font-size: 32px; line-height: 1.15; letter-spacing: -0.02em;
+    font-weight: 700; color: var(--deep); margin-bottom: 12px;
+  }
+  .section-sub { font-size: 16px; color: var(--stone); max-width: 720px; }
+
+  /* EJES OVERVIEW */
+  .ejes-overview {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .eje-overview-card {
+    background: white; border-radius: 20px; padding: 28px;
+    display: flex; flex-direction: column;
+  }
+  .eje-icon-wrap {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--moss); color: var(--sand);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .eje-icon-wrap svg { width: 24px; height: 24px; }
+  .eje-overview-card .eje-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.1em; margin-bottom: 6px;
+    font-weight: 600; text-transform: uppercase;
+  }
+  .eje-overview-card h3 {
+    font-size: 20px; font-weight: 700; color: var(--deep);
+    letter-spacing: -0.015em; line-height: 1.15; margin-bottom: 12px;
+  }
+  .eje-overview-card p {
+    font-size: 13px; color: var(--stone); line-height: 1.5; flex-grow: 1;
+  }
+  .eje-count {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.06em; font-weight: 600;
+  }
+
+  /* EJE DETAIL */
+  .eje-section {
+    background: white; border-radius: 24px; padding: 40px;
+    margin-bottom: 24px;
+  }
+  .eje-section.dark {
+    background: var(--deep); color: var(--sand);
+  }
+  .eje-header {
+    display: flex; gap: 24px; align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .eje-num-badge {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: var(--moss); color: var(--sand);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 24px;
+    font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0;
+  }
+  .eje-section.dark .eje-num-badge {
+    background: var(--moss-soft); color: var(--deep);
+  }
+  .eje-info { flex: 1; }
+  .eje-info .label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--moss); letter-spacing: 0.1em; font-weight: 600;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .eje-section.dark .eje-info .label { color: var(--moss-soft); }
+  .eje-info h2 {
+    font-size: 32px; font-weight: 700; color: var(--deep);
+    letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px;
+  }
+  .eje-section.dark .eje-info h2 { color: var(--sand); }
+  .eje-info p {
+    font-size: 15px; color: var(--ink); line-height: 1.55; max-width: 720px;
+  }
+  .eje-section.dark .eje-info p { color: rgba(245,242,237,0.75); }
+
+  /* PLAN CARDS WITHIN EJE */
+  .plans-row {
+    display: grid; gap: 16px;
+  }
+  .plans-row.two-col { grid-template-columns: repeat(2, 1fr); }
+  .plans-row.three-col { grid-template-columns: repeat(3, 1fr); }
+
+  .plan-card {
+    background: var(--sand); border-radius: 16px; padding: 24px;
+    display: flex; flex-direction: column;
+    border-left: 4px solid var(--moss);
+  }
+  .plan-card.conceptual { border-left-color: var(--terracotta); }
+  .eje-section.dark .plan-card { background: rgba(245,242,237,0.06); }
+  .eje-section.dark .plan-card.conceptual { background: rgba(196,130,109,0.12); }
+
+  .plan-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .plan-code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--moss); font-weight: 600; letter-spacing: 0.02em;
+  }
+  .plan-card.conceptual .plan-code { color: var(--terracotta); }
+  .eje-section.dark .plan-code { color: var(--moss-soft); }
+  .eje-section.dark .plan-card.conceptual .plan-code { color: var(--terracotta); }
+
+  .plan-status {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    padding: 3px 8px; border-radius: 100px;
+    background: var(--moss-tint); color: var(--moss);
+    letter-spacing: 0.08em; font-weight: 600; text-transform: uppercase;
+  }
+  .plan-card.conceptual .plan-status {
+    background: var(--terracotta-tint); color: var(--terracotta);
+  }
+  .eje-section.dark .plan-status { background: rgba(122,158,107,0.2); color: var(--moss-soft); }
+  .eje-section.dark .plan-card.conceptual .plan-status {
+    background: rgba(196,130,109,0.25); color: var(--terracotta);
+  }
+
+  .plan-name {
+    font-size: 18px; font-weight: 700; color: var(--deep);
+    letter-spacing: -0.015em; line-height: 1.2; margin-bottom: 6px;
+  }
+  .eje-section.dark .plan-name { color: var(--sand); }
+  .plan-for {
+    font-size: 12px; color: var(--stone); font-style: italic;
+    margin-bottom: 14px;
+  }
+  .eje-section.dark .plan-for { color: rgba(245,242,237,0.55); }
+  .plan-focus {
+    font-size: 13px; color: var(--ink); line-height: 1.5;
+    margin-bottom: 14px; flex-grow: 1;
+  }
+  .eje-section.dark .plan-focus { color: rgba(245,242,237,0.85); }
+
+  .plan-meta-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  .eje-section.dark .plan-meta-row { border-top-color: rgba(245,242,237,0.1); }
+  .meta-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 4px 8px; border-radius: 6px;
+    background: var(--moss); color: var(--sand);
+    letter-spacing: 0.02em; font-weight: 600;
+  }
+  .meta-pill.alt {
+    background: var(--sand-warm); color: var(--ink);
+  }
+  .eje-section.dark .meta-pill.alt {
+    background: rgba(245,242,237,0.12); color: var(--sand);
+  }
+
+  /* PATH GROUP (for Eje 1) */
+  .path-group {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  .path-col {
+    background: var(--sand); border-radius: 18px; padding: 24px;
+  }
+  .path-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 16px;
+  }
+  .path-title {
+    font-size: 22px; font-weight: 700; color: var(--deep);
+    margin-bottom: 16px; letter-spacing: -0.015em;
+  }
+  .path-plans { display: flex; flex-direction: column; gap: 10px; }
+  .path-plans .plan-card {
+    background: white; border-radius: 12px; padding: 18px;
+  }
+
+  /* FLOW */
+  .flow-container { background: white; border-radius: 24px; padding: 48px 32px; }
+  .flow-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    align-items: stretch;
+    position: relative;
+  }
+  .flow-step {
+    background: var(--moss); color: var(--sand);
+    padding: 24px; border-radius: 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    position: relative;
+  }
+  .flow-step .step-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: rgba(245,242,237,0.6); letter-spacing: 0.1em; font-weight: 600;
+  }
+  .flow-step .step-name {
+    font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2;
+  }
+  .flow-step .step-desc {
+    font-size: 12px; color: rgba(245,242,237,0.75); margin-top: 4px;
+  }
+  .flow-step::after {
+    content: "→"; position: absolute;
+    right: -22px; top: 50%; transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace; font-size: 28px;
+    color: var(--stone); font-weight: 300;
+    z-index: 2;
+  }
+  .flow-step:last-child::after { display: none; }
+  .flow-step.entry { background: var(--deep); }
+
+  /* JOURNEY */
+  .journey {
+    background: var(--deep); color: var(--sand);
+    border-radius: 24px; padding: 40px 36px;
+  }
+  .journey-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .journey-sub {
+    color: rgba(245,242,237,0.7); font-size: 14px; margin-bottom: 28px;
+  }
+  .timeline-bar {
+    display: flex; gap: 4px; border-radius: 100px; overflow: hidden;
+    height: 56px; margin-bottom: 16px;
+  }
+  .tl-seg {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--sand); font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    padding: 0 8px; text-align: center;
+  }
+  .tl-seg.e1 { background: #5A6E48; flex: 16; }
+  .tl-seg.e2 { background: #4A5D3A; flex: 12; }
+  .tl-seg.e3 { background: var(--moss-soft); flex: 10; }
+  .tl-seg.e4 { background: var(--moss-deep); flex: 12; }
+
+  .timeline-labels {
+    display: flex; gap: 4px; font-size: 11px;
+    font-family: 'JetBrains Mono', monospace; color: rgba(245,242,237,0.7);
+    margin-bottom: 24px; letter-spacing: 0.04em;
+  }
+  .tl-label.e1 { flex: 16; }
+  .tl-label.e2 { flex: 12; }
+  .tl-label.e3 { flex: 10; }
+  .tl-label.e4 { flex: 12; }
+
+  .journey-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 24px; border-top: 1px solid rgba(245,242,237,0.16);
+  }
+  .total-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: rgba(245,242,237,0.6); letter-spacing: 0.1em;
+    text-transform: uppercase; font-weight: 600;
+  }
+  .total-value {
+    font-family: 'JetBrains Mono', monospace; font-size: 22px;
+    font-weight: 700; color: var(--sand);
+  }
+
+  /* MATRIX */
+  .matrix { background: white; border-radius: 18px; overflow: hidden; }
+  .matrix table { width: 100%; border-collapse: collapse; }
+  .matrix th, .matrix td {
+    padding: 14px 18px; text-align: left; font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  .matrix thead { background: var(--deep); color: var(--sand); }
+  .matrix th {
+    font-weight: 600; font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .matrix tbody tr:hover { background: var(--sand); }
+  .matrix tbody tr.eje-header { background: var(--sand-warm); }
+  .matrix tbody tr.eje-header td {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.08em; font-weight: 700;
+    text-transform: uppercase; padding: 16px 18px;
+  }
+  .matrix code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: var(--sand-warm); padding: 3px 8px; border-radius: 6px;
+    color: var(--moss); font-weight: 600;
+  }
+  .matrix .status-codif {
+    display: inline-block; padding: 3px 8px; border-radius: 100px;
+    background: var(--moss-tint); color: var(--moss);
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; font-weight: 600; text-transform: uppercase;
+  }
+  .matrix .status-concept {
+    background: var(--terracotta-tint); color: var(--terracotta);
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line);
+    color: var(--stone); font-size: 13px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  footer code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  @media (max-width: 1080px) {
+    .page { padding: 48px 24px; }
+    h1 { font-size: 32px; }
+    .ejes-overview { grid-template-columns: repeat(2, 1fr); }
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .plans-row.three-col, .plans-row.two-col, .path-group { grid-template-columns: 1fr; }
+    .flow-row { grid-template-columns: 1fr; }
+    .flow-step::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position: absolute;">
+  <symbol id="switchback" viewBox="0 0 100 100">
+    <path d="M 20 80 Q 35 75, 35 60 Q 35 45, 50 45 Q 65 45, 65 30 Q 65 20, 80 20" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-start" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="currentColor"/>
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-bridge" viewBox="0 0 24 24">
+    <path d="M3 18 Q12 6, 21 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="3" cy="18" r="2" fill="currentColor"/>
+    <circle cx="21" cy="18" r="2" fill="currentColor"/>
+  </symbol>
+  <symbol id="ic-improve" viewBox="0 0 24 24">
+    <path d="M4 14 L9 9 L13 13 L20 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M15 6 L20 6 L20 11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-peak" viewBox="0 0 24 24">
+    <path d="M3 20 L9 8 L13 14 L17 6 L21 20 Z" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="eyebrow">Sistema de planes · 4 ejes · 9 planes</div>
+    <div class="brand-mark">
+      <div class="brand-symbol"><svg><use href="#switchback"/></svg></div>
+      <div class="brand-name">flowrun <em>— sistema de planes</em></div>
+    </div>
+    <h1>Cuatro caminos.<br>Un sistema.</h1>
+    <p class="lead">FlowRun organiza sus planes en 4 ejes según el momento del runner. Cada eje contiene plantillas específicas que se componen de bloques reutilizables. La progresión entre ejes es por respuesta del cuerpo, no por calendario.</p>
+
+    <div class="summary-strip">
+      <div class="summary-stat">
+        <div class="num">4</div>
+        <div class="label">Ejes</div>
+      </div>
+      <div class="summary-stat">
+        <div class="num">9</div>
+        <div class="label">Planes totales</div>
+      </div>
+      <div class="summary-stat">
+        <div class="num">8</div>
+        <div class="label">Codificados</div>
+      </div>
+      <div class="summary-stat">
+        <div class="num">1</div>
+        <div class="label">Fase 2</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 · LOS 4 EJES (overview) -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">01 / los cuatro ejes</div>
+      <h2>El recorrido del runner.</h2>
+      <p class="section-sub">Cada eje cubre un momento distinto. El usuario entra por donde está hoy, no necesariamente por el principio.</p>
+    </div>
+
+    <div class="ejes-overview">
+      <div class="eje-overview-card">
+        <div class="eje-icon-wrap"><svg><use href="#ic-start"/></svg></div>
+        <div class="eje-num">Eje 01</div>
+        <h3>Comenzar a Correr</h3>
+        <p>Entrada al sistema. El runner elige su camino: calle o montaña. Run-walk progresivo para los que nunca corrieron.</p>
+        <div class="eje-count">3 planes · 2 caminos</div>
+      </div>
+
+      <div class="eje-overview-card">
+        <div class="eje-icon-wrap"><svg><use href="#ic-bridge"/></svg></div>
+        <div class="eje-num">Eje 02</div>
+        <h3>Transición Calle → Montaña</h3>
+        <p>El bridge. Para runners de calle que quieren pasarse al trail. La piedra angular de FlowRun.</p>
+        <div class="eje-count">1 plan</div>
+      </div>
+
+      <div class="eje-overview-card">
+        <div class="eje-icon-wrap"><svg><use href="#ic-improve"/></svg></div>
+        <div class="eje-num">Eje 03</div>
+        <h3>Mejorar Montaña</h3>
+        <p>Para los que ya hacen trail. Consolidar la base o subir capacidad sin meterse en performance pico.</p>
+        <div class="eje-count">2 planes</div>
+      </div>
+
+      <div class="eje-overview-card">
+        <div class="eje-icon-wrap"><svg><use href="#ic-peak"/></svg></div>
+        <div class="eje-num">Eje 04</div>
+        <h3>Avanzados Trail</h3>
+        <p>Volumen alto, técnica de pendiente, intervalos VO2. Para runners avanzados con objetivo competitivo.</p>
+        <div class="eje-count">3 planes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · DETALLE POR EJE -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">02 / detalle por eje</div>
+      <h2>Qué hay adentro de cada uno.</h2>
+      <p class="section-sub">Los planes con sus dimensiones, foco y bloques principales.</p>
+    </div>
+
+    <!-- ============ EJE 1 ============ -->
+    <div class="eje-section">
+      <div class="eje-header">
+        <div class="eje-num-badge">01</div>
+        <div class="eje-info">
+          <div class="label">Eje 01 · entrada al sistema</div>
+          <h2>Comenzar a Correr</h2>
+          <p>El runner elige entre dos caminos al ingresar. Cada camino tiene sus plantillas según el punto de partida (nunca corrió vs. ya corre algo).</p>
+        </div>
+      </div>
+
+      <div class="path-group">
+
+        <div class="path-col">
+          <div class="path-label">Camino A</div>
+          <div class="path-title">Plan Calle</div>
+          <div class="path-plans">
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-code">desde_cero_3d</div>
+                <div class="plan-status">codificado</div>
+              </div>
+              <div class="plan-name">Desde Cero</div>
+              <div class="plan-for">"Nunca corrí" / "Hace años no corro"</div>
+              <div class="plan-focus">Run-walk progresivo modelo C25K (Galloway). 4 bloques A→D con criterio de paso por respuesta. Si el cuerpo no responde, se repite el bloque sin culpa.</div>
+              <div class="plan-meta-row">
+                <span class="meta-pill">3 d/sem</span>
+                <span class="meta-pill alt">8 sem</span>
+                <span class="meta-pill alt">→ nuevo_calle</span>
+              </div>
+            </div>
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-code">nuevo_calle_3d</div>
+                <div class="plan-status">codificado</div>
+              </div>
+              <div class="plan-name">Nuevo · Calle</div>
+              <div class="plan-for">"Corro 1-2 veces por semana en calle"</div>
+              <div class="plan-focus">Base aeróbica sólida + introducción a rodaje progresivo. Termina con primer test suave. Volumen sostenible, sin intensidad alta.</div>
+              <div class="plan-meta-row">
+                <span class="meta-pill">3 d/sem</span>
+                <span class="meta-pill alt">8 sem</span>
+                <span class="meta-pill alt">→ eje 02</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="path-col">
+          <div class="path-label">Camino B</div>
+          <div class="path-title">Plan Montaña</div>
+          <div class="path-plans">
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-code">nuevo_montana_3d</div>
+                <div class="plan-status">codificado</div>
+              </div>
+              <div class="plan-name">Nuevo · Montaña</div>
+              <div class="plan-for">"Tengo algo de base, quiero meterme al cerro"</div>
+              <div class="plan-focus">Primer contacto con trail. Foco en técnica antes que volumen. Caminar la subida es la norma. Termina con primer trail largo (60').</div>
+              <div class="plan-meta-row">
+                <span class="meta-pill">3 d/sem</span>
+                <span class="meta-pill alt">8 sem</span>
+                <span class="meta-pill alt">→ eje 02 o 03</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ EJE 2 ============ -->
+    <div class="eje-section">
+      <div class="eje-header">
+        <div class="eje-num-badge">02</div>
+        <div class="eje-info">
+          <div class="label">Eje 02 · el bridge</div>
+          <h2>Transición Calle → Montaña</h2>
+          <p>El diferenciador central de FlowRun. Para corredores de calle pasando al trail con la técnica, fuerza y mentalidad específicas que la transición requiere.</p>
+        </div>
+      </div>
+
+      <div class="plans-row">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-code">calle_trail_base_3d</div>
+            <div class="plan-status">codificado</div>
+          </div>
+          <div class="plan-name">Calle → Trail · Base</div>
+          <div class="plan-for">"Corro en calle y quiero pasarme al trail"</div>
+          <div class="plan-focus">3 bloques de 4 sem: <strong>motor + proteger → subir desnivel → simular carrera</strong>. Termina con simulacro de 2 hs de trail. La piedra angular del producto.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">3 d/sem</span>
+            <span class="meta-pill alt">12 sem</span>
+            <span class="meta-pill alt">→ eje 03 o 04</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ EJE 3 ============ -->
+    <div class="eje-section">
+      <div class="eje-header">
+        <div class="eje-num-badge">03</div>
+        <div class="eje-info">
+          <div class="label">Eje 03 · consolidar</div>
+          <h2>Mejorar Montaña</h2>
+          <p>Para runners con base trail que quieren seguir mejorando sin meterse en periodización competitiva. Foco en sostener el hábito y subir capacidad de a poco.</p>
+        </div>
+      </div>
+
+      <div class="plans-row two-col">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-code">trail_ongoing</div>
+            <div class="plan-status">ongoing · MVP</div>
+          </div>
+          <div class="plan-name">Trail · Modo Mantenimiento</div>
+          <div class="plan-for">"Quiero seguir corriendo en montaña sin lesionarme"</div>
+          <div class="plan-focus">Modo ongoing sin fecha de fin. Rotación adaptativa de base + colinas + tirada larga. El motor ajusta volumen e intensidad según respuesta del cuerpo.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">3-4 d/sem</span>
+            <span class="meta-pill alt">Sin fecha de fin</span>
+          </div>
+        </div>
+        <div class="plan-card conceptual">
+          <div class="plan-header">
+            <div class="plan-code">trail_capacidad_aerobica</div>
+            <div class="plan-status">fase 2</div>
+          </div>
+          <div class="plan-name">Trail · Capacidad Aeróbica</div>
+          <div class="plan-for">"Quiero correr más rápido en montaña sin reventar"</div>
+          <div class="plan-focus">Foco en tempo de terreno (umbral aeróbico) + fuerza excéntrica avanzada. Sube capacidad sin meter intensidad anaeróbica.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">3-4 d/sem</span>
+            <span class="meta-pill alt">8-10 sem</span>
+            <span class="meta-pill alt">→ eje 04</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ EJE 4 ============ -->
+    <div class="eje-section dark">
+      <div class="eje-header">
+        <div class="eje-num-badge">04</div>
+        <div class="eje-info">
+          <div class="label">Eje 04 · performance</div>
+          <h2>Avanzados Trail</h2>
+          <p>Planes para runners con base sólida que buscan rendir más. Volumen alto, intensidad estructurada, periodización para carrera objetivo.</p>
+        </div>
+      </div>
+
+      <div class="plans-row three-col">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-code">calle_trail_avanzado_4d</div>
+            <div class="plan-status">codificado</div>
+          </div>
+          <div class="plan-name">Trail · Avanzado</div>
+          <div class="plan-for">"Ya hice trail, quiero subir nivel general"</div>
+          <div class="plan-focus">12 semanas con 4 días/sem: mayor volumen, intensidad estructurada, día extra de calidad. Subidas fuertes (SF), intervalos near-VO2, técnica de bajada.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">4 d/sem</span>
+            <span class="meta-pill alt">12 sem</span>
+            <span class="meta-pill alt">→ subidas o vo2</span>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-code">trail_subidas_bajadas</div>
+            <div class="plan-status">codificado</div>
+          </div>
+          <div class="plan-name">Subidas y Bajadas</div>
+          <div class="plan-for">"Tengo carrera con desnivel fuerte"</div>
+          <div class="plan-focus">Técnica específica de pendiente. Subidas fuertes con cambio de cadencia. Bajadas técnicas a velocidad. Fuerza excéntrica máxima.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">4 d/sem</span>
+            <span class="meta-pill alt">8 sem</span>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-code">trail_vo2_peak</div>
+            <div class="plan-status">codificado</div>
+          </div>
+          <div class="plan-name">VO2 Peak</div>
+          <div class="plan-for">"Voy a competir y necesito picos de potencia"</div>
+          <div class="plan-focus">Intervalos near-VO2 sobre terreno. Ciclo de carga corto pre-carrera. Bloque de afilado final antes de competir.</div>
+          <div class="plan-meta-row">
+            <span class="meta-pill">4-5 d/sem</span>
+            <span class="meta-pill alt">4-6 sem</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 03 · FLOW -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">03 / cómo se mueve el usuario</div>
+      <h2>El flujo entre ejes.</h2>
+      <p class="section-sub">El usuario entra donde le corresponde. No siempre por el Eje 01.</p>
+    </div>
+
+    <div class="flow-container">
+      <div class="flow-row">
+        <div class="flow-step entry">
+          <div class="step-num">EJE 01</div>
+          <div class="step-name">Comenzar</div>
+          <div class="step-desc">Calle o montaña, según preferencia</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">EJE 02</div>
+          <div class="step-name">Transición</div>
+          <div class="step-desc">El bridge calle → trail</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">EJE 03</div>
+          <div class="step-name">Mejorar</div>
+          <div class="step-desc">Consolidar o subir capacidad</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">EJE 04</div>
+          <div class="step-name">Performance</div>
+          <div class="step-desc">Avanzado · pre-competición</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · JOURNEY -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">04 / journey de tiempo</div>
+      <h2>El tiempo aproximado.</h2>
+      <p class="section-sub">Si un usuario recorre el sistema entero desde Eje 01 hasta Eje 04, sin contar repeticiones por gate criteria.</p>
+    </div>
+
+    <div class="journey">
+      <div class="journey-title">Línea de tiempo · todos los ejes</div>
+      <div class="journey-sub">Asumiendo paso fluido y un plan por eje.</div>
+
+      <div class="timeline-bar">
+        <div class="tl-seg e1">eje 01 · 16 sem</div>
+        <div class="tl-seg e2">eje 02 · 12 sem</div>
+        <div class="tl-seg e3">eje 03 · 8-10 sem</div>
+        <div class="tl-seg e4">eje 04 · 12 sem</div>
+      </div>
+
+      <div class="timeline-labels">
+        <div class="tl-label e1">Comenzar</div>
+        <div class="tl-label e2">Transición</div>
+        <div class="tl-label e3">Mejorar</div>
+        <div class="tl-label e4">Avanzados</div>
+      </div>
+
+      <div class="journey-total">
+        <div><div class="total-label">Sistema completo · ejes 01-04</div></div>
+        <div class="total-value">~48-50 sem · ~11 meses</div>
+      </div>
+      <div class="journey-total" style="border-top: none; padding-top: 12px;">
+        <div><div class="total-label">Después: modo ongoing</div></div>
+        <div class="total-value">sin fecha de fin</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · TABLA MAESTRA -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">05 / tabla maestra</div>
+      <h2>Vista consultable.</h2>
+      <p class="section-sub">Los 9 planes organizados por eje.</p>
+    </div>
+
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Nombre</th>
+            <th>Días</th>
+            <th>Sem</th>
+            <th>Gradúa a</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="eje-header"><td colspan="6">Eje 01 · Comenzar a Correr</td></tr>
+          <tr>
+            <td><code>desde_cero_3d</code></td>
+            <td>Desde Cero (calle)</td>
+            <td>3</td><td>8</td>
+            <td>nuevo_calle_3d</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+          <tr>
+            <td><code>nuevo_calle_3d</code></td>
+            <td>Nuevo · Calle</td>
+            <td>3</td><td>8</td>
+            <td>calle_trail_base_3d</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+          <tr>
+            <td><code>nuevo_montana_3d</code></td>
+            <td>Nuevo · Montaña</td>
+            <td>3</td><td>8</td>
+            <td>calle_trail_base_3d o trail_ongoing</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+
+          <tr class="eje-header"><td colspan="6">Eje 02 · Transición Calle → Montaña</td></tr>
+          <tr>
+            <td><code>calle_trail_base_3d</code></td>
+            <td>Calle → Trail · Base</td>
+            <td>3</td><td>12</td>
+            <td>eje 03 o 04</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+
+          <tr class="eje-header"><td colspan="6">Eje 03 · Mejorar Montaña</td></tr>
+          <tr>
+            <td><code>trail_ongoing</code></td>
+            <td>Trail · Modo Mantenimiento</td>
+            <td>3-4</td><td>—</td>
+            <td>—</td>
+            <td><span class="status-codif">ongoing · MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>trail_capacidad_aerobica</code></td>
+            <td>Trail · Capacidad Aeróbica</td>
+            <td>3-4</td><td>8-10</td>
+            <td>eje 04</td>
+            <td><span class="status-codif status-concept">fase 2</span></td>
+          </tr>
+
+          <tr class="eje-header"><td colspan="6">Eje 04 · Avanzados Trail</td></tr>
+          <tr>
+            <td><code>calle_trail_avanzado_4d</code></td>
+            <td>Trail · Avanzado</td>
+            <td>4</td><td>12</td>
+            <td>subidas o vo2</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+          <tr>
+            <td><code>trail_subidas_bajadas</code></td>
+            <td>Subidas y Bajadas</td>
+            <td>4</td><td>8</td>
+            <td>ciclo / trail_ongoing</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+          <tr>
+            <td><code>trail_vo2_peak</code></td>
+            <td>VO2 Peak</td>
+            <td>4-5</td><td>4-6</td>
+            <td>trail_ongoing</td>
+            <td><span class="status-codif">codificado</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>FlowRun · sistema de planes · 4 ejes · 2026-05-15</div>
+    <div>Source: <code>discovery/dynamic-blocks-schema.md</code></div>
+  </footer>
+
+</div>
+</body>
+</html>

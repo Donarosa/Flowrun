@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flowrun — splash animado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --trail: #3D6B3F;
+  --cream: #FAF8F2;
+  --ink: #1B1F1B;
+  --muted: oklch(48% 0.012 145);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+.mark-anim {
+  width: min(320px, 56vw);
+  height: min(320px, 56vw);
+}
+.mark-anim path {
+  fill: none;
+  stroke: var(--trail);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--len, 600);
+  stroke-dashoffset: var(--len, 600);
+  animation: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards;
+}
+.mark-anim circle {
+  fill: var(--trail);
+  transform-origin: 42px 14px;
+  transform: scale(0);
+  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s forwards;
+}
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.wm {
+  font-size: clamp(40px, 8vw, 72px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  text-transform: lowercase;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: rise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.7s forwards;
+}
+.wm .accent { color: var(--trail); }
+@keyframes rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+.replay {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: none;
+  border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0;
+  animation: rise 0.4s ease 2.4s forwards;
+}
+.replay:hover { color: var(--ink); border-color: color-mix(in oklab, var(--ink) 24%, transparent); }
+.tag {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="tag">Splash · flowrun</div>
+<div class="stage" id="stage">
+  <svg class="mark-anim" id="mark" viewBox="0 0 100 100" aria-hidden="true">
+    <path id="trail" d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14"/>
+    <circle cx="42" cy="14" r="5"/>
+  </svg>
+  <div class="wm">flow<span class="accent">run</span></div>
+</div>
+<button class="replay" id="replay">↻ Repetir</button>
+<script>
+  const path = document.getElementById('trail');
+  const len = Math.ceil(path.getTotalLength());
+  document.documentElement.style.setProperty('--len', len);
+
+  document.getElementById('replay').addEventListener('click', () => {
+    const stage = document.getElementById('stage');
+    const clone = stage.cloneNode(true);
+    stage.replaceWith(clone);
+    clone.id = 'stage';
+    const newPath = clone.querySelector('#trail');
+    const newLen = Math.ceil(newPath.getTotalLength());
+    document.documentElement.style.setProperty('--len', newLen);
+  });
+</script>
+</body>
+</html>

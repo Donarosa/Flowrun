@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowRun · Content-Market Fit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #4A5D3A;
+    --deep: #1B3A4B;
+    --stone: #8C8578;
+    --sand: #F5F2ED;
+    --ink: #2C2C2C;
+    --moss-soft: #7A9E6B;
+    --terracotta: #C4826D;
+    --sky: #A8C4D4;
+    --line: rgba(44,44,44,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--sand);
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1200px; margin: 0 auto; padding: 72px 56px 120px; }
+
+  /* HEADER */
+  .header { padding-bottom: 56px; border-bottom: 1px solid var(--line); margin-bottom: 64px; }
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--stone); margin-bottom: 24px;
+  }
+  .brand-mark { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .brand-symbol {
+    width: 52px; height: 52px; background: var(--moss); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; color: var(--sand);
+  }
+  .brand-symbol svg { width: 60%; height: 60%; }
+  .brand-name { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+  .brand-name em { font-style: normal; color: var(--stone); font-weight: 400; }
+
+  h1 {
+    font-size: 48px; line-height: 1.05; letter-spacing: -0.025em;
+    font-weight: 700; color: var(--deep); margin-bottom: 24px; max-width: 880px;
+  }
+  .lead { font-size: 18px; color: var(--ink); max-width: 720px; }
+
+  .meta-strip {
+    display: flex; gap: 40px; margin-top: 48px; padding-top: 28px;
+    border-top: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .meta-item .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--stone); margin-bottom: 6px;
+  }
+  .meta-item .value { font-size: 14px; color: var(--ink); font-weight: 500; }
+
+  /* SECTION */
+  section { margin-bottom: 88px; }
+  .section-head { margin-bottom: 36px; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--moss); letter-spacing: 0.1em; margin-bottom: 12px;
+  }
+  h2 {
+    font-size: 32px; line-height: 1.15; letter-spacing: -0.02em;
+    font-weight: 700; color: var(--deep); margin-bottom: 12px;
+  }
+  .section-sub { font-size: 16px; color: var(--stone); max-width: 680px; }
+
+  /* VALUES */
+  .values-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .value-card {
+    background: white; border-radius: 20px; padding: 32px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .value-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--moss); letter-spacing: 0.08em;
+  }
+  .value-card h3 {
+    font-size: 24px; font-weight: 700; color: var(--deep); letter-spacing: -0.015em;
+  }
+  .value-card p { font-size: 15px; color: var(--ink); line-height: 1.55; }
+  .value-card .application {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--stone);
+  }
+  .value-card .application strong { color: var(--moss); font-weight: 600; }
+
+  /* PILLARS */
+  .pillars-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .pillar-card {
+    background: white; border-radius: 20px; padding: 32px;
+    border-top: 6px solid var(--moss);
+  }
+  .pillar-card:nth-child(2) { border-top-color: var(--deep); }
+  .pillar-card:nth-child(3) { border-top-color: var(--terracotta); }
+  .pillar-tag {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; background: var(--sand); color: var(--moss);
+    padding: 4px 10px; border-radius: 100px; letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 16px;
+  }
+  .pillar-card:nth-child(2) .pillar-tag { color: var(--deep); }
+  .pillar-card:nth-child(3) .pillar-tag { color: var(--terracotta); }
+  .pillar-card h3 {
+    font-size: 22px; font-weight: 700; color: var(--deep);
+    margin-bottom: 12px; letter-spacing: -0.015em;
+  }
+  .pillar-card p { font-size: 14px; color: var(--ink); line-height: 1.55; margin-bottom: 16px; }
+  .pillar-card .subtopics {
+    font-size: 12px; color: var(--stone); line-height: 1.6;
+    padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  .pillar-card .subtopics strong { color: var(--ink); font-weight: 600; }
+
+  /* GRID */
+  .post-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    background: white; padding: 12px; border-radius: 20px;
+  }
+  .post-cell {
+    background: var(--sand); border-radius: 14px; padding: 22px;
+    aspect-ratio: 1 / 1.05; display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+  }
+  .post-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .post-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    font-weight: 600; color: var(--stone); letter-spacing: 0.06em;
+  }
+  .format-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    padding: 4px 8px; border-radius: 6px; letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 700;
+  }
+  .format-carousel { background: var(--moss); color: var(--sand); }
+  .format-reel { background: var(--terracotta); color: var(--sand); }
+  .format-single { background: var(--deep); color: var(--sand); }
+
+  .post-topic {
+    font-size: 14px; font-weight: 700; color: var(--deep);
+    line-height: 1.3; margin-bottom: 10px; letter-spacing: -0.01em;
+  }
+  .post-hook {
+    font-size: 12px; color: var(--ink); font-style: italic;
+    line-height: 1.5; margin-bottom: 14px; flex-grow: 1;
+  }
+  .post-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); }
+  .post-pillar {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: var(--moss); letter-spacing: 0.06em; text-transform: uppercase;
+    font-weight: 600; display: flex; align-items: center; gap: 6px;
+  }
+  .post-pillar::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--moss);
+  }
+  .post-cell.pillar-cultura .post-pillar { color: var(--deep); }
+  .post-cell.pillar-cultura .post-pillar::before { background: var(--deep); }
+  .post-cell.pillar-profe .post-pillar { color: var(--terracotta); }
+  .post-cell.pillar-profe .post-pillar::before { background: var(--terracotta); }
+
+  /* LEGEND */
+  .legend {
+    margin-top: 28px; display: flex; gap: 32px; flex-wrap: wrap;
+    padding: 20px 28px; background: white; border-radius: 14px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-format {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 3px 8px; border-radius: 5px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 700;
+  }
+
+  /* AESTHETIC */
+  .palette-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+    margin-bottom: 16px;
+  }
+  .swatch { background: white; border-radius: 12px; overflow: hidden; }
+  .swatch-color { height: 84px; }
+  .swatch-info { padding: 12px 14px 16px; }
+  .swatch-name { font-size: 12px; font-weight: 600; color: var(--deep); }
+  .swatch-hex { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--stone); margin-top: 2px; }
+  .accent-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;
+  }
+
+  /* DISTRIBUTION */
+  .distribution {
+    background: white; border-radius: 18px; padding: 28px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  }
+  .dist-item { text-align: center; }
+  .dist-num {
+    font-size: 44px; font-weight: 800; color: var(--moss);
+    line-height: 1; letter-spacing: -0.03em;
+  }
+  .dist-label {
+    font-size: 11px; color: var(--stone); margin-top: 8px;
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+  }
+  .dist-bar {
+    height: 4px; background: var(--sand); border-radius: 4px;
+    margin-top: 14px; overflow: hidden;
+  }
+  .dist-bar-fill { height: 100%; background: var(--moss); border-radius: 4px; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line);
+    color: var(--stone); font-size: 13px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  footer code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  @media (max-width: 920px) {
+    .page { padding: 48px 24px; }
+    h1 { font-size: 32px; }
+    .values-grid, .pillars-grid, .post-grid, .distribution { grid-template-columns: 1fr; }
+    .palette-grid { grid-template-columns: repeat(2, 1fr); }
+    .post-cell { aspect-ratio: auto; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position: absolute;">
+  <symbol id="switchback" viewBox="0 0 100 100">
+    <path d="M 20 80 Q 35 75, 35 60 Q 35 45, 50 45 Q 65 45, 65 30 Q 65 20, 80 20" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="eyebrow">Content-Market Fit · v1.0</div>
+    <div class="brand-mark">
+      <div class="brand-symbol"><svg><use href="#switchback"/></svg></div>
+      <div class="brand-name">flowrun <em>— estrategia de contenido</em></div>
+    </div>
+    <h1>Tres valores, tres pilares, nueve posts.</h1>
+    <p class="lead">Sistema de contenido para Instagram de FlowRun. Diseñado para construir autoridad, pertenencia y conocimiento de producto en paralelo.</p>
+
+    <div class="meta-strip">
+      <div class="meta-item">
+        <div class="label">Last Updated</div>
+        <div class="value">2026-05-14</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Owner</div>
+        <div class="value">Santiago · Alta Gracia</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Platform</div>
+        <div class="value">Instagram (primary)</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Idioma</div>
+        <div class="value">Español AR (voseo)</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Mercado</div>
+        <div class="value">LATAM + USA</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BRAND VALUES -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">01 / brand values</div>
+      <h2>Lo que defendemos.</h2>
+      <p class="section-sub">Tres valores que filtran cada pieza de contenido. Si un post no expresa uno de estos, no se publica.</p>
+    </div>
+
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-num">VALOR 01</div>
+        <h3>Ritmo Propio</h3>
+        <p>Tu cuerpo, tu paso, sin comparación. El centro del producto y el anti-Strava-ego del posicionamiento.</p>
+        <div class="application"><strong>En contenido:</strong> mostramos runners de todos los niveles. Nunca comparamos pace. Celebramos progreso individual.</div>
+      </div>
+
+      <div class="value-card">
+        <div class="value-num">VALOR 02</div>
+        <h3>Ciencia Cálida</h3>
+        <p>Rigor científico (Galloway, Seiler, Gabbett) traducido a lenguaje humano. Sin tecnicismos, sin hype motivacional. Es "el profe" — sabe y respeta.</p>
+        <div class="application"><strong>En contenido:</strong> citamos estudios pero los explicamos. Usamos analogías, no jerga.</div>
+      </div>
+
+      <div class="value-card">
+        <div class="value-num">VALOR 03</div>
+        <h3>Disfrute Sostenible</h3>
+        <p>Correr para seguir corriendo. Anti-sufrimiento, anti-burnout, anti-"no pain no gain". El tagline lo dice: "Disfrutá más."</p>
+        <div class="application"><strong>En contenido:</strong> runners sonriendo, no sufriendo. Golden hour. Sin estética competitiva.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT PILLARS -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">02 / content pillars</div>
+      <h2>Tres líneas editoriales.</h2>
+      <p class="section-sub">Cada post pertenece a exactamente uno. Distribución objetivo: 1/3 cada uno.</p>
+    </div>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-tag">Pilar 01 · Autoridad</div>
+        <h3>Ciencia Simple</h3>
+        <p>Educación accesible sobre fisiología del running. Lo que ningún coach te explica claro.</p>
+        <div class="subtopics">
+          <strong>Sub-temas:</strong> Z2 vs Z1, talk test, RPE, threshold, polarized training, ACWR, recovery, run-walk Galloway, deload.
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-tag">Pilar 02 · Pertenencia</div>
+        <h3>Cultura del Ritmo Propio</h3>
+        <p>Mindset, comunidad, salud mental del runner. Anti-cultura del sufrimiento y de la comparación.</p>
+        <div class="subtopics">
+          <strong>Sub-temas:</strong> comparación destructiva, miedo a ir lento, lesiones por ego, historias personales, "el día que entendí X".
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-tag">Pilar 03 · Producto</div>
+        <h3>El Profe Digital</h3>
+        <p>Cómo coachea FlowRun. Building in public con ejemplos reales del producto.</p>
+        <div class="subtopics">
+          <strong>Sub-temas:</strong> screenshots de feedback, decisiones de producto, mockups, "le pregunté a la app X", behind the scenes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POST GRID -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">03 / post grid · 9 posts</div>
+      <h2>Tu primer feed.</h2>
+      <p class="section-sub">9 posts que cubren los 3 pilares con mix de formatos. Diseñado como un grid de Instagram 3×3.</p>
+    </div>
+
+    <div class="post-grid">
+      <!-- Row 1 -->
+      <div class="post-cell">
+        <div class="post-header">
+          <div class="post-num">POST 01</div>
+          <div class="format-badge format-carousel">Carousel</div>
+        </div>
+        <div class="post-topic">¿Qué es Z2 y por qué cambia todo?</div>
+        <div class="post-hook">"Si corrés siempre al 80%, no progresás. Esto es lo que la mayoría hace mal."</div>
+        <div class="post-footer"><div class="post-pillar">Ciencia Simple</div></div>
+      </div>
+
+      <div class="post-cell pillar-cultura">
+        <div class="post-header">
+          <div class="post-num">POST 02</div>
+          <div class="format-badge format-single">Single</div>
+        </div>
+        <div class="post-topic">Te sentís lento. No estás lento.</div>
+        <div class="post-hook">"El runner promedio que se siente 'lento' está exactamente donde debería estar."</div>
+        <div class="post-footer"><div class="post-pillar">Cultura del Ritmo Propio</div></div>
+      </div>
+
+      <div class="post-cell pillar-profe">
+        <div class="post-header">
+          <div class="post-num">POST 03</div>
+          <div class="format-badge format-carousel">Carousel</div>
+        </div>
+        <div class="post-topic">FlowRun analizó mi última carrera. Esto me dijo.</div>
+        <div class="post-hook">"Llegué al final reventado. Lo que la app vio que yo no."</div>
+        <div class="post-footer"><div class="post-pillar">El Profe Digital</div></div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="post-cell">
+        <div class="post-header">
+          <div class="post-num">POST 04</div>
+          <div class="format-badge format-reel">Reel</div>
+        </div>
+        <div class="post-topic">El test de 30 segundos para saber si vas muy rápido</div>
+        <div class="post-hook">"Frená. Si podés hablar en frases completas, estás en Z2. Si no, estás quemando match."</div>
+        <div class="post-footer"><div class="post-pillar">Ciencia Simple</div></div>
+      </div>
+
+      <div class="post-cell pillar-cultura">
+        <div class="post-header">
+          <div class="post-num">POST 05</div>
+          <div class="format-badge format-carousel">Carousel</div>
+        </div>
+        <div class="post-topic">El día que dejé de mirar Strava</div>
+        <div class="post-hook">"Tres lesiones por año a cero. Esto fue lo único que cambié."</div>
+        <div class="post-footer"><div class="post-pillar">Cultura del Ritmo Propio</div></div>
+      </div>
+
+      <div class="post-cell pillar-profe">
+        <div class="post-header">
+          <div class="post-num">POST 06</div>
+          <div class="format-badge format-carousel">Carousel</div>
+        </div>
+        <div class="post-topic">Cómo armo un plan para alguien que NUNCA corrió</div>
+        <div class="post-hook">"Run-walk no es para débiles. Es ciencia (Galloway, 2016). Te muestro."</div>
+        <div class="post-footer"><div class="post-pillar">El Profe Digital</div></div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="post-cell">
+        <div class="post-header">
+          <div class="post-num">POST 07</div>
+          <div class="format-badge format-carousel">Carousel</div>
+        </div>
+        <div class="post-topic">5 mitos del running que las apps no te dicen</div>
+        <div class="post-hook">"Strava te miente. Estos 5 mitos te están lesionando."</div>
+        <div class="post-footer"><div class="post-pillar">Ciencia Simple</div></div>
+      </div>
+
+      <div class="post-cell pillar-cultura">
+        <div class="post-header">
+          <div class="post-num">POST 08</div>
+          <div class="format-badge format-reel">Reel</div>
+        </div>
+        <div class="post-topic">Los que salen más rápido se rompen antes</div>
+        <div class="post-hook">"Por qué subir la carga +30% en una semana es la receta perfecta del esguince."</div>
+        <div class="post-footer"><div class="post-pillar">Cultura del Ritmo Propio</div></div>
+      </div>
+
+      <div class="post-cell pillar-profe">
+        <div class="post-header">
+          <div class="post-num">POST 09</div>
+          <div class="format-badge format-single">Single</div>
+        </div>
+        <div class="post-topic">El día que la app me dijo: "no salgas hoy"</div>
+        <div class="post-hook">Screenshot del Profe + caption sobre HRV, RPE y descanso inteligente.</div>
+        <div class="post-footer"><div class="post-pillar">El Profe Digital</div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-format format-carousel">Carousel</span> educacional, storytelling</div>
+      <div class="legend-item"><span class="legend-format format-reel">Reel</span> hooks rápidos, alcance</div>
+      <div class="legend-item"><span class="legend-format format-single">Single</span> frase impactante, screenshots</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--moss);"></span> Ciencia Simple</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--deep);"></span> Cultura del Ritmo Propio</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--terracotta);"></span> El Profe Digital</div>
+    </div>
+  </section>
+
+  <!-- DISTRIBUTION -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">04 / distribución</div>
+      <h2>Balance del feed.</h2>
+      <p class="section-sub">Mix recomendado de formatos y pilares para arrancar.</p>
+    </div>
+
+    <div class="distribution">
+      <div class="dist-item">
+        <div class="dist-num">5 / 2 / 2</div>
+        <div class="dist-label">Carousels · Reels · Singles</div>
+        <div class="dist-bar"><div class="dist-bar-fill" style="width:55%;"></div></div>
+      </div>
+      <div class="dist-item">
+        <div class="dist-num">3 / 3 / 3</div>
+        <div class="dist-label">Posts por pilar</div>
+        <div class="dist-bar"><div class="dist-bar-fill" style="width:100%;"></div></div>
+      </div>
+      <div class="dist-item">
+        <div class="dist-num">3 / sem</div>
+        <div class="dist-label">Cadencia sugerida</div>
+        <div class="dist-bar"><div class="dist-bar-fill" style="width:43%;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AESTHETIC -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">05 / aesthetic system</div>
+      <h2>Cómo se ve un post FlowRun.</h2>
+      <p class="section-sub">Match con el brandbook. Inter como única familia, paleta cerrada de 5 + 3 acentos, fotografía golden hour.</p>
+    </div>
+
+    <div class="palette-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#4A5D3A;"></div><div class="swatch-info"><div class="swatch-name">Verde musgo</div><div class="swatch-hex">#4A5D3A</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1B3A4B;"></div><div class="swatch-info"><div class="swatch-name">Azul profundo</div><div class="swatch-hex">#1B3A4B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#8C8578;"></div><div class="swatch-info"><div class="swatch-name">Gris piedra</div><div class="swatch-hex">#8C8578</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F5F2ED;border:1px solid var(--line);"></div><div class="swatch-info"><div class="swatch-name">Blanco arena</div><div class="swatch-hex">#F5F2ED</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2C2C2C;"></div><div class="swatch-info"><div class="swatch-name">Negro suave</div><div class="swatch-hex">#2C2C2C</div></div></div>
+    </div>
+
+    <div class="accent-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#7A9E6B; height:56px;"></div><div class="swatch-info"><div class="swatch-name">Verde claro · CTA</div><div class="swatch-hex">#7A9E6B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#C4826D; height:56px;"></div><div class="swatch-info"><div class="swatch-name">Terracota · alerta</div><div class="swatch-hex">#C4826D</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#A8C4D4; height:56px;"></div><div class="swatch-info"><div class="swatch-name">Azul cielo · datos</div><div class="swatch-hex">#A8C4D4</div></div></div>
+    </div>
+
+    <p style="font-size:14px; color:var(--stone); line-height:1.6;">
+      <strong style="color:var(--ink);">Reglas:</strong> Inter en todos los pesos. JetBrains Mono solo para datos / pace / RPE. Sin bordes 1px — usar cambios tonales. Border-radius 12-18px en cards, pill en botones. Fotografía golden hour, runners relajados, tonos cálidos desaturados. Sin neón, sin emojis fitness.
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>FlowRun · content-market-fit · v1.0 · 2026-05-14</div>
+    <div>Source: <code>discovery/MASTER_CONTENT_STRATEGY.md</code></div>
+  </footer>
+
+</div>
+</body>
+</html>

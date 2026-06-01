@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritmo Real — Flow Storyboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#F0F0F0;color:#1a1a1a;min-height:100vh}
+
+/* TAB NAV */
+.tab-nav{position:sticky;top:0;z-index:100;background:#1B4332;display:flex;gap:0;border-bottom:3px solid #2D6A4F}
+.tab-btn{padding:14px 28px;color:#D8F3DC;font-size:14px;font-weight:600;cursor:pointer;border:none;background:transparent;transition:background .2s}
+.tab-btn:hover{background:#2D6A4F}
+.tab-btn.active{background:#2D6A4F;color:#fff;border-bottom:3px solid #52B788;margin-bottom:-3px}
+
+/* FLOW SECTIONS */
+.flow-section{display:none;padding:24px 32px 48px}
+.flow-section.active{display:block}
+
+.flow-header{margin-bottom:20px}
+.flow-title{font-size:22px;font-weight:700;color:#1B4332;margin-bottom:4px}
+.flow-desc{font-size:13px;color:#555}
+
+/* PHASE GROUP */
+.phase-group{margin-bottom:36px}
+.phase-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#2D6A4F;background:#D8F3DC;display:inline-block;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+
+/* SCREEN ROW */
+.screen-row{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:16px}
+.screen-row::-webkit-scrollbar{height:6px}
+.screen-row::-webkit-scrollbar-track{background:#e0e0e0;border-radius:3px}
+.screen-row::-webkit-scrollbar-thumb{background:#2D6A4F;border-radius:3px}
+
+/* ARROW */
+.arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px;margin-top:-40px;flex-shrink:0}
+.arrow-line{font-size:20px;color:#2D6A4F;line-height:1}
+.arrow-label{font-size:9px;color:#888;margin-top:2px;white-space:nowrap}
+
+/* SCREEN WRAPPER */
+.screen-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.screen-label{font-size:10px;color:#555;margin-top:8px;text-align:center;font-weight:600;max-width:260px}
+.screen-id{font-size:9px;color:#999;text-align:center}
+
+/* PHONE FRAME */
+.phone{width:260px;height:460px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.15),0 1px 4px rgba(0,0,0,.1);overflow:hidden;position:relative;display:flex;flex-direction:column;flex-shrink:0}
+
+/* STATUS BAR */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:5px 10px 3px;background:inherit;flex-shrink:0}
+.status-time{font-size:9px;font-weight:700;color:inherit}
+.status-icons{font-size:8px;color:inherit;display:flex;gap:3px;align-items:center}
+.status-battery{width:14px;height:7px;border:1px solid currentColor;border-radius:1.5px;position:relative;display:inline-flex;align-items:center;padding:1px}
+.status-battery::after{content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:2px;height:4px;background:currentColor;border-radius:0 1px 1px 0}
+.battery-fill{height:100%;background:currentColor;border-radius:.5px;width:75%}
+
+/* SCREEN CONTENT */
+.screen-content{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:8px 10px 10px}
+
+/* REUSABLE COMPONENTS */
+.progress-bar-wrap{margin-bottom:10px}
+.progress-label{font-size:9px;color:#888;margin-bottom:3px}
+.progress-bar{height:3px;background:#e8e8e8;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2D6A4F;border-radius:2px}
+
+.screen-title{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px;line-height:1.3}
+.screen-subtitle{font-size:10px;color:#666;margin-bottom:10px}
+
+.option-card{border:1.5px solid #e8e8e8;border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:10px;color:#333;cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px}
+.option-card.selected{border-color:#2D6A4F;border-left:3px solid #2D6A4F;background:#f6fdf8}
+.option-card .emoji{font-size:13px;flex-shrink:0}
+.option-card .card-title{font-weight:600;font-size:10px}
+.option-card .card-sub{font-size:9px;color:#888;margin-top:1px}
+
+.form-group{margin-bottom:8px}
+.form-label{font-size:9px;color:#666;font-weight:600;margin-bottom:3px}
+.form-input{width:100%;border:1.5px solid #e0e0e0;border-radius:6px;padding:5px 8px;font-size:10px;color:#333;background:#fafafa;font-family:inherit}
+.form-input.filled{border-color:#2D6A4F;background:#f6fdf8}
+
+.btn-primary{width:100%;background:#2D6A4F;color:#fff;border:none;border-radius:8px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-secondary{width:100%;background:transparent;color:#666;border:1.5px solid #ddd;border-radius:8px;padding:7px;font-size:10px;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-outline{width:100%;background:transparent;color:#2D6A4F;border:1.5px solid #2D6A4F;border-radius:8px;padding:7px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
+
+.session-card{border:1px solid #e8e8e8;border-radius:8px;padding:7px 9px;margin-bottom:5px;background:#fff;display:flex;align-items:center;gap:8px}
+.session-card .day-badge{font-size:8px;font-weight:700;color:#2D6A4F;background:#D8F3DC;padding:2px 5px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.session-card .session-info{flex:1;min-width:0}
+.session-card .session-name{font-size:10px;font-weight:600;color:#1a1a1a}
+.session-card .session-detail{font-size:9px;color:#888;margin-top:1px}
+.session-card .session-check{font-size:14px;flex-shrink:0}
+
+.plan-header{background:#2D6A4F;margin:-8px -10px 10px;padding:10px 12px 8px}
+.plan-header .plan-title{font-size:12px;font-weight:700;color:#fff}
+.plan-header .plan-week{font-size:10px;color:#D8F3DC;margin-top:1px}
+
+.plan-header-dark{background:#1B4332;margin:-8px -10px 10px;padding:10px 12px 8px}
+.plan-header-dark .plan-title{font-size:12px;font-weight:700;color:#fff}
+.plan-header-dark .plan-week{font-size:10px;color:#D8F3DC;margin-top:1px}
+
+.total-bar{background:#f5f5f5;border-radius:6px;padding:5px 8px;font-size:9px;color:#555;text-align:center;margin-top:auto}
+
+.checkin-question{font-size:11px;font-weight:600;color:#333;margin-bottom:8px}
+.checkin-options{display:flex;gap:5px;margin-bottom:8px}
+.checkin-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:7px;padding:6px 4px;font-size:9px;font-weight:600;text-align:center;cursor:pointer;background:#fff}
+.checkin-btn.selected{background:#2D6A4F;color:#fff;border-color:#2D6A4F}
+
+.rpe-circles{display:flex;gap:6px;justify-content:center;margin:8px 0}
+.rpe-circle{width:32px;height:32px;border-radius:50%;border:2px solid #e0e0e0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999;cursor:pointer}
+.rpe-circle.filled{background:#2D6A4F;border-color:#2D6A4F;color:#fff}
+.rpe-labels{display:flex;justify-content:space-between;font-size:8px;color:#aaa;margin-top:3px}
+
+.feedback-circle{width:56px;height:56px;border-radius:50%;background:#D8F3DC;border:3px solid #2D6A4F;display:flex;align-items:center;justify-content:center;font-size:24px;margin:10px auto}
+.feedback-circle.yellow{background:#FFF3CD;border-color:#FFC107}
+.feedback-title{font-size:14px;font-weight:700;text-align:center;margin-bottom:4px}
+.feedback-msg{font-size:9px;color:#555;text-align:center;line-height:1.4;margin-bottom:10px;padding:0 4px}
+
+.spinner{width:36px;height:36px;border:3px solid #D8F3DC;border-top-color:#2D6A4F;border-radius:50%;animation:spin 1s linear infinite;margin:14px auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.generating-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:4px}
+.generating-sub{font-size:9px;color:#666;text-align:center}
+
+.paywall-banner{background:#FFF3CD;border-bottom:2px solid #FFC107;padding:6px 10px;font-size:9px;font-weight:600;color:#856404;text-align:center;margin:-8px -10px 10px}
+
+.pricing-card{border:1.5px solid #e8e8e8;border-radius:8px;padding:8px 10px;margin-bottom:6px}
+.pricing-card.featured{border-color:#2D6A4F;background:#f6fdf8}
+.pricing-name{font-size:10px;font-weight:700;color:#333}
+.pricing-price{font-size:13px;font-weight:800;color:#2D6A4F;margin:2px 0}
+.pricing-tag{font-size:8px;color:#2D6A4F;background:#D8F3DC;padding:1px 5px;border-radius:10px;display:inline-block}
+
+.header-back{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.back-arrow{font-size:14px;color:#2D6A4F}
+.header-back-title{font-size:11px;font-weight:700;color:#1a1a1a}
+
+.objective-box{background:#D8F3DC;border-radius:7px;padding:7px 9px;margin-bottom:8px;font-size:9px;color:#1B4332;font-weight:600}
+.structure-box{background:#f8f8f8;border-radius:7px;padding:7px 9px;margin-bottom:6px;font-size:9px;color:#444;line-height:1.5}
+.tip-box{background:#FFF9C4;border-radius:7px;padding:6px 9px;margin-bottom:8px;font-size:9px;color:#7A6000;line-height:1.4}
+
+.checkbox-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:10px;color:#333}
+.checkbox-item:last-child{border-bottom:none}
+.cb-box{width:13px;height:13px;border-radius:3px;border:1.5px solid #2D6A4F;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px}
+.cb-box.checked{background:#2D6A4F;color:#fff}
+
+.week-nav{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#888;margin-top:4px}
+.week-nav-arrow{background:#e8e8e8;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;font-size:10px}
+
+.dist-bar{height:8px;border-radius:4px;overflow:hidden;display:flex;margin:6px 0}
+.dist-z1{background:#2D6A4F;flex:4}
+.dist-z5{background:#E63946;flex:1}
+.dist-label{display:flex;justify-content:space-between;font-size:8px;color:#666;margin-bottom:4px}
+
+.metric-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #f0f0f0}
+.metric-row:last-child{border-bottom:none}
+.metric-label{font-size:9px;color:#666;flex:1}
+.metric-bar-wrap{flex:2;height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden}
+.metric-bar-fill{height:100%;border-radius:3px}
+.metric-val{font-size:9px;font-weight:700;color:#333;min-width:24px;text-align:right}
+
+.stat-row{display:flex;gap:6px;margin:8px 0}
+.stat-box{flex:1;background:#f5f5f5;border-radius:7px;padding:5px 6px;text-align:center}
+.stat-num{font-size:11px;font-weight:800;color:#2D6A4F}
+.stat-label{font-size:8px;color:#888;margin-top:1px}
+
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:8px;font-weight:700}
+.badge-green{background:#D8F3DC;color:#1B4332}
+.badge-dark{background:#1B4332;color:#fff}
+.badge-yellow{background:#FFF3CD;color:#856404}
+
+.progress-steps{display:flex;gap:3px;margin-bottom:10px}
+.step-dot{flex:1;height:3px;border-radius:2px;background:#e0e0e0}
+.step-dot.done{background:#2D6A4F}
+.step-dot.active{background:#52B788}
+
+.emoji-btn-row{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.emoji-btn{width:52px;height:44px;border:2px solid #e0e0e0;border-radius:9px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
+.emoji-btn.selected{border-color:#2D6A4F;background:#f6fdf8}
+
+.two-btn-row{display:flex;gap:6px;margin:10px 0}
+.big-btn{flex:1;border-radius:9px;padding:14px 8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;border:2px solid #e0e0e0;background:#fff;color:#333}
+.big-btn.selected{background:#D8F3DC;border-color:#2D6A4F;color:#1B4332}
+
+.dark-status .status-time,.dark-status .status-icons{color:#fff}
+.dark-plan-bg{background:#1B4332}
+
+/* scrollbar styling for Firefox */
+.screen-row{scrollbar-width:thin;scrollbar-color:#2D6A4F #e0e0e0}
+
+.flow-border-1{border-left:4px solid #52B788;padding-left:12px}
+.flow-border-2{border-left:4px solid #2D6A4F;padding-left:12px}
+.flow-border-3{border-left:4px solid #1B4332;padding-left:12px}
+
+.tabs-info{font-size:11px;color:#666;padding:10px 32px 0;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showFlow('flow1')">Flow 0 — Desde Cero</button>
+  <button class="tab-btn" onclick="showFlow('flow2')">Flow 2 — Calle → Montaña</button>
+  <button class="tab-btn" onclick="showFlow('flow3')">Flow 3 — Pro / Elite</button>
+</div>
+<p class="tabs-info">Scroll horizontalmente dentro de cada fase para ver todos los pantallazos.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 1: NUEVO CORREDOR -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="flow1" class="flow-section active">
+  <div class="flow-header flow-border-1">
+    <div class="flow-title">Flow 0 — Desde Cero (v2)</div>
+    <div class="flow-desc">Usuario que no corre. Run-walk progresivo con gate criteria. 18 pantallas total.</div>
+  </div>
+
+  <!-- PHASE: ONBOARDING -->
+  <div class="phase-group">
+    <div class="phase-label">Onboarding</div>
+    <div class="screen-row">
+
+      <!-- 1.0 Tipo de Corredor -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div style="margin-top:6px;margin-bottom:12px">
+              <div style="font-size:8px;font-weight:700;color:#2D6A4F;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">RITMO REAL</div>
+              <div class="screen-title">Queremos conocerte</div>
+              <div class="screen-subtitle">¿Qué tipo de corredor sos?</div>
+            </div>
+            <div class="option-card selected"><span class="emoji">🏃</span><div><div class="card-title">No corro / Empiezo de cero</div><div class="card-sub">Nunca corrí o hace mucho que no</div></div></div>
+            <div class="option-card"><span class="emoji">🏙️→⛰️</span><div><div class="card-title">Calle a montaña</div><div class="card-sub">Ya corro, quiero el trail</div></div></div>
+            <div class="option-card"><span class="emoji">⛰️</span><div><div class="card-title">Montaña específicos</div><div class="card-sub">Ya hago trail, mejorar</div></div></div>
+            <div class="option-card"><span class="emoji">🏆</span><div><div class="card-title">Planes pro</div><div class="card-sub">Competitivo / élite</div></div></div>
+          </div>
+        </div>
+        <div class="screen-id">1.0</div>
+        <div class="screen-label">Tipo de Corredor</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap</div></div>
+
+      <!-- 1.1 Datos -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">1 de 5</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+            </div>
+            <div class="screen-title">¿Cómo te llamás?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Empecemos con lo básico</div>
+            <div class="form-group">
+              <div class="form-label">NOMBRE</div>
+              <input class="form-input filled" value="Martín" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label">FECHA DE NACIMIENTO</div>
+              <input class="form-input filled" value="15/03/1990" readonly>
+            </div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.1</div>
+        <div class="screen-label">Datos Personales</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 1.2 Objetivo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">2 de 5</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+            </div>
+            <div class="screen-title">¿Qué querés lograr?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Tu primer objetivo</div>
+            <div class="option-card selected"><span class="emoji">🏙️</span><div><div class="card-title">Empezar en calle</div><div class="card-sub">Correr 30-40 min sin parar</div></div></div>
+            <div class="option-card"><span class="emoji">⛰️</span><div><div class="card-title">Empezar en montaña</div><div class="card-sub">Primer trail en 3 meses</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.2</div>
+        <div class="screen-label">Objetivo</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 1.3 Actividad -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">3 de 5</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+            </div>
+            <div class="screen-title">¿Corrés algo hoy?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Tu punto de partida</div>
+            <div class="option-card selected"><span class="emoji">🚫</span><div><div class="card-title">No corro</div><div class="card-sub">Nunca o hace más de 6 meses</div></div></div>
+            <div class="option-card"><span class="emoji">🚶</span><div><div class="card-title">Camino bastante</div><div class="card-sub">Activo pero sin correr</div></div></div>
+            <div class="option-card"><span class="emoji">🔄</span><div><div class="card-title">Algo, irregular</div><div class="card-sub">Salgo pero sin rutina</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.3</div>
+        <div class="screen-label">Actividad Actual</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 1.4 Días -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">4 de 5</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+            </div>
+            <div class="screen-title">¿Cuántos días?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Días disponibles por semana</div>
+            <div class="option-card"><span class="emoji">📅</span><div><div class="card-title">2 días</div><div class="card-sub">Plan mínimo sostenible</div></div></div>
+            <div class="option-card selected"><span class="emoji">📅</span><div><div class="card-title">3 días</div><div class="card-sub">Progreso constante</div></div></div>
+            <div class="option-card"><span class="emoji">📅</span><div><div class="card-title">4 días</div><div class="card-sub">Mayor progresión</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.4</div>
+        <div class="screen-label">Días Disponibles</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 1.5 Esfuerzo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">5 de 5</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+            </div>
+            <div class="screen-title">¿Tenés reloj con FC?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Para medir esfuerzo</div>
+            <div class="option-card" style="flex-direction:column;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:6px"><span class="emoji">⌚</span><div class="card-title">Sí, tengo reloj</div></div>
+              <input class="form-input" style="margin-top:5px;width:100%" placeholder="FC máx. (ej: 185 bpm)" readonly>
+            </div>
+            <div class="option-card selected" style="flex-direction:column;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:6px"><span class="emoji">💬</span><div class="card-title">No — por sensaciones</div></div>
+              <div style="font-size:8px;color:#555;margin-top:3px">Estimamos con 220 − edad</div>
+            </div>
+            <div style="background:#FFF9C4;border-radius:7px;padding:6px 9px;margin:8px 0;font-size:8px;color:#7A6000;line-height:1.4">
+  💡 Para nivel Cero, usamos un check-in simplificado — no necesitás reloj ni saber tu FC.
+</div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Crear mi plan →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.5</div>
+        <div class="screen-label">Esfuerzo / FC</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">crear plan</div></div>
+
+      <!-- 1.6 Generando -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center">
+            <div class="spinner"></div>
+            <div class="generating-title">Estamos armando tu plan...</div>
+            <div class="generating-sub" style="margin-top:6px">Basado en tus respuestas</div>
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:5px;text-align:left;background:#f8f8f8;border-radius:8px;padding:10px">
+              <div style="font-size:9px;color:#2D6A4F">✓ Perfil creado</div>
+              <div style="font-size:9px;color:#2D6A4F">✓ Objetivo identificado</div>
+              <div style="font-size:9px;color:#888;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border:1.5px solid #2D6A4F;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></span> Generando semanas...</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.6</div>
+        <div class="screen-label">Generando Plan</div>
+      </div>
+
+    </div><!-- end screen-row -->
+  </div><!-- end phase onboarding -->
+
+  <!-- PHASE: PLAN -->
+  <div class="phase-group">
+    <div class="phase-label">Plan Semanal</div>
+    <div class="screen-row">
+
+      <!-- 1.7 Plan Semana -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#2D6A4F"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header">
+              <div class="plan-title">Tu Plan · Desde Cero</div>
+              <div class="plan-week">Bloque A · Adaptación</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-size:10px;color:#666">Progreso</span>
+                <span style="font-size:10px;font-weight:700;color:#2D6A4F">0/3 sesiones</span>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D1</div>
+                <div class="session-info">
+                  <div class="session-name">Empezar a Moverse</div>
+                  <div class="session-detail">RW(A) · 30 min</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D2</div>
+                <div class="session-info">
+                  <div class="session-name">Fuerza Básica</div>
+                  <div class="session-detail">FG + MF · 20 min</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D3</div>
+                <div class="session-info">
+                  <div class="session-name">Segundo Paso</div>
+                  <div class="session-detail">RW(A) · 30 min</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="week-nav">
+                <button class="week-nav-arrow">‹</button>
+                <span>80 min total · Bloque A</span>
+                <button class="week-nav-arrow">›</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.7</div>
+        <div class="screen-label">Plan Semana</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap D1</div></div>
+
+      <!-- 1.8 Sesión -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="header-back">
+              <span class="back-arrow">←</span>
+              <span class="header-back-title">Día 1 — Empezar a Moverse (Run-Walk)</span>
+            </div>
+            <div class="objective-box">🎯 Alternar trote y caminata. Sin presión.<br><span style="font-weight:400">1 min trote + 4 min caminata × repetir</span></div>
+            <div style="font-size:9px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px">Estructura</div>
+            <div class="structure-box">
+  5' caminata fácil (calentamiento)<br>
+  20' → 1' trote suave + 4' caminata (repetir)<br>
+  5' caminata suave (vuelta a calma)<br>
+  <span style="color:#888">· Si te cansás, caminá más. Está perfecto.</span>
+</div>
+            <div class="tip-box">💡 Caminar no es hacer trampa. Es parte del plan.</div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Completar Sesión ✓</button>
+              <button class="btn-secondary">Saltar sesión</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.8</div>
+        <div class="screen-label">Detalle Sesión</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: CHECK-IN -->
+  <div class="phase-group">
+    <div class="phase-label">Check-in Post-Sesión</div>
+    <div class="screen-row">
+
+      <!-- 1.9 Check-in 1 -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center">
+            <div style="text-align:center;margin-bottom:16px">
+              <div style="font-size:9px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">CHECK-IN RÁPIDO</div>
+              <div style="font-size:10px;font-weight:700;color:#888">1 de 4</div>
+            </div>
+            <div class="checkin-question">¿Pudiste completar todos los bloques de trote?</div>
+            <div class="checkin-options">
+              <div class="checkin-btn selected">Sí ✓</div>
+              <div class="checkin-btn">Casi</div>
+              <div class="checkin-btn">No</div>
+            </div>
+            <div style="font-size:9px;color:#aaa;text-align:center;margin-top:8px">No importa la velocidad, solo completar</div>
+          </div>
+        </div>
+        <div class="screen-id">1.9</div>
+        <div class="screen-label">Check-in 1: Conversación</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap</div></div>
+
+      <!-- 1.10 Check-in 2 -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center">
+            <div style="text-align:center;margin-bottom:16px">
+              <div style="font-size:9px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">CHECK-IN RÁPIDO</div>
+              <div style="font-size:10px;font-weight:700;color:#888">2 de 4</div>
+            </div>
+            <div class="checkin-question">¿Cómo te sentiste?</div>
+            <div class="emoji-btn-row">
+  <div class="emoji-btn selected">😊<br><span style="font-size:8px">Bien</span></div>
+  <div class="emoji-btn">😐<br><span style="font-size:8px">Regular</span></div>
+  <div class="emoji-btn">😟<br><span style="font-size:8px">Mal</span></div>
+</div>
+          </div>
+        </div>
+        <div class="screen-id">1.10</div>
+        <div class="screen-label">Check-in 2: RPE</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap</div></div>
+
+      <!-- 1.11 Check-in 3 -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center">
+            <div style="text-align:center;margin-bottom:16px">
+              <div style="font-size:9px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">CHECK-IN RÁPIDO</div>
+              <div style="font-size:10px;font-weight:700;color:#888">3 de 4</div>
+            </div>
+            <div class="checkin-question">¿Molestia física?</div>
+            <div class="two-btn-row">
+              <div class="big-btn selected">No 👍</div>
+              <div class="big-btn">Sí</div>
+            </div>
+            <div style="font-size:9px;color:#aaa;text-align:center;margin-top:8px">Dolor &gt; incomodidad = parar</div>
+          </div>
+        </div>
+        <div class="screen-id">1.11</div>
+        <div class="screen-label">Check-in 3: Molestia</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap</div></div>
+
+      <!-- 1.12 Check-in 4 -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center">
+            <div style="text-align:center;margin-bottom:16px">
+              <div style="font-size:9px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">CHECK-IN RÁPIDO</div>
+              <div style="font-size:10px;font-weight:700;color:#888">4 de 4</div>
+            </div>
+            <div class="checkin-question">¿Disfrutaste?</div>
+            <div class="emoji-btn-row">
+              <div class="emoji-btn selected">😊</div>
+              <div class="emoji-btn">😐</div>
+              <div class="emoji-btn">😕</div>
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn-primary">Enviar →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.12</div>
+        <div class="screen-label">Check-in 4: Disfrute</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: RESULTADO -->
+  <div class="phase-group">
+    <div class="phase-label">Resultado &amp; Plan Actualizado</div>
+    <div class="screen-row">
+
+      <!-- 1.13 Feedback -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center">
+            <div class="feedback-circle">✓</div>
+            <div class="feedback-title">¡Perfecto!</div>
+            <div class="feedback-msg">Corriste a tu <strong>Ritmo Real</strong>. Así se construye base aeróbica real. ¡Seguí así!</div>
+            <div style="background:#f6fdf8;border-radius:8px;padding:8px 10px;margin:0 8px 14px;border:1px solid #D8F3DC">
+              <div style="font-size:9px;color:#2D6A4F;font-weight:700;margin-bottom:4px">Tu sesión en números</div>
+              <div style="display:flex;justify-content:space-around">
+                <div style="text-align:center"><div style="font-size:12px;font-weight:800;color:#1B4332">25'</div><div style="font-size:8px;color:#888">Tiempo</div></div>
+                <div style="text-align:center"><div style="font-size:12px;font-weight:800;color:#1B4332">Z2</div><div style="font-size:8px;color:#888">Zona</div></div>
+                <div style="text-align:center"><div style="font-size:12px;font-weight:800;color:#1B4332">RPE 2</div><div style="font-size:8px;color:#888">Esfuerzo</div></div>
+              </div>
+            </div>
+            <button class="btn-primary">Volver al plan</button>
+          </div>
+        </div>
+        <div class="screen-id">1.13</div>
+        <div class="screen-label">Feedback Positivo</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">ver progreso</div></div>
+
+      <!-- 1.14 Gate Progress -->
+<div class="screen-wrap">
+  <div class="phone">
+    <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+    <div class="screen-content">
+      <div class="header-back">
+        <span class="back-arrow">←</span>
+        <span class="header-back-title">Tu Progreso — Bloque A</span>
+      </div>
+      <div style="background:#D8F3DC;border-radius:8px;padding:10px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:#1B4332;margin-bottom:6px">Criterio para avanzar al Bloque B</div>
+        <div style="font-size:9px;color:#2D6A4F;display:flex;align-items:center;gap:4px;margin-bottom:4px">✅ Esfuerzo promedio ≤ 4</div>
+        <div style="font-size:9px;color:#2D6A4F;display:flex;align-items:center;gap:4px;margin-bottom:4px">✅ Sin dolor en últimas 48h</div>
+        <div style="font-size:9px;color:#2D6A4F;display:flex;align-items:center;gap:4px;margin-bottom:4px">✅ 4+ sesiones completadas</div>
+        <div style="font-size:9px;color:#888;display:flex;align-items:center;gap:4px">⬜ ≥80% de sesiones (3/4)</div>
+      </div>
+      <div style="background:#FFF9C4;border-radius:7px;padding:7px 9px;font-size:9px;color:#7A6000;line-height:1.4;margin-bottom:10px">
+        Una sesión más y avanzás al Bloque B (3' trote / 2' caminata)
+      </div>
+      <div style="display:flex;gap:4px;margin-bottom:8px">
+        <div style="flex:1;height:6px;border-radius:3px;background:#2D6A4F"></div>
+        <div style="flex:1;height:6px;border-radius:3px;background:#e0e0e0"></div>
+        <div style="flex:1;height:6px;border-radius:3px;background:#e0e0e0"></div>
+        <div style="flex:1;height:6px;border-radius:3px;background:#e0e0e0"></div>
+      </div>
+      <div style="font-size:8px;color:#888;text-align:center">Bloque A → B → C → Correr continuo</div>
+    </div>
+  </div>
+  <div class="screen-id">1.14</div>
+  <div class="screen-label">Gate Criteria Progress</div>
+</div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">volver al plan</div></div>
+
+      <!-- 1.15 Plan Updated -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#2D6A4F"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header">
+              <div class="plan-title">Tu Plan · Desde Cero</div>
+              <div class="plan-week">Bloque A · Adaptación</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-size:10px;color:#666">Progreso</span>
+                <span style="font-size:10px;font-weight:700;color:#2D6A4F">1/3 sesiones ↗</span>
+              </div>
+              <div class="session-card" style="background:#f6fdf8;border-color:#2D6A4F">
+                <div class="day-badge">D1</div>
+                <div class="session-info">
+                  <div class="session-name">Empezar a Moverse</div>
+                  <div class="session-detail">RW(A) · 30 min · completada</div>
+                </div>
+                <div class="session-check">✅</div>
+              </div>
+              <div class="session-card" style="border-color:#52B788;background:#f0fdf4">
+                <div class="day-badge">D2</div>
+                <div class="session-info">
+                  <div class="session-name">Fuerza Básica</div>
+                  <div class="session-detail">FG + MF · 20 min · Próxima →</div>
+                </div>
+                <div class="session-check" style="font-size:10px;color:#2D6A4F;font-weight:700">→</div>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D3</div>
+                <div class="session-info">
+                  <div class="session-name">Segundo Paso</div>
+                  <div class="session-detail">RW(A) · 30 min</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="week-nav">
+                <button class="week-nav-arrow">‹</button>
+                <span>80 min total · Bloque A</span>
+                <button class="week-nav-arrow">›</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.15</div>
+        <div class="screen-label">Plan Actualizado</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">sem 3+</div></div>
+
+      <!-- 1.16 Paywall -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="paywall-banner">⏰ Tus 2 semanas gratis terminaron</div>
+            <div style="padding:8px 10px">
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Seguí mejorando</div>
+              <div style="font-size:9px;color:#666;margin-bottom:12px">Desbloquea todo tu plan y check-ins adaptativos</div>
+              <div class="pricing-card">
+                <div class="pricing-name">1 mes</div>
+                <div class="pricing-price">$5.000</div>
+                <div style="font-size:8px;color:#888">/ mes · cancela cuando quieras</div>
+                <button class="btn-outline" style="margin-top:6px">Elegir este</button>
+              </div>
+              <div class="pricing-card featured">
+                <div class="pricing-name">3 meses</div>
+                <div class="pricing-price">$12.000</div>
+                <div><span class="pricing-tag">Ahorrás 25%</span></div>
+                <button class="btn-primary" style="margin-top:6px">Elegir este ✓</button>
+              </div>
+              <div style="text-align:center;margin-top:8px">
+                <span style="font-size:9px;color:#aaa;text-decoration:underline;cursor:pointer">Seguir limitado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.16</div>
+        <div class="screen-label">Paywall</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: GRADUACIÓN -->
+  <div class="phase-group">
+    <div class="phase-label">Graduación Nivel Cero → Nuevo</div>
+    <div class="screen-row">
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center;background:#1B4332;color:#fff">
+            <div style="font-size:40px;margin-bottom:12px">🎉</div>
+            <div style="font-size:16px;font-weight:700;margin-bottom:6px">¡Ya corrés 30 minutos!</div>
+            <div style="font-size:10px;opacity:0.8;margin-bottom:20px;padding:0 16px">Eso es enorme. Ahora elegí tu camino.</div>
+            <div class="option-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);color:#fff;margin:0 8px 6px">
+              <span class="emoji">🏙️</span>
+              <div><div class="card-title" style="color:#fff">Seguir en calle</div><div class="card-sub" style="color:rgba(255,255,255,0.6)">Plan nuevo_calle_3d</div></div>
+            </div>
+            <div class="option-card" style="background:rgba(255,255,255,0.15);border-color:#52B788;color:#fff;margin:0 8px 6px">
+              <span class="emoji">⛰️</span>
+              <div><div class="card-title" style="color:#fff">Ir a la montaña</div><div class="card-sub" style="color:rgba(255,255,255,0.6)">Plan nuevo_montana_3d</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">1.G</div>
+        <div class="screen-label">Graduación — Elige Camino</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end flow1 -->
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 2: CALLE A MONTAÑA -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="flow2" class="flow-section">
+  <div class="flow-header flow-border-2">
+    <div class="flow-title">Flow 2 — Calle a Montaña</div>
+    <div class="flow-desc">Corredor de calle que quiere hacer su primer trail. 11 pantallas total.</div>
+  </div>
+
+  <!-- PHASE: ONBOARDING -->
+  <div class="phase-group">
+    <div class="phase-label">Onboarding</div>
+    <div class="screen-row">
+
+      <!-- 2.1 Datos -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">1 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+            </div>
+            <div class="screen-title">¿Cómo te llamás?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Datos básicos</div>
+            <div class="form-group">
+              <div class="form-label">NOMBRE</div>
+              <input class="form-input filled" value="Martín" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label">FECHA DE NACIMIENTO</div>
+              <input class="form-input filled" value="15/03/1990" readonly>
+            </div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.1</div>
+        <div class="screen-label">Datos Personales</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 2.2 Volumen -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">2 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+            </div>
+            <div class="screen-title">¿Cuánto corrés?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Volumen actual de entrenamiento</div>
+            <div class="option-card"><span class="emoji">📊</span><div><div class="card-title">2-3 veces/sem · 30-40 min</div><div class="card-sub">Base inicial</div></div></div>
+            <div class="option-card selected"><span class="emoji">📊</span><div><div class="card-title">3-4 veces/sem · 40-60 min</div><div class="card-sub">Base sólida</div></div></div>
+            <div class="option-card"><span class="emoji">📊</span><div><div class="card-title">4+ tiradas largas</div><div class="card-sub">Volumen alto</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.2</div>
+        <div class="screen-label">Volumen Actual</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 2.3 Trail exp -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">3 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+            </div>
+            <div class="screen-title">¿Corriste en montaña?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Experiencia en trail</div>
+            <div class="option-card"><span class="emoji">🆕</span><div><div class="card-title">Nunca</div><div class="card-sub">Solo asfalto/pista</div></div></div>
+            <div class="option-card selected"><span class="emoji">🔁</span><div><div class="card-title">Alguna vez</div><div class="card-sub">1-5 salidas informales</div></div></div>
+            <div class="option-card"><span class="emoji">🌲</span><div><div class="card-title">Pocas veces</div><div class="card-sub">Algunas salidas planificadas</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.3</div>
+        <div class="screen-label">Experiencia Trail</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 2.4 Preocupaciones -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">4 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:66%"></div></div>
+            </div>
+            <div class="screen-title">¿Qué te preocupa?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Elegí todas las que apliquen</div>
+            <div class="checkbox-item">
+              <div class="cb-box checked">✓</div>
+              <span>Bajadas / rodillas</span>
+            </div>
+            <div class="checkbox-item">
+              <div class="cb-box"></div>
+              <span>Subidas / me agoto</span>
+            </div>
+            <div class="checkbox-item">
+              <div class="cb-box checked">✓</div>
+              <span>No sé el ritmo en montaña</span>
+            </div>
+            <div class="checkbox-item">
+              <div class="cb-box"></div>
+              <span>Lesionarme</span>
+            </div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.4</div>
+        <div class="screen-label">Preocupaciones</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 2.5 Carrera objetivo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">5 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:83%"></div></div>
+            </div>
+            <div class="screen-title">¿Objetivo de carrera?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">¿Hay una carrera en mente?</div>
+            <div class="option-card selected" style="flex-direction:column;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:6px"><span class="emoji">🏁</span><div class="card-title">Sí, quiero prepararme</div></div>
+              <div style="width:100%;margin-top:7px;display:flex;flex-direction:column;gap:4px">
+                <input class="form-input filled" style="width:100%" value="K21 Villa Carlos Paz" readonly>
+                <input class="form-input filled" style="width:100%" value="15/06/2026" readonly>
+              </div>
+            </div>
+            <div class="option-card"><span class="emoji">🎯</span><div><div class="card-title">No, quiero explorar</div><div class="card-sub">Plan general de transición</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.5</div>
+        <div class="screen-label">Carrera Objetivo</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 2.6 Zona 2 -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">6 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+            </div>
+            <div class="screen-title">¿Cómo medís esfuerzo?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Para prescribir correctamente</div>
+            <div class="option-card" style="flex-direction:column;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:6px"><span class="emoji">⌚</span><div class="card-title">FC con reloj</div></div>
+              <div style="display:flex;gap:4px;margin-top:5px;width:100%">
+                <input class="form-input" style="flex:1" placeholder="FC Z2 min" readonly>
+                <input class="form-input" style="flex:1" placeholder="FC Z2 max" readonly>
+              </div>
+            </div>
+            <div class="option-card selected"><span class="emoji">💬</span><div><div class="card-title">Por sensaciones</div><div class="card-sub">Test de conversación</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Crear mi plan →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.6</div>
+        <div class="screen-label">Zona 2 / Esfuerzo</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">crear plan</div></div>
+
+      <!-- 2.7 Generando -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center">
+            <div class="spinner"></div>
+            <div class="generating-title">Generando tu plan de transición...</div>
+            <div class="generating-sub" style="margin-top:6px">12 semanas para la montaña</div>
+            <div style="margin-top:14px">
+              <span class="badge badge-green" style="font-size:9px;padding:3px 10px">🏁 K21 VCP · 15 jun 2026</span>
+            </div>
+            <div style="margin-top:12px;background:#f8f8f8;border-radius:8px;padding:10px;text-align:left">
+              <div style="font-size:9px;color:#2D6A4F">✓ Base aeróbica identificada</div>
+              <div style="font-size:9px;color:#2D6A4F">✓ 12 semanas disponibles</div>
+              <div style="font-size:9px;color:#888;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border:1.5px solid #2D6A4F;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></span> Estructurando semanas...</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.7</div>
+        <div class="screen-label">Generando Plan</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: PLAN -->
+  <div class="phase-group">
+    <div class="phase-label">Plan &amp; Sesión</div>
+    <div class="screen-row">
+
+      <!-- 2.8 Plan -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#2D6A4F"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div class="plan-title">Calle a Montaña</div>
+                <span style="font-size:8px;background:rgba(255,255,255,.2);color:#fff;padding:2px 6px;border-radius:8px">K21 VCP</span>
+              </div>
+              <div class="plan-week">Semana 1 · Base Aeróbica — 15 jun</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-size:10px;color:#666">Progreso sem 1</span>
+                <span style="font-size:10px;font-weight:700;color:#2D6A4F">0/3</span>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D1</div>
+                <div class="session-info">
+                  <div class="session-name">Base Aeróbica</div>
+                  <div class="session-detail">RS · 40 min · conversacional</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D2</div>
+                <div class="session-info">
+                  <div class="session-name">Trail en Ciudad</div>
+                  <div class="session-detail">SMC · 40 min · escaleras/rampas</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card">
+                <div class="day-badge">D3</div>
+                <div class="session-info">
+                  <div class="session-name">Tirada Sostenible</div>
+                  <div class="session-detail">TL · 55 min · Z2 estricto</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="week-nav">
+                <button class="week-nav-arrow">‹</button>
+                <span>135 min total · sem 1/12</span>
+                <button class="week-nav-arrow">›</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.8</div>
+        <div class="screen-label">Plan Semana</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap D2</div></div>
+
+      <!-- 2.9 Sesión Trail -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="header-back">
+              <span class="back-arrow">←</span>
+              <span class="header-back-title">Día 2 — Trail en Ciudad</span>
+            </div>
+            <div class="objective-box">🎯 Simular terreno irregular sin salir de ciudad<br><span style="font-weight:400">Escaleras = práctica de subida técnica</span></div>
+            <div style="font-size:9px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px">Estructura · 40 min</div>
+            <div class="structure-box">
+              10' calentamiento suave →<br>
+              25' circuito urbano con escaleras →<br>
+              5' trote suave vuelta calma
+            </div>
+            <div class="tip-box">💡 Escaleras y rampas entrenan los mismos músculos que la montaña. Bajá con control.</div>
+            <div style="margin-top:auto">
+              <button class="btn-primary">Completar Sesión ✓</button>
+              <button class="btn-secondary">Saltar sesión</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">2.9</div>
+        <div class="screen-label">Sesión Trail en Ciudad</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: CHECK-IN & RESULTADO -->
+  <div class="phase-group">
+    <div class="phase-label">Check-in &amp; Resultado</div>
+    <div class="screen-row">
+
+      <!-- 2.10 Check-in compacto -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div style="text-align:center;margin-bottom:10px">
+              <div style="font-size:9px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px">CHECK-IN RÁPIDO</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="background:#f8f8f8;border-radius:8px;padding:7px 9px">
+                <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px">¿Conversación?</div>
+                <div style="display:flex;gap:4px">
+                  <div class="checkin-btn" style="font-size:9px">Sí</div>
+                  <div class="checkin-btn selected" style="font-size:9px">A veces</div>
+                  <div class="checkin-btn" style="font-size:9px">No</div>
+                </div>
+              </div>
+              <div style="background:#f8f8f8;border-radius:8px;padding:7px 9px">
+                <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px">Esfuerzo RPE</div>
+                <div style="display:flex;gap:4px;justify-content:center">
+                  <div class="rpe-circle" style="width:26px;height:26px;font-size:9px">1</div>
+                  <div class="rpe-circle" style="width:26px;height:26px;font-size:9px">2</div>
+                  <div class="rpe-circle filled" style="width:26px;height:26px;font-size:9px">3</div>
+                  <div class="rpe-circle" style="width:26px;height:26px;font-size:9px">4</div>
+                  <div class="rpe-circle" style="width:26px;height:26px;font-size:9px">5</div>
+                </div>
+              </div>
+              <div style="background:#f8f8f8;border-radius:8px;padding:7px 9px">
+                <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px">¿Molestia?</div>
+                <div style="display:flex;gap:4px">
+                  <div class="checkin-btn selected" style="font-size:9px">No 👍</div>
+                  <div class="checkin-btn" style="font-size:9px">Sí</div>
+                </div>
+              </div>
+              <div style="background:#f8f8f8;border-radius:8px;padding:7px 9px">
+                <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px">¿Disfrutaste?</div>
+                <div style="display:flex;gap:6px;justify-content:center">
+                  <div class="emoji-btn selected" style="width:36px;height:30px;font-size:14px">😊</div>
+                  <div class="emoji-btn" style="width:36px;height:30px;font-size:14px">😐</div>
+                  <div class="emoji-btn" style="width:36px;height:30px;font-size:14px">😕</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:8px">Enviar →</button>
+          </div>
+        </div>
+        <div class="screen-id">2.10</div>
+        <div class="screen-label">Check-in Compacto</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">enviar</div></div>
+
+      <!-- 2.11 Feedback amarillo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center">
+            <div class="feedback-circle yellow">⚠</div>
+            <div class="feedback-title">Buen esfuerzo</div>
+            <div class="feedback-msg">RPE moderado y conversación intermitente. Intentá mantener ritmo conversacional la próxima salida.</div>
+            <div style="background:#f8f8f8;border-radius:8px;padding:8px 10px;margin:0 4px 12px;text-align:left">
+              <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:6px">Análisis</div>
+              <div style="font-size:9px;color:#666;line-height:1.6">
+                · RPE 3 — un poco alto para Z2<br>
+                · Escaleras = más intensidad normal<br>
+                · Reducí 10% la próxima semana
+              </div>
+            </div>
+            <button class="btn-primary">Volver al plan</button>
+          </div>
+        </div>
+        <div class="screen-id">2.11</div>
+        <div class="screen-label">Feedback Moderado</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end flow2 -->
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 3: PRO / ELITE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="flow3" class="flow-section">
+  <div class="flow-header flow-border-3">
+    <div class="flow-title">Flow 3 — Pro / Elite</div>
+    <div class="flow-desc">Corredor competitivo trail/ultra. Headers oscuros #1B4332. 11 pantallas total.</div>
+  </div>
+
+  <!-- PHASE: ONBOARDING -->
+  <div class="phase-group">
+    <div class="phase-label">Onboarding Pro</div>
+    <div class="screen-row">
+
+      <!-- 3.1 Datos -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">1 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+            </div>
+            <div class="screen-title">¿Cómo te llamás?</div>
+            <div class="screen-subtitle" style="margin-bottom:12px">Perfil atlético</div>
+            <div class="form-group">
+              <div class="form-label">NOMBRE</div>
+              <input class="form-input filled" value="Martín" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label">FECHA DE NACIMIENTO</div>
+              <input class="form-input filled" value="15/03/1990" readonly>
+            </div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.1</div>
+        <div class="screen-label">Datos Personales</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 3.2 Tipo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">2 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:33%;background:#1B4332"></div></div>
+            </div>
+            <div class="screen-title">¿Tipo de corredor?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Categoría de rendimiento</div>
+            <div class="option-card selected" style="border-left-color:#1B4332;border-color:#1B4332;background:#f0f4f2"><span class="emoji">🏔️</span><div><div class="card-title">Trail / Ultra competitivo</div><div class="card-sub">Podio / clasificaciones</div></div></div>
+            <div class="option-card"><span class="emoji">🌲</span><div><div class="card-title">Trail recreativo avanzado</div><div class="card-sub">Finalista, mejorar tiempos</div></div></div>
+            <div class="option-card"><span class="emoji">🏙️</span><div><div class="card-title">Calle competitivo</div><div class="card-sub">Maratón / medio maratón</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.2</div>
+        <div class="screen-label">Tipo Corredor</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 3.3 Objetivo -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">3 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:50%;background:#1B4332"></div></div>
+            </div>
+            <div class="screen-title">¿Tu objetivo?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">¿Qué querés lograr?</div>
+            <div class="option-card selected" style="border-left-color:#1B4332;border-color:#1B4332;background:#f0f4f2"><span class="emoji">🏁</span><div><div class="card-title">Carrera + fecha objetivo</div><div class="card-sub">Plan periodizado específico</div></div></div>
+            <div class="option-card"><span class="emoji">📈</span><div><div class="card-title">Mejorar umbral</div><div class="card-sub">Rendimiento general</div></div></div>
+            <div class="option-card"><span class="emoji">🔒</span><div><div class="card-title">Mantener nivel</div><div class="card-sub">Sin carrera en vista</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.3</div>
+        <div class="screen-label">Objetivo</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 3.4 Días -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">4 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:66%;background:#1B4332"></div></div>
+            </div>
+            <div class="screen-title">¿Cuántos días?</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Capacidad semanal</div>
+            <div class="option-card selected" style="border-left-color:#1B4332;border-color:#1B4332;background:#f0f4f2"><span class="emoji">📅</span><div><div class="card-title">4-5 días</div><div class="card-sub">Volumen alto controlado</div></div></div>
+            <div class="option-card"><span class="emoji">📅</span><div><div class="card-title">6+ días</div><div class="card-sub">Volumen máximo · élite</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.4</div>
+        <div class="screen-label">Días Disponibles</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 3.5 Rendimiento -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">5 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:83%;background:#1B4332"></div></div>
+            </div>
+            <div class="screen-title">Datos de rendimiento</div>
+            <div class="screen-subtitle" style="margin-bottom:10px">Para personalizar zonas</div>
+            <div class="form-group">
+              <div class="form-label">RITMO FÁCIL (min/km)</div>
+              <input class="form-input filled" value="5:30 min/km" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label">RITMO UMBRAL (min/km)</div>
+              <input class="form-input filled" value="4:15 min/km" readonly>
+            </div>
+            <div class="form-group">
+              <div class="form-label">FC ZONA 2 (bpm)</div>
+              <input class="form-input filled" value="140 — 155 bpm" readonly>
+            </div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.5</div>
+        <div class="screen-label">Datos de Rendimiento</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">siguiente</div></div>
+
+      <!-- 3.6 Método -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons">▲▲▲ <div class="status-battery"><div class="battery-fill"></div></div></div></div>
+          <div class="screen-content">
+            <div class="progress-bar-wrap">
+              <div class="progress-label">6 de 6</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:100%;background:#1B4332"></div></div>
+            </div>
+            <div class="screen-title">Elegí método</div>
+            <div class="screen-subtitle" style="margin-bottom:8px">Metodología de entrenamiento</div>
+            <div class="option-card" style="padding:6px 8px"><span class="emoji">🏔️</span><div><div class="card-title" style="font-size:9px">Kilian: Volumen + Vertical</div><div class="card-sub">Alto volumen, terreno vertical</div></div></div>
+            <div class="option-card selected" style="border-left-color:#1B4332;border-color:#1B4332;background:#f0f4f2;padding:6px 8px"><span class="emoji">📊</span><div><div class="card-title" style="font-size:9px">Polarizado: 80/20</div><div class="card-sub">80% Z1-Z2 · 20% Z4-Z5</div></div></div>
+            <div class="option-card" style="padding:6px 8px"><span class="emoji">🔺</span><div><div class="card-title" style="font-size:9px">Piramidal: Base + Umbral</div><div class="card-sub">Más tiempo en Z3</div></div></div>
+            <div class="option-card" style="padding:6px 8px"><span class="emoji">🤖</span><div><div class="card-title" style="font-size:9px">Adaptativo: App decide</div><div class="card-sub">IA ajusta según datos</div></div></div>
+            <div style="margin-top:auto">
+              <button class="btn-primary" style="background:#1B4332">Crear mi plan →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.6</div>
+        <div class="screen-label">Método Entrenamiento</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">crear plan</div></div>
+
+      <!-- 3.7 Generando dark -->
+      <div class="screen-wrap">
+        <div class="phone" style="background:#1B4332">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#D8F3DC">9:41</span><div class="status-icons" style="color:#D8F3DC">▲▲▲ <div class="status-battery" style="border-color:#D8F3DC"><div class="battery-fill" style="background:#D8F3DC"></div></div></div></div>
+          <div class="screen-content" style="justify-content:center;text-align:center;background:#1B4332">
+            <div style="width:36px;height:36px;border:3px solid #2D6A4F;border-top-color:#52B788;border-radius:50%;animation:spin 1s linear infinite;margin:14px auto 10px"></div>
+            <div class="generating-title" style="color:#fff">Generando plan...</div>
+            <div class="generating-sub" style="color:#D8F3DC;margin-top:6px">Método Polarizado seleccionado</div>
+            <div style="margin-top:12px">
+              <span class="badge badge-dark" style="font-size:9px;padding:4px 10px;background:#2D6A4F">📊 Polarizado: 80% Z1-Z2 + 20% Z4-Z5</span>
+            </div>
+            <div style="margin-top:14px;background:rgba(255,255,255,.07);border-radius:8px;padding:10px;text-align:left">
+              <div style="font-size:9px;color:#52B788">✓ Perfil élite calibrado</div>
+              <div style="font-size:9px;color:#52B788">✓ Zonas calculadas</div>
+              <div style="font-size:9px;color:#D8F3DC;opacity:.6;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border:1.5px solid #52B788;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></span> Cargando semanas...</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.7</div>
+        <div class="screen-label">Generando Plan</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: PLAN -->
+  <div class="phase-group">
+    <div class="phase-label">Plan Pro &amp; Métricas</div>
+    <div class="screen-row">
+
+      <!-- 3.8 Plan Pro -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header-dark">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div class="plan-title">Método Polarizado</div>
+                <span style="font-size:8px;background:rgba(255,255,255,.15);color:#D8F3DC;padding:2px 6px;border-radius:8px">Pro</span>
+              </div>
+              <div class="dist-label" style="margin-top:6px;color:#D8F3DC;font-size:8px"><span>Z1-Z2 80%</span><span>Z4-Z5 20%</span></div>
+              <div class="dist-bar"><div class="dist-z1"></div><div class="dist-z5"></div></div>
+              <div class="plan-week" style="margin-top:2px">Semana 1 · Base Sólida</div>
+            </div>
+            <div style="padding:0 10px 4px">
+              <div class="session-card" style="padding:5px 7px">
+                <div class="day-badge">D1</div>
+                <div class="session-info">
+                  <div class="session-name" style="font-size:9px">Rodaje Suave + Strides</div>
+                  <div class="session-detail">RS+ST · 50 min · Z2</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card" style="padding:5px 7px">
+                <div class="day-badge">D2</div>
+                <div class="session-info">
+                  <div class="session-name" style="font-size:9px">Series Cortas + Técnica Bajada</div>
+                  <div class="session-detail">SC+TB · 50 min · Z4-Z5</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card" style="padding:5px 7px">
+                <div class="day-badge">D3</div>
+                <div class="session-info">
+                  <div class="session-name" style="font-size:9px">Fuerza Específica + Pliometría</div>
+                  <div class="session-detail">FE+PL+FG · 35 min</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+              <div class="session-card" style="padding:5px 7px">
+                <div class="day-badge">D4</div>
+                <div class="session-info">
+                  <div class="session-name" style="font-size:9px">Tirada Larga Montaña</div>
+                  <div class="session-detail">TLM · 90 min · Z2 estricto</div>
+                </div>
+                <div class="session-check">⬜</div>
+              </div>
+            </div>
+            <div style="display:flex;border-top:1px solid #e8e8e8;margin-top:2px">
+              <div style="flex:1;padding:6px;text-align:center;font-size:9px;font-weight:700;color:#1B4332;border-right:1px solid #e8e8e8;background:#f0f4f2">Plan</div>
+              <div style="flex:1;padding:6px;text-align:center;font-size:9px;color:#999">Métricas</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.8</div>
+        <div class="screen-label">Plan Pro Semana</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tab Métricas</div></div>
+
+      <!-- 3.9 Métricas -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header-dark">
+              <div class="plan-title">Método Polarizado</div>
+              <div class="plan-week">Distribución de zonas · Sem 1</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div style="font-size:9px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Distribución por zonas</div>
+              <div class="metric-row">
+                <div class="metric-label">Z1-Z2</div>
+                <div class="metric-bar-wrap"><div class="metric-bar-fill" style="width:80%;background:#2D6A4F"></div></div>
+                <div class="metric-val">80%</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">Z3</div>
+                <div class="metric-bar-wrap"><div class="metric-bar-fill" style="width:0%;background:#FFC107"></div></div>
+                <div class="metric-val">0%</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">Z4-Z5</div>
+                <div class="metric-bar-wrap"><div class="metric-bar-fill" style="width:20%;background:#E63946"></div></div>
+                <div class="metric-val">20%</div>
+              </div>
+              <div class="stat-row" style="margin-top:12px">
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">225'</div><div class="stat-label">min/sem</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">4:15</div><div class="stat-label">Umbral</div></div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">Normal</div><div class="stat-label">Carga</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">↗</div><div class="stat-label">Tendencia</div></div>
+              </div>
+            </div>
+            <div style="display:flex;border-top:1px solid #e8e8e8">
+              <div style="flex:1;padding:6px;text-align:center;font-size:9px;color:#999;border-right:1px solid #e8e8e8">Plan</div>
+              <div style="flex:1;padding:6px;text-align:center;font-size:9px;font-weight:700;color:#1B4332;background:#f0f4f2">Métricas</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.9</div>
+        <div class="screen-label">Métricas Zonas</div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line">→</div><div class="arrow-label">tap D4</div></div>
+
+      <!-- 3.10 Sesión Pro -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header-dark" style="padding:8px 12px 8px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="color:#D8F3DC;font-size:12px">←</span>
+                <div class="plan-title">Día 4 — Larga Montaña</div>
+              </div>
+              <div class="plan-week">TLM · 90 min · Z2 estricto</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div class="objective-box" style="background:#e8f0eb;color:#1B4332">🎯 Z2: 140-155 bpm — máximo conversacional<br><span style="font-weight:400;font-size:8px">Vertical positivo &gt; 500m</span></div>
+              <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px">Estructura · 90 min</div>
+              <div class="structure-box">
+                15' calentamiento (Z1) →<br>
+                60' subida continua sostenida →<br>
+                15' bajada técnica controlada
+              </div>
+              <div class="tip-box" style="background:#E8F5E9;color:#1B4332;border-left:2px solid #2D6A4F">⚡ Si superas Z3 en subida, bajá ritmo o caminá. Hoy el objetivo es acumular tiempo en Z2.</div>
+              <div style="margin-top:auto">
+                <button class="btn-primary" style="background:#1B4332">Completar Sesión ✓</button>
+                <button class="btn-secondary">Saltar sesión</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.10</div>
+        <div class="screen-label">Sesión Larga Montaña</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PHASE: ADAPTACIÓN -->
+  <div class="phase-group">
+    <div class="phase-label">Adaptación Semanal</div>
+    <div class="screen-row">
+
+      <!-- 3.11 Adaptación -->
+      <div class="screen-wrap">
+        <div class="phone">
+          <div class="status-bar" style="background:#1B4332"><span class="status-time" style="color:#fff">9:41</span><div class="status-icons" style="color:#fff">▲▲▲ <div class="status-battery" style="border-color:#fff"><div class="battery-fill" style="background:#fff"></div></div></div></div>
+          <div class="screen-content" style="padding:0">
+            <div class="plan-header-dark">
+              <div class="plan-title">Resumen Semanal</div>
+              <div class="plan-week">Semana 1 completada · Evaluando</div>
+            </div>
+            <div style="padding:0 10px 10px">
+              <div class="stat-row">
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">4/4</div><div class="stat-label">sesiones ✅</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">2.3</div><div class="stat-label">RPE medio</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#1B4332">80%</div><div class="stat-label">sostenido</div></div>
+              </div>
+              <div style="background:#E8F5E9;border:1.5px solid #2D6A4F;border-radius:9px;padding:10px;margin:10px 0;text-align:center">
+                <div style="font-size:10px;font-weight:800;color:#1B4332;margin-bottom:3px">Adaptación positiva ↗</div>
+                <div style="font-size:8px;color:#2D6A4F">Todas las métricas dentro del rango</div>
+              </div>
+              <div style="background:#f8f8f8;border-radius:8px;padding:8px 10px;margin-bottom:10px">
+                <div style="font-size:9px;font-weight:700;color:#555;margin-bottom:4px">Ajuste automático</div>
+                <div style="font-size:9px;color:#444;line-height:1.6">
+                  · Aumentamos +5% volumen sem 2<br>
+                  · Mantenemos distribución 80/20<br>
+                  · Agregamos 1 sesión vertical
+                </div>
+              </div>
+              <button class="btn-primary" style="background:#1B4332">Ver próxima semana →</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen-id">3.11</div>
+        <div class="screen-label">Resumen &amp; Adaptación</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end flow3 -->
+
+<script>
+function showFlow(id) {
+  document.querySelectorAll('.flow-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

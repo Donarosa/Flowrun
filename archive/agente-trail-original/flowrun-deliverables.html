@@ -1,0 +1,391 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flowrun — Deliverables · Switchback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --trail:  #3D6B3F;
+  --pine:   oklch(26% 0.08 145);
+  --lichen: oklch(94% 0.018 145);
+  --cream:  oklch(98% 0.006 90);
+  --paper:  oklch(99% 0.004 90);
+  --ink:    #1B1F1B;
+  --fg:     oklch(18% 0.012 145);
+  --muted:  oklch(48% 0.012 145);
+  --soft:   oklch(72% 0.010 145);
+  --border: oklch(90% 0.010 90);
+  --hair:   oklch(94% 0.008 90);
+  --danger: oklch(58% 0.20 25);
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--cream); color: var(--fg); font-family: var(--font); font-feature-settings: 'cv11','ss03'; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-size: 15px; line-height: 1.55; }
+.page { max-width: 1180px; margin: 0 auto; padding: 56px 32px 120px; }
+.top { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border); margin-bottom: 56px; }
+.kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--trail); margin: 0 0 16px; font-weight: 500; }
+.top h1 { font-size: clamp(40px, 5.4vw, 56px); line-height: 0.96; letter-spacing: -0.045em; font-weight: 800; margin: 0; }
+.top h1 em { font-style: normal; color: var(--soft); font-weight: 500; letter-spacing: -0.03em; }
+.top .meta { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; line-height: 1.85; letter-spacing: 0.04em; }
+.top .meta strong { color: var(--fg); font-weight: 500; }
+.top .meta .sw { display: inline-block; width: 9px; height: 9px; background: var(--trail); border-radius: 50%; vertical-align: middle; margin-right: 6px; }
+section { margin-bottom: 72px; }
+.section-head { display: grid; grid-template-columns: 90px 1fr; gap: 28px; padding-bottom: 14px; margin-bottom: 28px; border-bottom: 1px solid var(--border); align-items: end; }
+.section-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--muted); font-weight: 500; }
+.section-title { font-size: 26px; letter-spacing: -0.025em; font-weight: 700; margin: 0; }
+.section-sub { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.14em; }
+.toolbar { background: var(--ink); color: var(--cream); border-radius: 6px; padding: 22px 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+.toolbar h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(75% 0.10 145); margin: 0; font-weight: 500; }
+.toolbar p { font-size: 13.5px; color: oklch(85% 0.020 145); margin: 0; flex: 1; min-width: 240px; line-height: 1.55; }
+.btn { background: var(--trail); color: white; border: none; font-family: var(--font); font-size: 13.5px; font-weight: 500; letter-spacing: -0.005em; padding: 10px 18px; border-radius: 6px; cursor: pointer; transition: background 0.15s ease; }
+.btn:hover { background: oklch(48% 0.12 145); }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--cream); border: 1px solid color-mix(in oklab, var(--cream) 22%, transparent); }
+.btn.ghost:hover { background: color-mix(in oklab, var(--cream) 6%, transparent); }
+.svgs { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--paper); }
+.svg-cell { padding: 24px 20px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; }
+.svg-cell:last-child { border-right: none; background: var(--ink); }
+.svg-preview { background: var(--cream); border-radius: 4px; padding: 24px 16px; display: flex; align-items: center; justify-content: center; min-height: 140px; }
+.svg-cell:last-child .svg-preview { background: var(--pine); }
+.svg-cell:nth-child(5) .svg-preview { background: var(--trail); }
+.svg-name { font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+.svg-cell:last-child .svg-name, .svg-cell:nth-child(5) .svg-name { color: var(--cream); }
+.svg-file { font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin: 0; word-break: break-all; }
+.svg-cell:last-child .svg-file, .svg-cell:nth-child(5) .svg-file { color: oklch(78% 0.008 145); }
+.dl { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--trail); text-decoration: none; padding: 6px 0 0; border-top: 1px solid var(--hair); margin-top: auto; }
+.svg-cell:last-child .dl, .svg-cell:nth-child(5) .dl { color: var(--cream); border-top-color: color-mix(in oklab, var(--cream) 14%, transparent); }
+.dl:hover { text-decoration: underline; }
+.icons-table { background: var(--paper); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.icons-table h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0; font-weight: 500; padding: 22px 28px; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: center; }
+.icons-table h3 .platform { color: var(--trail); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 14px 28px; border-bottom: 1px solid var(--hair); font-size: 13.5px; }
+th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--cream); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--cream); }
+td.size { font-family: var(--mono); font-weight: 500; color: var(--ink); }
+td.use { color: var(--muted); }
+td.action { text-align: right; padding-right: 22px; }
+.mini-btn { background: transparent; border: 1px solid var(--border); color: var(--ink); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+.mini-btn:hover { border-color: var(--trail); color: var(--trail); }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.app-preview { background: var(--trail); border-radius: 12px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; padding: 22%; }
+.app-preview svg { width: 100%; height: 100%; color: var(--cream); }
+.anim-card { background: var(--paper); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+.anim-head { padding: 22px 28px; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: center; }
+.anim-head h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0; font-weight: 500; }
+.anim-stage { background: var(--cream); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 56px 24px; min-height: 320px; }
+.anim-stage svg { width: 160px; height: 160px; }
+.anim-stage .path { fill: none; stroke: var(--trail); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 600; stroke-dashoffset: 600; }
+.anim-stage .dot { fill: var(--trail); transform-origin: 42px 14px; transform: scale(0); }
+.anim-stage.play .path { animation: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards; }
+.anim-stage.play .dot { animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards; }
+.anim-stage.play .wm { animation: rise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s forwards; }
+.anim-stage .wm { font-size: 40px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; color: var(--ink); opacity: 0; transform: translateY(8px); }
+.anim-stage .wm .accent { color: var(--trail); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { 0% { transform: scale(0); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+.progress { display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+.progress .bar { width: 160px; height: 6px; background: var(--hair); border-radius: 999px; overflow: hidden; }
+.progress .bar > div { height: 100%; background: var(--trail); width: 0; transition: width 0.25s ease; }
+.foot { padding-top: 36px; border-top: 1px solid var(--border); margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+.foot h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg); font-weight: 500; margin: 0 0 14px; }
+.foot ul { margin: 0; padding-left: 20px; }
+.foot li { margin-bottom: 6px; }
+.foot strong { color: var(--fg); font-weight: 500; }
+.note { font-size: 12.5px; color: var(--muted); line-height: 1.65; padding: 14px 18px; background: var(--cream); border-radius: 4px; border-left: 2px solid var(--trail); margin-top: 18px; }
+.note strong { color: var(--ink); font-weight: 600; }
+@media (max-width: 920px) {
+  .page { padding: 40px 20px 80px; }
+  .top { grid-template-columns: 1fr; }
+  .top .meta { text-align: left; }
+  .svgs { grid-template-columns: 1fr 1fr; }
+  .svg-cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .svg-cell:nth-child(2n) { border-right: none; }
+  .split { grid-template-columns: 1fr; }
+  .foot { grid-template-columns: 1fr; gap: 24px; }
+  th, td { padding: 12px 16px; }
+  .section-head { grid-template-columns: 1fr; gap: 6px; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="switchback" viewBox="0 0 100 100">
+      <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="42" cy="14" r="5" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="page">
+<header class="top">
+  <div><p class="kicker">Deliverables · Switchback v1</p><h1>flowrun <em>— exports listos para producción</em></h1></div>
+  <div class="meta">
+    <div><span class="sw"></span><strong>Trail</strong> · #3D6B3F</div>
+    <div>SVG vectoriales · PNG @1×/@2×/@3×</div>
+    <div>App icon 1024 · animación</div>
+  </div>
+</header>
+
+<section>
+  <div class="section-head"><span class="section-num">01 / 04</span><h2 class="section-title">SVG vectoriales<span class="section-sub">Source files — escalables a cualquier tamaño</span></h2></div>
+  <div class="svgs">
+    <div class="svg-cell">
+      <div class="svg-preview"><svg width="80" height="80" style="color:var(--trail)" aria-hidden="true"><use href="#switchback"/></svg></div>
+      <p class="svg-name">Símbolo</p>
+      <p class="svg-file">flowrun-symbol.svg</p>
+      <a class="dl" href="exports/flowrun-symbol.svg" download>↓ Descargar SVG</a>
+    </div>
+    <div class="svg-cell">
+      <div class="svg-preview"><div style="display:flex;align-items:center;gap:14px;"><svg width="44" height="44" style="color:var(--trail)" aria-hidden="true"><use href="#switchback"/></svg><span style="font-size:26px;font-weight:600;letter-spacing:-0.04em;color:var(--ink);line-height:1">flow<span style="color:var(--trail)">run</span></span></div></div>
+      <p class="svg-name">Lockup horizontal</p>
+      <p class="svg-file">flowrun-lockup-horizontal.svg</p>
+      <a class="dl" href="exports/flowrun-lockup-horizontal.svg" download>↓ Descargar SVG</a>
+    </div>
+    <div class="svg-cell">
+      <div class="svg-preview"><div style="display:flex;flex-direction:column;align-items:center;gap:10px;"><svg width="44" height="44" style="color:var(--trail)" aria-hidden="true"><use href="#switchback"/></svg><span style="font-size:20px;font-weight:600;letter-spacing:-0.04em;color:var(--ink);line-height:1">flow<span style="color:var(--trail)">run</span></span></div></div>
+      <p class="svg-name">Lockup vertical</p>
+      <p class="svg-file">flowrun-lockup-vertical.svg</p>
+      <a class="dl" href="exports/flowrun-lockup-vertical.svg" download>↓ Descargar SVG</a>
+    </div>
+    <div class="svg-cell" style="background:var(--ink)">
+      <div class="svg-preview"><div style="display:flex;align-items:center;gap:14px;color:var(--cream)"><svg width="44" height="44" aria-hidden="true"><use href="#switchback"/></svg><span style="font-size:26px;font-weight:600;letter-spacing:-0.04em;line-height:1">flowrun</span></div></div>
+      <p class="svg-name">Monocromo (currentColor)</p>
+      <p class="svg-file">flowrun-monochrome.svg</p>
+      <a class="dl" href="exports/flowrun-monochrome.svg" download>↓ Descargar SVG</a>
+    </div>
+    <div class="svg-cell">
+      <div class="svg-preview"><svg width="80" height="80" style="color:var(--cream)" aria-hidden="true"><use href="#switchback"/></svg></div>
+      <p class="svg-name">App icon 1024</p>
+      <p class="svg-file">flowrun-appicon-1024.svg</p>
+      <a class="dl" href="exports/flowrun-appicon-1024.svg" download>↓ Descargar SVG</a>
+    </div>
+  </div>
+  <p class="note"><strong>Tip:</strong> el lockup monocromo usa <code style="font-family:var(--mono);background:var(--paper);padding:1px 5px;border-radius:3px">currentColor</code> — heredá el color desde CSS para usarlo en cualquier fondo sin editar el SVG.</p>
+</section>
+
+<section>
+  <div class="section-head"><span class="section-num">02 / 04</span><h2 class="section-title">PNGs · iOS &amp; Android<span class="section-sub">Generación en el navegador — un click y se descargan</span></h2></div>
+  <div class="toolbar">
+    <h3>Bulk export</h3>
+    <p>Generá todos los PNGs (iOS + Android + Play Store + App Store) en un solo batch directamente del navegador. Sin servidor, sin upload.</p>
+    <div class="progress"><span id="progressLabel">listo</span><div class="bar"><div id="progressBar"></div></div></div>
+    <button class="btn" id="exportAll">↓ Descargar todos los PNG</button>
+    <button class="btn ghost" id="exportIOS">Solo iOS</button>
+    <button class="btn ghost" id="exportAndroid">Solo Android</button>
+  </div>
+
+  <div class="split">
+    <div class="icons-table">
+      <h3><span class="platform">iOS</span> · App icon sizes</h3>
+      <table>
+        <thead><tr><th>Px</th><th>Uso</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="size">1024 ×1</td><td class="use">App Store</td><td class="action"><button class="mini-btn" data-size="1024" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">180 ×3</td><td class="use">iPhone home</td><td class="action"><button class="mini-btn" data-size="180" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">167 ×2</td><td class="use">iPad Pro</td><td class="action"><button class="mini-btn" data-size="167" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">152 ×2</td><td class="use">iPad</td><td class="action"><button class="mini-btn" data-size="152" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">120 ×2</td><td class="use">iPhone @2×</td><td class="action"><button class="mini-btn" data-size="120" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">87 ×3</td><td class="use">Settings @3×</td><td class="action"><button class="mini-btn" data-size="87" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">80 ×2</td><td class="use">Spotlight @2×</td><td class="action"><button class="mini-btn" data-size="80" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">76 ×1</td><td class="use">iPad legacy</td><td class="action"><button class="mini-btn" data-size="76" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">60 ×1</td><td class="use">Settings @1×</td><td class="action"><button class="mini-btn" data-size="60" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">58 ×2</td><td class="use">Settings iPhone</td><td class="action"><button class="mini-btn" data-size="58" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">40 ×1</td><td class="use">Spotlight @1×</td><td class="action"><button class="mini-btn" data-size="40" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">29 ×1</td><td class="use">Settings legacy</td><td class="action"><button class="mini-btn" data-size="29" data-platform="ios">PNG</button></td></tr>
+          <tr><td class="size">20 ×1</td><td class="use">Notification</td><td class="action"><button class="mini-btn" data-size="20" data-platform="ios">PNG</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="icons-table">
+      <h3><span class="platform">Android</span> · Launcher icon sizes</h3>
+      <table>
+        <thead><tr><th>Px</th><th>Densidad</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="size">512</td><td class="use">Play Store</td><td class="action"><button class="mini-btn" data-size="512" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">192</td><td class="use">xxxhdpi · 4.0×</td><td class="action"><button class="mini-btn" data-size="192" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">144</td><td class="use">xxhdpi · 3.0×</td><td class="action"><button class="mini-btn" data-size="144" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">96</td><td class="use">xhdpi · 2.0×</td><td class="action"><button class="mini-btn" data-size="96" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">72</td><td class="use">hdpi · 1.5×</td><td class="action"><button class="mini-btn" data-size="72" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">48</td><td class="use">mdpi · 1.0×</td><td class="action"><button class="mini-btn" data-size="48" data-platform="android">PNG</button></td></tr>
+          <tr><td class="size">36</td><td class="use">ldpi · 0.75×</td><td class="action"><button class="mini-btn" data-size="36" data-platform="android">PNG</button></td></tr>
+        </tbody>
+      </table>
+      <p style="font-family:var(--mono);font-size:10.5px;color:var(--muted);padding:14px 28px 18px;margin:0;line-height:1.65;border-top:1px solid var(--hair)">Todos los PNGs se generan con fondo Trail sólido (sin transparencia) según especificación de App Store / Play Store.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><span class="section-num">03 / 04</span><h2 class="section-title">App icon 1024<span class="section-sub">Hero · fondo sólido, sin transparencia</span></h2></div>
+  <div class="split">
+    <div class="app-preview"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#switchback"/></svg></div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 8px;">
+      <p style="font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin:0;">1024 × 1024 · PNG · #3D6B3F</p>
+      <h3 style="font-size:24px;letter-spacing:-0.025em;font-weight:700;margin:0;color:var(--ink);line-height:1.15;">El icon listo para subir a App Store Connect y Google Play.</h3>
+      <p style="font-size:14px;color:var(--muted);margin:0;line-height:1.65;">Cumple los requisitos: fondo opaco, símbolo centrado al 60% del área, sin redondeo del cuadrado (iOS lo redondea automáticamente a 22.5%, Android usa adaptive icon mask).</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:8px;">
+        <button class="btn" id="exportHero">↓ PNG 1024 (sólido)</button>
+        <a class="dl" href="exports/flowrun-appicon-1024.svg" download style="border:none;padding:10px 0;">↓ SVG vectorial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><span class="section-num">04 / 04</span><h2 class="section-title">Animación · single gesture<span class="section-sub">El trazo se dibuja en un solo gesto al cargar la app</span></h2></div>
+  <div class="anim-card">
+    <div class="anim-head"><h3>Splash · vista previa</h3><div style="display:flex;gap:10px;"><button class="btn ghost" id="replayAnim" style="color:var(--ink);border-color:var(--border)">↻ Repetir</button><a class="btn" href="flowrun-animated.html" target="_blank">Abrir standalone ↗</a></div></div>
+    <div class="anim-stage play" id="animStage">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path class="path" id="animPath" d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14"/>
+        <circle class="dot" cx="42" cy="14" r="5"/>
+      </svg>
+      <div class="wm">flow<span class="accent">run</span></div>
+    </div>
+  </div>
+  <p class="note"><strong>Timing del splash:</strong> 1.6s para dibujar el trail (cubic-bezier 0.65 0 0.35 1) · 0.4s para que aparezca el dot con bounce · 0.7s para que suba el wordmark. Total: <strong>2.3s</strong>. Implementación pura CSS — sin libs, sin Lottie. Archivo: <code style="font-family:var(--mono);background:var(--cream);padding:1px 5px;border-radius:3px">flowrun-animated.html</code></p>
+</section>
+
+<footer class="foot">
+  <div>
+    <h3>Archivos generados</h3>
+    <ul>
+      <li><strong>exports/flowrun-symbol.svg</strong> — solo símbolo</li>
+      <li><strong>exports/flowrun-lockup-horizontal.svg</strong> — lockup primario</li>
+      <li><strong>exports/flowrun-lockup-vertical.svg</strong> — lockup square</li>
+      <li><strong>exports/flowrun-monochrome.svg</strong> — currentColor</li>
+      <li><strong>exports/flowrun-appicon-1024.svg</strong> — app icon vectorial</li>
+      <li><strong>flowrun-animated.html</strong> — splash standalone</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Próximos pasos sugeridos</h3>
+    <ul>
+      <li>Subir PNG 1024 a App Store Connect (Build &gt; App Information)</li>
+      <li>Generar adaptive icon Android (foreground transparente + background sólido)</li>
+      <li>Versión Lottie de la animación para integrar en React Native / Flutter</li>
+      <li>Favicon multi-tamaño (16, 32, 192, 512) para web</li>
+      <li>Apple Touch Icon 180×180 con padding interno</li>
+    </ul>
+  </div>
+</footer>
+</div>
+
+<script>
+const SVG_SYMBOL_PATH = 'M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14';
+const TRAIL = '#3D6B3F';
+const CREAM = '#FAF8F2';
+
+function buildIconSVG(size) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="${size}" height="${size}">
+    <rect width="1024" height="1024" fill="${TRAIL}"/>
+    <g transform="translate(204 220) scale(6.16)">
+      <path d="${SVG_SYMBOL_PATH}" fill="none" stroke="${CREAM}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="42" cy="14" r="5" fill="${CREAM}"/>
+    </g>
+  </svg>`;
+}
+
+function svgToPng(svgString, size) {
+  return new Promise((resolve, reject) => {
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = TRAIL;
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => resolve(blob), 'image/png');
+    };
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+    img.src = url;
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function exportOne(size, platform) {
+  const svg = buildIconSVG(size);
+  const blob = await svgToPng(svg, size);
+  const filename = `flowrun-${platform}-${size}.png`;
+  downloadBlob(blob, filename);
+}
+
+const IOS_SIZES = [1024, 180, 167, 152, 120, 87, 80, 76, 60, 58, 40, 29, 20];
+const ANDROID_SIZES = [512, 192, 144, 96, 72, 48, 36];
+
+async function exportBatch(sizes, platform) {
+  const label = document.getElementById('progressLabel');
+  const bar = document.getElementById('progressBar');
+  const total = sizes.length;
+  for (let i = 0; i < sizes.length; i++) {
+    const size = sizes[i];
+    label.textContent = `${platform} ${size}…`;
+    bar.style.width = `${((i+1)/total)*100}%`;
+    await exportOne(size, platform);
+    await new Promise(r => setTimeout(r, 80));
+  }
+  label.textContent = `${total} archivos · listo`;
+  setTimeout(() => { bar.style.width = '0'; label.textContent = 'listo'; }, 2400);
+}
+
+document.getElementById('exportAll').addEventListener('click', async () => {
+  await exportBatch(IOS_SIZES, 'ios');
+  await exportBatch(ANDROID_SIZES, 'android');
+});
+document.getElementById('exportIOS').addEventListener('click', () => exportBatch(IOS_SIZES, 'ios'));
+document.getElementById('exportAndroid').addEventListener('click', () => exportBatch(ANDROID_SIZES, 'android'));
+document.getElementById('exportHero').addEventListener('click', () => exportOne(1024, 'icon'));
+
+document.querySelectorAll('.mini-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const size = parseInt(btn.dataset.size, 10);
+    const platform = btn.dataset.platform;
+    exportOne(size, platform);
+  });
+});
+
+const replayBtn = document.getElementById('replayAnim');
+const stage = document.getElementById('animStage');
+replayBtn.addEventListener('click', () => {
+  stage.classList.remove('play');
+  void stage.offsetWidth;
+  stage.classList.add('play');
+});
+
+(function setDashLen() {
+  const p = document.getElementById('animPath');
+  if (p && p.getTotalLength) {
+    const len = Math.ceil(p.getTotalLength());
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="1040" height="320" role="img" aria-label="flowrun monochrome lockup">
+  <title>flowrun — monochrome lockup</title>
+  <g transform="translate(20 30)">
+    <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="42" cy="14" r="5" fill="currentColor"/>
+  </g>
+  <text x="160" y="108" font-family="Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-weight="600" font-size="96" letter-spacing="-3.8" fill="currentColor">flowrun</text>
+</svg>
