@@ -57,25 +57,46 @@ export default async function DiagPage() {
     result.client_creation_threw = String(e)
   }
 
-  // Raw fetch to Supabase REST to check key format issues
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-    const r = await fetch(`${url}/rest/v1/profiles?select=id&limit=1`, {
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-      },
-      cache: 'no-store',
-    })
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!.replace(/\/+$/, '')
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY!.trim()
+    const tries: Array<{
+      label: string
+      target: string
+      status?: number
+      body?: string
+    }> = []
+    for (const path of [
+      '/rest/v1/profiles?select=id&limit=1',
+      '/rest/v1/?apikey=',
+      '/auth/v1/health',
+    ]) {
+      const target = `${url}${path}`
+      try {
+        const r = await fetch(target, {
+          headers: {
+            apikey: key,
+            Authorization: `Bearer ${key}`,
+          },
+          cache: 'no-store',
+        })
+        tries.push({
+          label: path,
+          target: target.replace(url, '<URL>'),
+          status: r.status,
+          body: (await r.text()).slice(0, 240),
+        })
+      } catch (e) {
+        tries.push({ label: path, target, body: `THREW: ${e}` })
+      }
+    }
     result.raw_fetch = {
-      status: r.status,
-      statusText: r.statusText,
-      body: (await r.text()).slice(0, 500),
-      url_starts: url.slice(0, 20),
+      url_chars: process.env.NEXT_PUBLIC_SUPABASE_URL!.length,
+      url_cleaned_chars: url.length,
+      url_host: url.replace(/^https?:\/\//, '').split('.')[0],
       key_starts: key.slice(0, 12),
-      url_ends_clean: !url.endsWith('\n') && !url.endsWith(' '),
-      key_ends_clean: !key.endsWith('\n') && !key.endsWith(' '),
+      key_chars: key.length,
+      tries,
     }
   } catch (e) {
     result.raw_fetch_threw = String(e)
