@@ -362,13 +362,17 @@ function Suggestions() {
 }
 
 function WeekStrip({ summary }: { summary: WeeklySummary }) {
+  const pct =
+    summary.sessionsTotal > 0
+      ? (summary.sessionsCompleted / summary.sessionsTotal) * 100
+      : 0
   return (
-    <section className="bg-paper-2 border border-border rounded-[18px] px-[18px] py-4 mt-2 mb-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
-      <div className="flex justify-between items-baseline mb-3.5">
-        <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-trail">
+    <section className="bg-paper-2 border border-border rounded-[16px] px-4 py-3.5 mt-2 mb-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
+      <div className="flex justify-between items-baseline mb-3">
+        <span className="font-mono text-[10px] font-semibold tracking-[0.16em] uppercase text-trail">
           Resumen sem {summary.weekNumber || '—'}
         </span>
-        <span className="font-mono text-[10px] text-soft tracking-[0.06em] font-medium">
+        <span className="font-mono text-[9.5px] text-soft tracking-[0.06em] font-medium">
           {summary.rangeLabel}
         </span>
       </div>
@@ -383,6 +387,18 @@ function WeekStrip({ summary }: { summary: WeeklySummary }) {
           label="Z1 — Z2"
         />
       </div>
+      <div className="h-px bg-hair mt-3 mb-2.5" />
+      <div className="flex items-center gap-2.5">
+        <div className="flex-1 h-[5px] bg-hair rounded-[3px] overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-trail to-trail-deep rounded-[3px] transition-all"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <span className="font-mono text-[10px] font-semibold text-muted tracking-[0.04em] whitespace-nowrap">
+          {summary.sessionsCompleted} / {summary.sessionsTotal} sesiones
+        </span>
+      </div>
     </section>
   )
 }
@@ -390,10 +406,10 @@ function WeekStrip({ summary }: { summary: WeeklySummary }) {
 function BigCell({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <div className="text-[24px] font-bold text-ink tracking-[-0.03em] leading-none tabular-nums">
+      <div className="text-[22px] font-bold text-ink tracking-[-0.03em] leading-none tabular-nums">
         {value}
       </div>
-      <div className="font-mono text-[8.5px] tracking-[0.12em] uppercase text-muted font-semibold mt-1.5">
+      <div className="font-mono text-[8px] tracking-[0.12em] uppercase text-muted font-semibold mt-1.5">
         {label}
       </div>
     </div>

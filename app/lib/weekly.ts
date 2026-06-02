@@ -6,6 +6,8 @@ export type WeeklySummary = {
   volumeMin: number
   rpeAvg: number | null
   easyPct: number | null
+  sessionsCompleted: number
+  sessionsTotal: number
 }
 
 const MONTHS_ES_SHORT = [
@@ -97,7 +99,6 @@ export async function getWeeklySummary(
   if (!sessions || sessions.length === 0) return null
 
   const completed = sessions.filter((s) => s.status === 'completed')
-  if (completed.length === 0) return null
 
   let volumeMin = 0
   let weekNumber = 0
@@ -139,11 +140,27 @@ export async function getWeeklySummary(
     }
   }
 
+  // weekNumber fallback: si no hay sesiones completadas, tomarlo de
+  // cualquier sesión planificada de la semana.
+  if (weekNumber === 0) {
+    for (const s of sessions) {
+      const t = Array.isArray(s.template_session)
+        ? s.template_session[0]
+        : s.template_session
+      if (t?.week_number) {
+        weekNumber = t.week_number
+        break
+      }
+    }
+  }
+
   return {
     weekNumber,
     rangeLabel: formatRange(weekStart, weekEnd),
     volumeMin,
     rpeAvg,
     easyPct,
+    sessionsCompleted: completed.length,
+    sessionsTotal: sessions.length,
   }
 }
