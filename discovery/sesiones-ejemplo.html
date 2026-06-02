@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>FlowRun · Ejemplo card enriquecida</title>
+<style>
+  :root {
+    --bg: #F5F2EA;
+    --paper: #FFFFFF;
+    --ink: #1B1F1B;
+    --fg: #2A2F2A;
+    --muted: #7A827A;
+    --soft: #B5BDB5;
+    --border: #E6E2D6;
+    --trail: #3D6B3F;
+    --trail-tint: #ecf0e6;
+    --terracotta: #8C5640;
+    --warn-tint: #f4e6c4;
+    --warn-deep: #5a3a10;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    padding: 32px 16px 80px;
+  }
+  header.page {
+    max-width: 760px;
+    margin: 0 auto 28px;
+    text-align: center;
+  }
+  header.page h1 {
+    font-size: 24px;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 4px;
+  }
+  header.page p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ===== Card ===== */
+  .session {
+    background: var(--paper);
+    border-radius: 20px;
+    padding: 24px 24px 18px;
+    box-shadow: inset 0 0 0 1px var(--border), 0 2px 12px -6px rgba(27,31,27,0.06);
+  }
+  .session-head {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 16px;
+    align-items: start;
+    margin-bottom: 6px;
+  }
+  .session-num {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--trail);
+    background: var(--trail-tint);
+    border-radius: 12px;
+    padding: 10px 0;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+  .session-title {
+    font-size: 28px;
+    letter-spacing: -0.024em;
+    color: var(--ink);
+    margin: 0 0 4px;
+    line-height: 1.05;
+  }
+  .session-meta {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .meta-sep { margin: 0 6px; opacity: 0.4; }
+  .pill {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    background: var(--warn-tint);
+    color: var(--warn-deep);
+    font-weight: 700;
+  }
+  .session-cat {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: var(--trail);
+    color: white;
+    align-self: start;
+  }
+
+  /* ===== Headline plain language ===== */
+  .headline {
+    margin: 8px 0 18px;
+    font-size: 17.5px;
+    line-height: 1.4;
+    color: var(--fg);
+    letter-spacing: -0.012em;
+  }
+  .headline strong { color: var(--ink); font-weight: 700; }
+
+  /* ===== Sections ===== */
+  .sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) {
+    .sections { grid-template-columns: 1fr; }
+  }
+  .sec {
+    background: #faf8f1;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px 14px;
+  }
+  .sec-label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: var(--trail);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .sec-label .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--trail);
+    display: inline-block;
+  }
+  .sec p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--fg);
+  }
+  .sec strong { color: var(--ink); font-weight: 700; }
+  .sec.full { grid-column: 1 / -1; }
+
+  /* ===== Sensación (RPE bar) ===== */
+  .sensation {
+    grid-column: 1 / -1;
+    background: #faf8f1;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .sensation-text { font-size: 13.5px; color: var(--fg); }
+  .sensation-text strong { color: var(--ink); }
+  .rpe-scale {
+    display: flex;
+    gap: 2px;
+    align-items: end;
+    height: 28px;
+  }
+  .rpe-tick {
+    width: 8px;
+    background: var(--border);
+    border-radius: 2px;
+    position: relative;
+  }
+  .rpe-tick.active { background: var(--trail); }
+  .rpe-tick:nth-child(1) { height: 30%; }
+  .rpe-tick:nth-child(2) { height: 38%; }
+  .rpe-tick:nth-child(3) { height: 46%; }
+  .rpe-tick:nth-child(4) { height: 54%; }
+  .rpe-tick:nth-child(5) { height: 62%; }
+  .rpe-tick:nth-child(6) { height: 70%; }
+  .rpe-tick:nth-child(7) { height: 78%; }
+  .rpe-tick:nth-child(8) { height: 86%; }
+  .rpe-tick:nth-child(9) { height: 94%; }
+  .rpe-tick:nth-child(10) { height: 100%; }
+  .rpe-label {
+    text-align: center;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ===== Block (still keep for technical reference) ===== */
+  .block {
+    background: #f7f3e6;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  .block-code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--trail);
+    font-weight: 700;
+  }
+  .block-dur {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .block-name {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .block-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .session-foot {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .muted {
+    font-size: 11px;
+    color: var(--soft);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<header class="page">
+  <h1>Card enriquecida — ejemplo #7 Recuperación</h1>
+  <p>Si te gusta el formato, lo aplico a las 249 sesiones del catálogo.</p>
+</header>
+
+<main>
+
+<article class="session" id="s7">
+  <header class="session-head">
+    <div class="session-num">#7</div>
+    <div class="session-title-wrap">
+      <h2 class="session-title">Recuperación</h2>
+      <div class="session-meta">
+        <span class="meta-item">30 minutos</span>
+        <span class="meta-sep">·</span>
+        <span class="meta-item">CARRERA</span>
+        <span class="pill">DELOAD</span>
+      </div>
+    </div>
+    <div class="session-cat">CARRERA</div>
+  </header>
+
+  <p class="headline">
+    Trote muy suave o caminata rápida durante <strong>30 minutos</strong>,
+    sin pausas planeadas. Es una sesión <strong>cortita y liviana</strong> de
+    una semana de descarga.
+  </p>
+
+  <div class="sections">
+
+    <div class="sec">
+      <div class="sec-label"><span class="dot"></span>QUÉ HACÉS</div>
+      <p>
+        30 minutos de movimiento aeróbico suave. Podés <strong>trotar</strong>
+        todo el tiempo, <strong>caminar rápido</strong> todo el tiempo, o
+        alternar. No hay intervalos, no hay pausas, no hay nada para
+        "completar". Solo movimiento.
+      </p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-label"><span class="dot"></span>CÓMO</div>
+      <p>
+        Empezá <strong>caminando 3-5 minutos</strong> para activar.
+        Después trotá MUY suave: el ritmo en el que podrías
+        <strong>cantar, no solo hablar</strong>. Si sentís que te
+        falta el aire, bajá a caminata rápida y volvé a trotar cuando
+        te recuperes.
+      </p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-label"><span class="dot"></span>PARA QUÉ</div>
+      <p>
+        El movimiento suave después de un esfuerzo grande
+        <strong>acelera la regeneración</strong> más que el descanso
+        total. Limpia las piernas, mantiene el cardio activo sin
+        sumar fatiga, y prepara el cuerpo para la próxima semana fuerte.
+      </p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-label"><span class="dot"></span>CLAVES</div>
+      <p>
+        <strong>Más lento que lo cómodo.</strong> Si pensás
+        "qué ritmo de tortuga", vas bien. Si te quedás con ganas de
+        más, ese es el objetivo: terminar fresco, no cansado.
+        Nada de strides ni acelerones al final.
+      </p>
+    </div>
+
+    <div class="sensation">
+      <div class="sensation-text">
+        <strong>Sensación esperada · RPE 2-3 / 10</strong><br>
+        Piernas livianas. Respiración tranquila. Podés hablar
+        de corrido todo el tiempo. Salís igual o mejor que como entraste.
+      </div>
+      <div>
+        <div class="rpe-scale">
+          <span class="rpe-tick active"></span>
+          <span class="rpe-tick active"></span>
+          <span class="rpe-tick active"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+          <span class="rpe-tick"></span>
+        </div>
+        <div class="rpe-label">RPE 1 — 10</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="block">
+    <div class="block-head">
+      <span class="block-code">RA</span>
+      <span class="block-dur">30'</span>
+    </div>
+    <div class="block-name">Recuperación Activa</div>
+    <div class="block-desc">Trote muy suave o caminata rápida, regeneración.</div>
+  </div>
+
+  <footer class="session-foot">
+    <span class="muted">Aparece en: calle_trail_base_3d, nuevo_montana_3d · 2x</span>
+  </footer>
+</article>
+
+</main>
+
+</body>
+</html>

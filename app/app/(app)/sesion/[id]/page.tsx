@@ -8,6 +8,16 @@ import { getProfileWithMetrics } from '@/lib/profile'
 import { getTipForSession, tipCategoryLabel } from '@/lib/education'
 import { PaywallBlock } from '@/components/subscription/paywall-block'
 import { SessionActions } from './actions-client'
+import {
+  buildSteps,
+  blockTagLabel,
+  categoryLabel,
+  displayTitle,
+  noteFor,
+  primaryCategory,
+  whyFor,
+  type SessionStep,
+} from '@/lib/session-presentation'
 import type {
   BreathingLevel,
   LegsFatigueLevel,
@@ -16,50 +26,11 @@ import type {
 } from '@/types/database'
 
 const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-const MONTHS_SHORT = [
-  'ene',
-  'feb',
-  'mar',
-  'abr',
-  'may',
-  'jun',
-  'jul',
-  'ago',
-  'sep',
-  'oct',
-  'nov',
-  'dic',
-]
+const MONTHS_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
 
 function formatShortDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`)
   return `${DAYS_SHORT[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS_SHORT[d.getUTCMonth()]}`
-}
-
-const BLOCK_ZONE: Record<string, string> = {
-  RS: 'Z1—Z2',
-  RW: 'Z1',
-  SC: 'Z2—Z3',
-  FE: 'Z3',
-  SMC: 'Z2—Z3',
-  FK: 'Z2—Z3',
-  TE: 'Z3',
-  PR: 'Z2—Z3',
-  HF: 'Z3—Z4',
-  HK: 'Z1',
-  RC: 'Z3—Z4',
-  SU: 'Z2',
-}
-
-function dominantZones(codes: string[]): string {
-  const zones = new Set<string>()
-  for (const c of codes) {
-    const z = BLOCK_ZONE[c]
-    if (!z) continue
-    z.split('—').forEach((p) => zones.add(p))
-  }
-  if (zones.size === 0) return ''
-  return Array.from(zones).sort().join(' · ')
 }
 
 type Params = Promise<{ id: string }>
@@ -106,11 +77,17 @@ export default async function SessionPage({ params }: { params: Params }) {
         })
       : null
 
-  const zoneSummary = dominantZones(session.blocks.map((b) => b.code))
   const adapted = session.durationModifier !== 1
   const adaptedLabel = adapted
     ? `${session.durationModifier > 1 ? '+' : ''}${Math.round((session.durationModifier - 1) * 100)}%`
     : null
+
+  const title = displayTitle(session.name)
+  const why = whyFor(session.blocks)
+  const note = noteFor(session.blocks)
+  const blockTag = blockTagLabel(session.blocks)
+  const cat = primaryCategory(session.blocks)
+  const steps = buildSteps(session)
 
   return (
     <main className="px-6 pt-1 pb-8 max-w-md mx-auto w-full">
@@ -122,41 +99,38 @@ export default async function SessionPage({ params }: { params: Params }) {
         >
           ←
         </Link>
-        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted font-semibold">
+        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-trail font-semibold flex items-center gap-2.5">
+          <span aria-hidden className="w-[18px] h-[1.5px] bg-trail rounded-[1px]" />
           Semana {session.weekNumber} · Sesión
           {session.isDeload && ' · Descarga'}
         </span>
       </div>
 
-      <h1 className="text-[26px] font-semibold tracking-[-0.03em] text-ink leading-[1.08] mb-1.5 text-balance">
-        {session.name}
+      <h1 className="text-[30px] font-semibold tracking-[-0.03em] text-ink leading-[1.04] mb-2.5 text-balance">
+        {title}
       </h1>
 
-      <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-[0.1em] uppercase text-muted font-semibold mb-[18px]">
+      <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] tracking-[0.06em] uppercase text-muted font-semibold mb-4">
         <span>{formatShortDate(session.scheduledDate)}</span>
         <Dot />
         <span>{session.totalDurationMin} min</span>
-        {zoneSummary && (
-          <>
-            <Dot />
-            <span>{zoneSummary}</span>
-          </>
-        )}
+        <Dot />
+        <span>{categoryLabel(cat)}</span>
         {adapted && (
           <>
             <Dot />
-            <span className="text-terracotta-deep font-bold">
-              Ajustada {adaptedLabel}
-            </span>
+            <span className="text-terracotta-deep font-bold">Ajustada {adaptedLabel}</span>
           </>
         )}
         {session.status === 'completed' && (
-          <span className="ml-auto text-pine font-bold">✓ Hecha</span>
+          <span className="ml-auto inline-flex items-center gap-1.5 text-trail bg-lichen px-2.5 py-1 rounded-full text-[9.5px] tracking-[0.1em]">
+            ✓ Hecha
+          </span>
         )}
       </div>
 
       {session.adaptationNote && (
-        <div className="border border-terracotta-deep/30 bg-terracotta-tint rounded-[14px] px-4 py-3 mb-3">
+        <div className="border border-terracotta-deep/30 bg-terracotta-tint rounded-[14px] px-4 py-3 mb-4">
           <p className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-terracotta-deep font-bold mb-1.5">
             Ajuste del coach
           </p>
@@ -166,15 +140,50 @@ export default async function SessionPage({ params }: { params: Params }) {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 mb-3.5">
-        {session.blocks.map((b, i) => (
-          <BlockCard key={`${b.code}-${i}`} block={b} />
+      {/* Why card */}
+      <div className="grid grid-cols-[auto_1fr] gap-3 items-start bg-lichen rounded-[14px] px-3.5 py-3 mb-5">
+        <span className="w-6 h-6 rounded-lg bg-paper border border-trail text-trail flex items-center justify-center shrink-0 mt-0.5">
+          <WhyIcon />
+        </span>
+        <p className="text-[12.5px] leading-[1.45] text-trail-deep tracking-[-0.005em]">
+          <strong className="text-ink font-semibold">{why.title}.</strong>{' '}
+          {why.body}
+        </p>
+      </div>
+
+      {/* Block label */}
+      <div className="flex items-center justify-between gap-2 font-mono text-[10px] tracking-[0.18em] uppercase text-muted font-semibold mb-3.5">
+        <span>El entrenamiento</span>
+        <span className="text-[8.5px] bg-lichen text-trail px-1.5 py-0.5 rounded-[5px] tracking-[0.1em] truncate max-w-[60%]">
+          {blockTag}
+        </span>
+      </div>
+
+      {/* Stepper */}
+      <ol className="mb-4">
+        {steps.map((step, i) => (
+          <Step
+            key={`${step.name}-${i}`}
+            step={step}
+            num={i + 1}
+            isLast={i === steps.length - 1}
+          />
         ))}
+      </ol>
+
+      {/* Note card */}
+      <div className="bg-cream border border-hair rounded-[13px] px-3.5 py-3 mb-4 grid grid-cols-[auto_1fr] gap-3 items-start">
+        <span className="font-mono text-[10px] font-bold text-trail bg-paper border border-trail w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+          i
+        </span>
+        <p className="text-[12px] text-fg leading-[1.5] tracking-[-0.005em]">
+          {note}
+        </p>
       </div>
 
       {tip && (
         <aside
-          className="rounded-[14px] border border-lichen-deep px-4 py-3 mb-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+          className="rounded-[14px] border border-lichen-deep px-4 py-3 mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
           style={{
             background:
               'linear-gradient(180deg, var(--color-lichen) 0%, oklch(91% 0.02 145) 100%)',
@@ -191,7 +200,7 @@ export default async function SessionPage({ params }: { params: Params }) {
       )}
 
       {checkin && (
-        <section className="rounded-[14px] border border-trail-tint bg-trail-tint px-4 py-3.5 mb-3.5">
+        <section className="rounded-[14px] border border-trail-tint bg-trail-tint px-4 py-3.5 mb-4">
           <h3 className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-trail font-bold mb-3 flex items-center gap-2.5">
             <span aria-hidden className="w-[14px] h-[1.5px] bg-trail rounded-[1px]" />
             Tu check-in
@@ -199,17 +208,12 @@ export default async function SessionPage({ params }: { params: Params }) {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[12.5px]">
             <CheckinRow label="Sensación" value={`${checkin.rpe}/5`} />
             <CheckinRow label="Habla" value={TALK_LABEL[checkin.talk_test]} />
-            <CheckinRow
-              label="Respiración"
-              value={BREATHING_LABEL[checkin.breathing]}
-            />
+            <CheckinRow label="Respiración" value={BREATHING_LABEL[checkin.breathing]} />
             <CheckinRow label="Objetivo" value={INTENT_LABEL[checkin.intent]} />
             <CheckinRow label="Dolor" value={checkin.pain ? 'Sí' : 'No'} />
             <CheckinRow
               label="Fatiga piernas"
-              value={
-                checkin.legs_fatigue ? FATIGUE_LABEL[checkin.legs_fatigue] : '—'
-              }
+              value={checkin.legs_fatigue ? FATIGUE_LABEL[checkin.legs_fatigue] : '—'}
             />
           </dl>
           {checkin.notes && (
@@ -238,45 +242,112 @@ export default async function SessionPage({ params }: { params: Params }) {
   )
 }
 
-function BlockCard({
-  block,
+function Step({
+  step,
+  num,
+  isLast,
 }: {
-  block: {
-    code: string
-    name: string
-    description: string | null
-    durationMin: number
-    note?: string
-  }
+  step: SessionStep
+  num: number
+  isLast: boolean
 }) {
-  const zone = BLOCK_ZONE[block.code]
+  const isWork = step.kind === 'work'
+  const nodeClass = isWork
+    ? 'border-trail bg-trail text-white shadow-[0_0_0_4px_var(--color-trail-tint)]'
+    : 'border-[color-mix(in_oklch,var(--color-warn)_55%,white)] bg-[color-mix(in_oklch,var(--color-warn)_22%,white)] text-warn-deep shadow-[0_0_0_4px_color-mix(in_oklch,var(--color-warn)_8%,white)]'
+
+  const effortColor =
+    step.effort.level === 'hard'
+      ? 'text-alert'
+      : step.effort.level === 'soft'
+        ? 'text-trail'
+        : 'text-muted'
+  const effortDots =
+    step.effort.level === 'hard'
+      ? 'bg-alert'
+      : step.effort.level === 'soft'
+        ? 'bg-trail'
+        : 'bg-muted'
+
   return (
-    <article className="bg-paper-2 border border-border rounded-[14px] overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
-      <header className="flex justify-between items-center px-4 py-[11px] bg-cream border-b border-border">
-        <span className="font-mono text-[9.5px] tracking-[0.16em] uppercase text-trail font-bold">
-          {block.code}
-          {zone && <span className="text-muted font-semibold ml-1.5">· {zone}</span>}
-        </span>
-        <span className="font-mono text-[11px] font-bold text-ink tracking-[0.02em] tabular-nums">
-          {block.durationMin}′
-        </span>
-      </header>
-      <div className="px-4 py-3">
-        <h3 className="text-[15px] font-semibold text-ink tracking-[-0.018em] leading-[1.25] mb-1.5">
-          {block.name}
-        </h3>
-        {block.description && (
-          <p className="text-[12.5px] text-muted leading-[1.5] tracking-[-0.005em]">
-            {block.description}
-          </p>
+    <li className="grid grid-cols-[30px_1fr] gap-3 relative">
+      <div className="flex flex-col items-center">
+        <div
+          className={`w-[30px] h-[30px] rounded-full border-[1.5px] flex items-center justify-center font-mono text-[11px] font-bold shrink-0 z-10 ${nodeClass}`}
+        >
+          {num}
+        </div>
+        {!isLast && <div className="flex-1 w-[1.5px] bg-hair my-0.5" />}
+      </div>
+      <div className="pb-4 min-w-0">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="text-[14px] font-semibold text-ink tracking-[-0.015em] leading-[1.2]">
+            {step.name}
+          </span>
+          <span className="font-mono text-[11px] text-muted font-semibold whitespace-nowrap">
+            {step.duration}
+          </span>
+        </div>
+        <p className="text-[12px] text-muted leading-[1.4] mt-0.5 tracking-[-0.005em]">
+          {step.description}
+        </p>
+
+        {!step.repeats && (
+          <span
+            className={`inline-flex items-center gap-1.5 font-mono text-[9px] font-semibold tracking-[0.1em] uppercase mt-1.5 ${effortColor}`}
+          >
+            <span className="inline-flex gap-[2.5px]">
+              <span className={`w-[5px] h-[5px] rounded-full ${effortDots}`} />
+              <span className={`w-[5px] h-[5px] rounded-full ${step.effort.level === 'hard' ? effortDots : 'bg-border'}`} />
+              <span className={`w-[5px] h-[5px] rounded-full ${step.effort.level === 'hard' ? effortDots : 'bg-border'}`} />
+            </span>
+            {step.effort.label}
+          </span>
         )}
-        {block.note && (
-          <div className="mt-2.5 pl-3 border-l-2 border-lichen-deep">
-            <p className="text-[12px] text-ink leading-[1.45]">{block.note}</p>
+
+        {step.repeats && (
+          <div className="mt-2.5 border border-border rounded-[13px] overflow-hidden bg-paper-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
+            <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-trail-tint to-paper-2 border-b border-hair">
+              <span className="font-mono text-[9.5px] font-semibold tracking-[0.14em] uppercase text-muted">
+                Repetir
+              </span>
+              <span className="font-mono font-bold text-trail text-[15px] tracking-[0.01em]">
+                ×{step.repeats.reps}{' '}
+                <small className="text-[9px] font-semibold tracking-[0.12em] uppercase text-muted">veces</small>
+              </span>
+            </div>
+            <div className="grid grid-cols-[auto_1fr_auto] gap-2.5 items-center px-3 py-2">
+              <span className="w-[22px] h-[22px] rounded-[7px] bg-trail text-white flex items-center justify-center font-mono font-bold text-[11px]">↑</span>
+              <span className="min-w-0">
+                <div className="text-[12.5px] font-semibold text-ink leading-[1.25] tracking-[-0.012em]">
+                  {step.repeats.go.main}
+                </div>
+                <div className="text-[10.5px] text-muted mt-px tracking-[-0.005em]">
+                  {step.repeats.go.sub}
+                </div>
+              </span>
+              <span className="font-mono text-[8.5px] font-bold tracking-[0.1em] uppercase px-1.5 py-0.5 rounded-md bg-[color-mix(in_oklch,var(--color-alert)_14%,white)] text-alert whitespace-nowrap">
+                Fuerte
+              </span>
+            </div>
+            <div className="grid grid-cols-[auto_1fr_auto] gap-2.5 items-center px-3 py-2 border-t border-dashed border-hair">
+              <span className="w-[22px] h-[22px] rounded-[7px] bg-cream text-soft border border-border flex items-center justify-center font-mono font-bold text-[11px]">↻</span>
+              <span className="min-w-0">
+                <div className="text-[12.5px] font-medium text-muted leading-[1.25] tracking-[-0.012em]">
+                  {step.repeats.rec.main}
+                </div>
+                <div className="text-[10.5px] text-muted mt-px tracking-[-0.005em]">
+                  {step.repeats.rec.sub}
+                </div>
+              </span>
+              <span className="font-mono text-[8.5px] font-bold tracking-[0.1em] uppercase px-1.5 py-0.5 rounded-md bg-lichen text-trail whitespace-nowrap">
+                Recup
+              </span>
+            </div>
           </div>
         )}
       </div>
-    </article>
+    </li>
   )
 }
 
@@ -290,24 +361,21 @@ function CheckinRow({ label, value }: { label: string; value: string }) {
 }
 
 function Dot() {
+  return <span aria-hidden className="w-[3px] h-[3px] bg-soft rounded-full" />
+}
+
+function WhyIcon() {
   return (
-    <span aria-hidden className="w-[3px] h-[3px] bg-soft rounded-full" />
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 6a6 6 0 0 1 6 6M12 18a6 6 0 0 1-6-6" />
+    </svg>
   )
 }
 
 function InfoIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      width="13"
-      height="13"
-      aria-hidden
-    >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" width="13" height="13" aria-hidden>
       <circle cx="12" cy="12" r="10" />
       <path d="M12 16v-4M12 8h.01" />
     </svg>

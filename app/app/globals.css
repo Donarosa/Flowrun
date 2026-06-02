@@ -28,6 +28,8 @@
   --color-terracotta-tint: oklch(94% 0.025 40);
 
   --color-warn: oklch(78% 0.14 80);
+  --color-warn-soft: oklch(96% 0.05 90);
+  --color-warn-deep: #6a4a14;
   --color-alert: oklch(60% 0.18 25);
 
   /* Fonts — loaded via next/font in layout.tsx */

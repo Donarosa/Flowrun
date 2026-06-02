@@ -1,0 +1,229 @@
+{
+  "_doc": "Overrides aprobados para notes de template_sessions. Match por (name, duration, block_code, original_note) — unívoco. Cuando termine la revisión, se compila a un único UPDATE SQL.",
+  "overrides": [
+    {
+      "match": { "name": "Rodaje + Progresivo", "duration": 55, "block_code": "RP", "original_note": "Bloque firme controlado al final" },
+      "new_note": "Trote conversacional la mayor parte. Los últimos 10 min subí a ritmo \"firme\": respiración más cargada pero todavía sostenible — el límite donde podés decir 3-4 palabras seguidas. No esprintes ni acelerones bruscos."
+    },
+    {
+      "match": { "name": "Rodaje + Progresivo", "duration": 55, "block_code": "RP", "original_note": "Último bloque firme al final" },
+      "new_note": "Trote suave los primeros 40 min, después 15 min de cierre firme (respiración cargada, todavía controlada). Es el mismo formato que la semana pasada pero con más tramo firme — empezás a aguantar más tiempo cerca del umbral."
+    },
+    {
+      "match": { "name": "Rodaje Celebración", "duration": 30, "block_code": "RS", "original_note": "Cierre del plan" },
+      "new_note": "Última sesión del plan — trotá cómodo y reconocé el trabajo de las 8 semanas. Sin presión de ritmo ni duración. Si te quedan ganas de más, eso es señal de motor sano: lo guardás para el próximo plan."
+    },
+    {
+      "match": { "name": "Rodaje Celebración", "duration": 40, "block_code": "RS", "original_note": "Cierre del plan, sentí lo logrado" },
+      "new_note": "Última sesión del plan — corré con la satisfacción del trabajo hecho. Aprovechá los 40 min para chequear cómo cambió tu cuerpo desde la semana 1: ¿la respiración se siente más fácil? ¿las piernas más livianas? Ese es el progreso real."
+    },
+    {
+      "match": { "name": "Rodaje Creciendo", "duration": 35, "block_code": "RS", "original_note": "+5 vs semana pasada" },
+      "new_note": "Mismo trote conversacional que la semana pasada, pero 5 min más largo. Así crece la base aeróbica: agregando tiempo, no ritmo. Si te cuesta llegar al final, bajá el ritmo — no acortes."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 30, "block_code": "RS", "original_note": "Con 4 x 10s strides relajados" },
+      "new_note": "Trote conversacional + 4 strides al final. Un stride es una pasada de 10 segundos a paso largo y suelto (rápido pero sin esprintar). Recuperá 60s caminando entre cada una. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 40, "block_code": "RS", "original_note": "Con 6 x 20s strides, 2-3 min trote easy entre cada aceleración" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Entre cada uno, 2-3 minutos de trote muy suave para recuperar. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 60, "block_code": "RS", "original_note": "Con 6 x 20s strides, 2-3 min trote easy entre" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Entre cada uno, 2-3 minutos de trote muy suave para recuperar. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 40, "block_code": "RS", "original_note": "Con 6 x 20s strides, 2-3 min trote easy entre" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Entre cada uno, 2-3 minutos de trote muy suave para recuperar. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 30, "block_code": "RS", "original_note": "Con 6 x 20s strides rápidos pero no extenuantes, 2-3 min trote easy entre" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y rápido pero no extenuante (sentís la zancada abrirse, no que te falta el aire). Entre cada uno, 2-3 minutos de trote muy suave. Despiertan las piernas sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 48, "block_code": "RS", "original_note": "Con 6 x 20s strides (llano)" },
+      "new_note": "Trote conversacional + 6 strides al final, en terreno llano. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Recuperá 60-90s caminando o con trote muy suave entre cada uno. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 48, "block_code": "RS", "original_note": "Con 6 x 20s strides" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Recuperá 60-90s caminando o con trote muy suave entre cada uno. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 60, "block_code": "RS", "original_note": "Con 6 x 20s strides" },
+      "new_note": "Trote conversacional + 6 strides al final. Un stride es una pasada de 20 segundos a paso largo y suelto (rápido pero sin esprintar). Recuperá 60-90s caminando o con trote muy suave entre cada uno. Despiertan las piernas y mejoran técnica sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 36, "block_code": "RS", "original_note": "Con 4 x 20s strides relajados (llano)" },
+      "new_note": "Trote conversacional + 4 strides relajados al final, en terreno llano. Un stride es una pasada de 20 segundos a paso largo y rápido pero suelto (sin esprintar). Recuperá 60-90s caminando o con trote muy suave entre cada uno. Despiertan las piernas sin sumar fatiga."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 40, "block_code": "RS", "original_note": "Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Probá la estrategia de comida y bebida que vas a usar el día de la carrera. Cada 30 min comé/bebé algo de lo que pensás consumir (gel, fruta, isotónica). Es entrenamiento del estómago — más importante que el ritmo en este rodaje."
+    },
+    {
+      "match": { "name": "Rodaje Easy", "duration": 48, "block_code": "RS", "original_note": "En los últimos 20 min: 10 min @ 3h race pace (65-70%)" },
+      "new_note": "Trote conversacional la primera parte. En los últimos 20 min metés 10 minutos a ritmo firme controlado: respiración cargada pero todavía sostenible (esfuerzo ~65-70% del máximo, como si fueras a correr 3 horas). Cerrás los últimos 10 min volviendo a easy."
+    },
+    {
+      "match": { "name": "Cuestas", "duration": 45, "block_code": "SF", "original_note": "5 x (1 min duro cuesta arriba / 1 min bajada easy) + 3 min trote easy + 15 min tempo @ 3h race pace (65-70%)" },
+      "new_note": "5 × (1 min duro cuesta arriba + 1 min de bajada easy). Después 3 min de trote suave de transición. Cerrás con 15 min de tempo firme: ritmo controlado, respiración cargada pero todavía sostenible (esfuerzo ~65-70%, como ritmo de carrera de 3 horas)."
+    },
+    {
+      "match": { "name": "Cuestas", "duration": 45, "block_code": "SF", "original_note": "4 x 2 min duro cuesta arriba con trote bajada + 25 min tempo @ 2h race pace (80-85%)" },
+      "new_note": "4 × 2 min duro cuesta arriba, con trote suave de bajada como recuperación. Después 25 min de tempo más exigente: ritmo de umbral, respiración fuerte pero podés sostenerlo (esfuerzo ~80-85%, como ritmo de carrera de 2 horas)."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 88, "block_code": "TLM", "original_note": "Con pickup: 5 mi easy + 2 mi @ 1.5h race pace (80%) + 1 mi easy" },
+      "new_note": "Tirada larga con un tramo firme intercalado. Hacé la mayor parte (aprox los primeros 50 min) en trote conversacional. Después ~20 min a ritmo firme controlado: respiración cargada pero sostenible (esfuerzo ~80%, ritmo de umbral). Cerrás los últimos ~15 min volviendo a easy."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 121, "block_code": "TLM", "original_note": "Con pickup: 8 mi easy + 2 mi @ 1.5h race pace (80%) + 1 mi easy" },
+      "new_note": "Misma estructura que la sesión más corta, pero más larga. Arrancás cómodo en trote conversacional (aprox los primeros 85 min). Después ~20 min a ritmo firme controlado: respiración cargada pero sostenible (esfuerzo ~80%, ritmo de umbral). Cerrás los últimos ~15 min volviendo a easy."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 99, "block_code": "TLM", "original_note": "En los últimos 10-15 min: 5 x 30s surges (no más rápido que 10k race pace) con 2-3 min trote entre, en llano firme" },
+      "new_note": "En los últimos 10-15 min del rodaje metés 5 surges. Un surge es una aceleración corta de 30 segundos a ritmo fuerte pero controlado — no más rápido del ritmo al que correrías un 10k. Entre cada surge, 2-3 min de trote suave. Hacelos en terreno llano y firme, no en cuesta."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 132, "block_code": "TLM", "original_note": "En las últimas 3 mi: 10 min @ 2h race pace (75-80%)" },
+      "new_note": "En los últimos 25-30 min del rodaje metés un tramo firme de 10 minutos: ritmo de umbral, respiración fuerte pero sostenible (esfuerzo ~75-80%, como ritmo de carrera de 2 horas). Después cerrás los minutos restantes en easy."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 110, "block_code": "TLM", "original_note": "Incluí 3 x 10 min @ 2h race pace (75-80%) con 5 min trote entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 3 × 10 minutos a ritmo firme (de umbral, respiración fuerte pero sostenible — esfuerzo ~75-80%, como ritmo de carrera de 2 horas). Entre cada bloque, 5 min de trote suave para recuperar. También probá la estrategia de comida y bebida que vas a usar el día de la carrera: cada 30 min algo de lo que pensás consumir (gel, fruta, isotónica)."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 110, "block_code": "TLM", "original_note": "Incluí 3 x 15 min @ 3h race pace (65-70%) con 5 min trote entre reps. ALTERNATIVA: 10-mile o half marathon de trail como carrera de preparación · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 3 × 15 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65-70%, como ritmo de carrera de 3 horas). Entre cada bloque, 5 min de trote suave. Alternativa: reemplazá el rodaje por una carrera de trail de 10 mi (~16 km) o media maratón como prueba de carga. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 154, "block_code": "TLM", "original_note": "Incluí 2 x 20 min @ 3h race pace (65-70%) con 5 min trote entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 2 × 20 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65-70%, como ritmo de carrera de 3 horas). Entre cada bloque, 5 min de trote suave. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 140, "block_code": "TLM", "original_note": "En los últimos 20 min: 10 min @ 2h race pace (80%)" },
+      "new_note": "Trote conversacional la mayor parte. En los últimos 20 minutos metés un tramo firme de 10 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~80%, como ritmo de carrera de 2 horas). Cerrás los últimos 10 min volviendo a easy."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 140, "block_code": "TLM", "original_note": "Incluí 45 min @ 3h race pace (65%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 45 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65%, como ritmo de carrera de 3 horas) en el medio del rodaje. El resto en trote conversacional. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 140, "block_code": "TLM", "original_note": "Incluí 60 min @ 3h race pace (65%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 60 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65%, como ritmo de carrera de 3 horas) en el medio del rodaje. El resto en trote conversacional. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 175, "block_code": "TLM", "original_note": "Incluí 75 min @ 4h race pace · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 75 minutos a ritmo de ultra (levemente más rápido que conversacional, esfuerzo ~60-65%, como ritmo de carrera de 4 horas). El resto en trote conversacional. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 210, "block_code": "TLM", "original_note": "Incluí 90 min @ 4h race pace · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 90 minutos a ritmo de ultra (levemente más rápido que conversacional, esfuerzo ~60-65%, como ritmo de carrera de 4 horas). El resto en trote conversacional. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tirada Larga", "duration": 175, "block_code": "TLM", "original_note": "Incluí 60 min @ 4h race pace · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Incluí 60 minutos a ritmo de ultra (levemente más rápido que conversacional, esfuerzo ~60-65%, como ritmo de carrera de 4 horas). El resto en trote conversacional. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Aceleraciones", "duration": 45, "block_code": "SU", "original_note": "Relaxed surges run: incluí 4 x 2 min @ 1.5h race pace con 3 min trote easy entre" },
+      "new_note": "Rodaje easy con aceleraciones relajadas. Incluí 4 × 2 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~80%, como ritmo de carrera de 1.5 horas). Entre cada bloque, 3 minutos de trote suave para recuperar."
+    },
+    {
+      "match": { "name": "Fartlek", "duration": 45, "block_code": "FK", "original_note": "2 x 4 min duro cuesta arriba con trote bajada. Después: 20 min de tempo ondulado @ 1.5h race pace (80-90%)" },
+      "new_note": "2 × 4 min duro cuesta arriba, con trote suave de bajada como recuperación. Después 20 min de tempo en terreno ondulado: ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~80-90%, como ritmo de carrera de 1.5 horas). El terreno hace que el paso varíe — mantené el esfuerzo, no el ritmo exacto."
+    },
+    {
+      "match": { "name": "Fartlek", "duration": 45, "block_code": "FK", "original_note": "Alternation: 5 x (1 min @ 1h race pace 90% / 5 min @ 3h race pace 65%)" },
+      "new_note": "Alternancia de ritmos: 5 × (1 minuto fuerte a ritmo de 10k — esfuerzo ~90%, respiración casi al máximo / 5 minutos a ritmo firme controlado — esfuerzo ~65%, como ritmo de carrera de 3 horas)."
+    },
+    {
+      "match": { "name": "Fartlek", "duration": 45, "block_code": "FK", "original_note": "Alternation: 3 x (5 min @ 1h race pace 90% / 15 min steady @ 4h race pace)" },
+      "new_note": "Alternancia de ritmos: 3 × (5 minutos fuerte a ritmo de 10k — esfuerzo ~90%, respiración casi al máximo / 15 minutos steady a ritmo de ultra — esfuerzo ~60-65%, como ritmo de carrera de 4 horas, levemente más rápido que conversacional)."
+    },
+    {
+      "match": { "name": "Hill Fartlek", "duration": 45, "block_code": "HF", "original_note": "Hill alternations 20 min: todas las subidas duro (40-60 min race pace), llanos y bajadas moderado @ 3h race pace (65-70%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "20 minutos de alternancia en terreno con cuestas: todas las subidas a ritmo duro (de 10k-15k, esfuerzo ~90-95%, respiración casi al máximo); los llanos y las bajadas a ritmo firme moderado (esfuerzo ~65-70%, como ritmo de carrera de 3 horas). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Hill Fartlek", "duration": 50, "block_code": "HF", "original_note": "Hill alternations 25 min: subidas duro (40-60 min race pace), llanos y bajadas @ 3h race pace (65-70%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "25 minutos de alternancia en terreno con cuestas: todas las subidas a ritmo duro (de 10k-15k, esfuerzo ~90-95%, respiración casi al máximo); los llanos y las bajadas a ritmo firme moderado (esfuerzo ~65-70%, como ritmo de carrera de 3 horas). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 95, "block_code": "PR", "original_note": "10 min @ 2h race pace (75-80%) + 5 min @ 40-60 min race pace (90-95%)" },
+      "new_note": "10 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~75-80%, como ritmo de carrera de 2 horas), seguido de 5 minutos a ritmo más exigente (de 10k-15k, esfuerzo ~90-95%, respiración casi al máximo)."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 40, "block_code": "PR", "original_note": "10 min @ 2h race pace (75-80%) + 10 min @ 1h race pace (90-95%)" },
+      "new_note": "10 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~75-80%, como ritmo de carrera de 2 horas), seguido de 10 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo)."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 50, "block_code": "PR", "original_note": "15 min @ 2h race pace (75-80%) + 15 min @ 1h race pace (90-95%)" },
+      "new_note": "15 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~75-80%, como ritmo de carrera de 2 horas), seguido de 15 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo)."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 60, "block_code": "PR", "original_note": "20 min total: 10 min @ 2h race pace (75-80%) + 10 min @ 1h race pace (90-95%)" },
+      "new_note": "20 min progresivos en el medio del rodaje: 10 minutos a ritmo de umbral (esfuerzo ~75-80%, como ritmo de carrera de 2 horas), después 10 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo)."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 70, "block_code": "PR", "original_note": "25 min total: 10 min @ 3h race pace (65-70%) + 10 min @ 2h race pace (75-80%) + 5 min @ 1h race pace (90-95%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "25 min progresivos en el medio: 10 minutos a ritmo firme controlado (esfuerzo ~65-70%, como ritmo de carrera de 3 horas), después 10 minutos a ritmo de umbral (esfuerzo ~75-80%, como ritmo de 2 horas), después 5 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 80, "block_code": "PR", "original_note": "30 min total: 10 min @ 3h race pace (65-70%) + 10 min @ 2h race pace (75-80%) + 10 min @ 1h race pace (90-95%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "30 min progresivos en el medio: 10 minutos a ritmo firme controlado (esfuerzo ~65-70%, como ritmo de carrera de 3 horas), después 10 minutos a ritmo de umbral (esfuerzo ~75-80%, como ritmo de 2 horas), después 10 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 80, "block_code": "PR", "original_note": "30 min total: 20 min @ 3h race pace (65-70%) + 10 min @ 1h race pace (90-95%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "30 min progresivos en el medio: 20 minutos a ritmo firme controlado (esfuerzo ~65-70%, como ritmo de carrera de 3 horas), seguido de 10 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 50, "block_code": "PR", "original_note": "20 min @ 3h race pace (65%) + 10 min @ 2h race pace (80%)" },
+      "new_note": "20 minutos a ritmo firme controlado (esfuerzo ~65%, como ritmo de carrera de 3 horas), seguido de 10 minutos a ritmo de umbral (esfuerzo ~80%, como ritmo de 2 horas, respiración fuerte pero sostenible)."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 60, "block_code": "PR", "original_note": "20 min @ 3h race pace (65%) + 20 min @ 2h race pace (80%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "20 minutos a ritmo firme controlado (esfuerzo ~65%, como ritmo de carrera de 3 horas), seguido de 20 minutos a ritmo de umbral (esfuerzo ~80%, como ritmo de 2 horas, respiración fuerte pero sostenible). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 60, "block_code": "PR", "original_note": "20 min @ 3h race pace (65%) + 15 min @ 2h race pace (80%) + 5 min @ 1h race pace (90%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "Pirámide ascendente: 20 minutos a ritmo firme controlado (esfuerzo ~65%, como ritmo de carrera de 3 horas), 15 minutos a ritmo de umbral (esfuerzo ~80%, como ritmo de 2 horas), 5 minutos a ritmo más exigente (de 10k, esfuerzo ~90%, respiración casi al máximo). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Progresivo", "duration": 70, "block_code": "PR", "original_note": "40 min @ 4h race pace + 10 min @ 2h race pace (80%)" },
+      "new_note": "40 minutos a ritmo de ultra (levemente más rápido que conversacional, esfuerzo ~60-65%, como ritmo de carrera de 4 horas), seguido de 10 minutos a ritmo de umbral (esfuerzo ~80%, respiración fuerte pero sostenible)."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 37, "block_code": "TE", "original_note": "2 x 12 min @ 2h race pace (75-80%) con 3 min trote entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "2 × 12 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~75-80%, como ritmo de carrera de 2 horas). Entre cada bloque, 3 min de trote suave para recuperar. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 40, "block_code": "TE", "original_note": "2 x 15 min @ 2h race pace (75-80%) con 3 min trote entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "2 × 15 minutos a ritmo de umbral (respiración fuerte pero sostenible, esfuerzo ~75-80%, como ritmo de carrera de 2 horas). Entre cada bloque, 3 min de trote suave para recuperar. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 45, "block_code": "TE", "original_note": "En trail ondulado, 20 min @ 1h race pace (90-95%)" },
+      "new_note": "En terreno trail ondulado: 20 minutos a ritmo más exigente (de 10k, esfuerzo ~90-95%, respiración casi al máximo). El terreno hace que el paso varíe — mantené el esfuerzo, no el ritmo exacto."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 65, "block_code": "TE", "original_note": "40 min @ 3h race pace (65-75%) · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "40 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65-75%, como ritmo de carrera de 3 horas). También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 40, "block_code": "TE", "original_note": "2 x 15 min @ 3h race pace (65-70%) con 5 min trote easy entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "2 × 15 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65-70%, como ritmo de carrera de 3 horas). Entre cada bloque, 5 min de trote suave para recuperar. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 45, "block_code": "TE", "original_note": "2 x 20 min @ 3h race pace (65-70%) con 5 min trote easy entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "2 × 20 minutos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~65-70%, como ritmo de carrera de 3 horas). Entre cada bloque, 5 min de trote suave para recuperar. También probá la estrategia de comida y bebida del día de la carrera."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 55, "block_code": "TE", "original_note": "30 min steady @ 3h race pace (60%)" },
+      "new_note": "30 minutos sostenidos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~60%, como ritmo de carrera de 3 horas)."
+    },
+    {
+      "match": { "name": "Tempo", "duration": 45, "block_code": "TE", "original_note": "2 x 20 min steady @ 3h race pace (60%) con 5 min trote easy entre reps · Buen día para probar tu estrategia de combustible (*)." },
+      "new_note": "2 × 20 minutos sostenidos a ritmo firme controlado (respiración cargada pero sostenible, esfuerzo ~60%, como ritmo de carrera de 3 horas). Entre cada bloque, 5 min de trote suave para recuperar. También probá la estrategia de comida y bebida del día de la carrera."
+    }
+  ]
+}
