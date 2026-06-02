@@ -155,43 +155,50 @@ function SessionToday({ session }: { session: TodaySession }) {
 
   return (
     <>
-      {/* Hero verde con gradient */}
-      <article className="relative overflow-hidden bg-gradient-to-br from-trail to-trail-deep text-white rounded-[22px] px-5 py-[18px] mb-3.5 shadow-[0_12px_26px_-14px_rgba(61,107,63,0.6)]">
-        <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 w-[160px] h-[160px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.13),transparent_62%)]" />
-        <span aria-hidden className="pointer-events-none absolute -left-6 -bottom-11 w-[130px] h-[130px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08),transparent_62%)]" />
-
-        <div className="relative z-[1] flex items-center justify-between mb-3.5">
-          <span className="font-mono text-[9.5px] tracking-[0.18em] uppercase font-semibold text-white/85">
-            Semana {session.weekNumber} · Sesión
-            {session.isDeload && ' · Descarga'}
-          </span>
-          {done && (
-            <span className="font-mono text-[9px] font-bold tracking-[0.12em] uppercase bg-white/20 px-2 py-1 rounded-full">
-              ✓ Hecha
+      {/* Hero — estilo white card */}
+      <article className="relative overflow-hidden bg-paper-2 border border-border rounded-[16px] p-[18px] mb-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-5 -top-5 w-[90px] h-[90px] rounded-full bg-trail-tint"
+        />
+        <div className="relative z-[1]">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-trail font-bold">
+              Semana {session.weekNumber} · Sesión
             </span>
-          )}
-          {!done && adapted && (
-            <span className="font-mono text-[9px] font-bold tracking-[0.12em] uppercase bg-white/20 px-2 py-1 rounded-full">
-              {adaptedLabel}
-            </span>
-          )}
-        </div>
+            {session.isDeload && (
+              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-stone font-semibold">
+                · Descarga
+              </span>
+            )}
+            {adapted && (
+              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-terracotta-deep font-bold">
+                · Ajustada {adaptedLabel}
+              </span>
+            )}
+            {done && (
+              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-pine font-bold ml-auto">
+                ✓ Hecha
+              </span>
+            )}
+          </div>
 
-        <h2 className="relative z-[1] text-[27px] font-bold tracking-[-0.03em] leading-[1.04] mb-1">
-          {title}
-        </h2>
-        <p className="relative z-[1] text-[12.5px] text-white/85 leading-[1.4] tracking-[-0.005em] mb-3.5 max-w-[255px]">
-          {why.body}
-        </p>
+          <h2 className="text-[22px] font-bold tracking-[-0.028em] text-ink leading-[1.1] mb-1.5">
+            {title}
+          </h2>
+          <p className="text-[12.5px] text-muted leading-[1.45] tracking-[-0.005em] mb-3.5 max-w-[255px]">
+            {why.body}
+          </p>
 
-        <div className="relative z-[1] flex gap-4">
-          <Fact value={`${session.totalDurationMin}′`} label="Duración" />
-          <Fact value={steps.length} label="Pasos" />
-          {showReps ? (
-            <Fact value={totalReps} label="Repeticiones" />
-          ) : (
-            <Fact value={categoryLabel(cat)} label="Tipo" />
-          )}
+          <div className="flex gap-5">
+            <Fact value={`${session.totalDurationMin}′`} label="Duración" />
+            <Fact value={steps.length} label="Pasos" />
+            {showReps ? (
+              <Fact value={totalReps} label="Repeticiones" />
+            ) : (
+              <Fact value={categoryLabel(cat)} label="Tipo" />
+            )}
+          </div>
         </div>
       </article>
 
@@ -234,10 +241,10 @@ function SessionToday({ session }: { session: TodaySession }) {
 function Fact({ value, label }: { value: string | number; label: string }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="font-mono text-[16px] font-bold tracking-[0.01em] leading-none text-white">
+      <span className="font-mono text-[17px] font-bold tracking-[0.01em] leading-none text-ink tabular-nums">
         {value}
       </span>
-      <span className="font-mono text-[8.5px] tracking-[0.14em] uppercase font-semibold text-white/70">
+      <span className="font-mono text-[8.5px] tracking-[0.14em] uppercase font-semibold text-muted">
         {label}
       </span>
     </div>
