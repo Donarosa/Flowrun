@@ -708,3 +708,76 @@ export async function graduate(
 
   return plan.id
 }
+
+// Progreso global del plan activo: semana actual / total + % de sesiones
+// completadas. Liviano (2 queries). Devuelve null si no hay plan activo.
+export type PlanProgress = {
+  currentWeek: number
+  totalWeeks: number
+  completedSessions: number
+  totalSessions: number
+  completedPct: number
+  templateName: string
+}
+
+export async function getPlanProgress(
+  userId: string,
+): Promise<PlanProgress | null> {
+  const supabase = await createClient()
+  const { data: plan } = await supabase
+    .from('user_plans')
+    .select('id, template:plan_templates ( name, total_weeks )')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle<{
+      id: string
+      template:
+        | { name: string; total_weeks: number }
+        | { name: string; total_weeks: number }[]
+        | null
+    }>()
+  if (!plan || !plan.template) return null
+  const template = Array.isArray(plan.template) ? plan.template[0] : plan.template
+  if (!template) return null
+
+  const { data: sessions } = await supabase
+    .from('user_sessions')
+    .select('status, template_session:template_sessions ( week_number )')
+    .eq('user_plan_id', plan.id)
+    .returns<{
+      status: SessionStatus
+      template_session:
+        | { week_number: number }
+        | { week_number: number }[]
+        | null
+    }[]>()
+
+  const list = sessions ?? []
+  const total = list.length
+  const completed = list.filter((s) => s.status === 'completed').length
+
+  const weeksWithPending = new Set<number>()
+  const weeksAny = new Set<number>()
+  for (const s of list) {
+    const t = Array.isArray(s.template_session)
+      ? s.template_session[0]
+      : s.template_session
+    if (!t) continue
+    weeksAny.add(t.week_number)
+    if (s.status !== 'completed') weeksWithPending.add(t.week_number)
+  }
+  const currentWeek = weeksWithPending.size
+    ? Math.min(...weeksWithPending)
+    : weeksAny.size
+      ? Math.max(...weeksAny)
+      : 1
+
+  return {
+    currentWeek,
+    totalWeeks: template.total_weeks,
+    completedSessions: completed,
+    totalSessions: total,
+    completedPct: total > 0 ? Math.round((completed / total) * 100) : 0,
+    templateName: template.name,
+  }
+}
