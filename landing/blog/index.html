@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog · FlowRun</title>
+<meta name="description" content="Notas sobre entrenamiento de running con foco en lo que se siente, no solo en los números. Zona 2, talk test, fuerza para corredores, recuperación.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --trail:#3D6B3F; --trail-deep:#2B4F2D; --trail-tint:oklch(96% 0.018 145);
+  --lichen:oklch(94% 0.018 145); --moss:oklch(88% 0.022 145);
+  --cream:oklch(98% 0.006 90); --paper:oklch(99.4% 0.004 90); --paper-2:#ffffff;
+  --ink:#1B1F1B; --fg:oklch(20% 0.012 145); --muted:oklch(48% 0.012 145);
+  --soft:oklch(72% 0.010 145); --hair:oklch(94% 0.008 90);
+  --font:'Inter',-apple-system,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--cream);color:var(--fg);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 24px}
+
+nav{position:sticky;top:0;background:var(--cream);border-bottom:1px solid var(--hair);z-index:10;padding:18px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+nav .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+nav .brand svg{color:var(--trail);width:28px;height:28px}
+nav .brand .acc{color:var(--trail)}
+nav .back{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--hair);background:var(--paper-2);transition:all .15s}
+nav .back:hover{color:var(--ink);border-color:var(--moss)}
+
+main{padding:48px 0 80px}
+.head .kicker{font-family:var(--mono);font-size:11px;color:var(--trail);letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
+.head .kicker::before{content:'';width:24px;height:1.5px;background:var(--trail);border-radius:1px}
+.head h1{font-size:clamp(36px,5.5vw,52px);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--ink);margin-bottom:14px}
+.head .lede{font-size:18px;color:var(--muted);line-height:1.55;letter-spacing:-.005em;max-width:580px;margin-bottom:48px}
+
+.posts{display:flex;flex-direction:column;gap:14px}
+.post{display:block;background:var(--paper-2);border:1px solid var(--hair);border-radius:18px;padding:26px 28px;transition:transform .15s,border-color .15s,box-shadow .15s;text-decoration:none;color:inherit}
+.post:hover{transform:translateY(-2px);border-color:var(--moss);box-shadow:0 14px 30px -16px rgba(20,30,20,.18)}
+.post .meta{font-family:var(--mono);font-size:10.5px;color:var(--trail);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.post .meta .dot{width:3px;height:3px;background:var(--soft);border-radius:50%}
+.post .meta .date{color:var(--muted);font-weight:500}
+.post h2{font-size:24px;font-weight:700;letter-spacing:-.022em;line-height:1.18;color:var(--ink);margin-bottom:10px}
+.post p{font-size:15.5px;color:var(--muted);line-height:1.55;margin-bottom:14px;letter-spacing:-.005em}
+.post .read{font-family:var(--mono);font-size:11.5px;color:var(--trail);font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px}
+
+.empty-tease{margin-top:32px;background:var(--lichen);border-radius:14px;padding:18px 22px;font-size:14px;color:var(--ink);text-align:center}
+.empty-tease strong{font-weight:600}
+
+.foot{margin-top:60px;padding:40px 24px;text-align:center;border-top:1px solid var(--hair);background:var(--paper)}
+.foot p{font-size:14px;color:var(--muted);margin-bottom:14px}
+.foot a.cta{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--ink);color:#fff;border-radius:999px;font-size:14.5px;font-weight:600;letter-spacing:-.005em;transition:background .15s,transform .15s}
+.foot a.cta:hover{background:var(--trail);transform:translateY(-1px)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="brand">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="42" cy="14" r="5" fill="currentColor"/>
+      </svg>
+      <span>flow<span class="acc">run</span></span>
+    </a>
+    <a href="/" class="back">← Volver</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <section class="head">
+      <p class="kicker">Blog FlowRun</p>
+      <h1>Notas sobre correr al ritmo correcto.</h1>
+      <p class="lede">Pocas reglas, mucha sensación. Acá compartimos lo que aprendemos entrenando con corredores reales — qué funciona, qué no, y por qué.</p>
+    </section>
+
+    <section class="posts">
+      <a href="/blog/zona-2" class="post">
+        <div class="meta">
+          <span>Entrenamiento</span>
+          <span class="dot"></span>
+          <span class="date">2 jun · 8 min de lectura</span>
+        </div>
+        <h2>Zona 2: por qué el ritmo que se siente "demasiado lento" es el que más te hace mejorar</h2>
+        <p>Si pensás "esto es demasiado tranquilo, no me sirve" — vas bien. La paradoja del entrenamiento de resistencia: lo que más rinde es lo que más cuesta respetar.</p>
+        <span class="read">Leer nota →</span>
+      </a>
+    </section>
+
+    <div class="empty-tease">
+      <strong>Próximamente:</strong> talk test en la práctica · fuerza para corredores · qué pasa cuando saltás una sesión.
+    </div>
+  </div>
+</main>
+
+<section class="foot">
+  <p>¿Querés entrenar con un coach que entiende lo que sentís?</p>
+  <a href="https://app.flowrun.fun/login" class="cta">Empezá gratis · 15 días →</a>
+</section>
+
+</body>
+</html>

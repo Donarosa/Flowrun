@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ciencia detrás de FlowRun · Cómo entrenamos</title>
+<meta name="description" content="FlowRun está construido sobre principios de fisiología del ejercicio y entrenamiento polarizado: zona 2, talk test, periodización por bloques y adaptación basada en sensación. Acá explicamos en qué nos basamos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --trail:#3D6B3F; --trail-deep:#2B4F2D; --trail-tint:oklch(96% 0.018 145);
+  --pine:oklch(26% 0.08 145); --lichen:oklch(94% 0.018 145); --moss:oklch(88% 0.022 145);
+  --cream:oklch(98% 0.006 90); --paper:oklch(99.4% 0.004 90); --paper-2:#ffffff;
+  --ink:#1B1F1B; --fg:oklch(20% 0.012 145); --muted:oklch(48% 0.012 145);
+  --soft:oklch(72% 0.010 145); --hair:oklch(94% 0.008 90);
+  --font:'Inter',-apple-system,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--cream);color:var(--fg);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+nav{position:sticky;top:0;background:var(--cream);border-bottom:1px solid var(--hair);z-index:10;padding:18px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+nav .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+nav .brand svg{color:var(--trail);width:28px;height:28px}
+nav .brand .acc{color:var(--trail)}
+nav .back{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--hair);background:var(--paper-2);transition:all .15s}
+nav .back:hover{color:var(--ink);border-color:var(--moss)}
+
+main{padding:48px 0 80px}
+.kicker{font-family:var(--mono);font-size:11px;color:var(--trail);letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
+.kicker::before{content:'';width:24px;height:1.5px;background:var(--trail);border-radius:1px}
+h1{font-size:clamp(36px,5.5vw,56px);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--ink);margin-bottom:18px}
+.lede{font-size:19px;color:var(--muted);line-height:1.55;letter-spacing:-.005em;max-width:620px;margin-bottom:50px}
+
+h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.025em;color:var(--ink);margin:48px 0 14px;line-height:1.15}
+h2::before{content:'';display:block;width:36px;height:2px;background:var(--trail);margin-bottom:14px;border-radius:1px}
+h3{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.012em;margin:28px 0 8px;line-height:1.3}
+p{margin-bottom:14px;color:var(--fg);font-size:16px;line-height:1.65;letter-spacing:-.005em}
+p:last-child{margin-bottom:0}
+strong{font-weight:600;color:var(--ink)}
+em{font-style:italic;color:var(--fg)}
+
+ul.bullet{list-style:none;padding:0;margin:16px 0}
+ul.bullet li{padding:12px 0 12px 28px;position:relative;border-bottom:1px solid var(--hair);font-size:15.5px;line-height:1.55;color:var(--fg)}
+ul.bullet li:last-child{border-bottom:none}
+ul.bullet li::before{content:'';position:absolute;left:8px;top:21px;width:6px;height:6px;background:var(--trail);border-radius:50%}
+ul.bullet li strong{display:inline}
+
+.card{background:var(--paper-2);border:1px solid var(--hair);border-radius:18px;padding:22px 26px;margin:22px 0}
+.card .label{font-family:var(--mono);font-size:10.5px;color:var(--trail);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:10px;display:block}
+.card p{font-size:15.5px;line-height:1.55;margin-bottom:0}
+.card.dark{background:var(--ink);color:rgba(255,255,255,.85);border-color:transparent}
+.card.dark .label{color:var(--moss)}
+.card.dark strong{color:#fff}
+
+blockquote{margin:22px 0;padding:18px 24px;border-left:3px solid var(--trail);background:var(--lichen);border-radius:0 14px 14px 0;font-size:16px;line-height:1.6;color:var(--ink);font-style:italic}
+blockquote .src{display:block;margin-top:10px;font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+
+.refs{margin-top:50px;padding-top:30px;border-top:1px solid var(--hair)}
+.refs h2{margin-top:0}
+.refs h2::before{display:none}
+.refs ol{padding-left:0;list-style:none;counter-reset:r}
+.refs ol li{counter-increment:r;padding:10px 0 10px 30px;position:relative;font-size:14px;color:var(--muted);line-height:1.5;border-bottom:1px solid var(--hair)}
+.refs ol li:last-child{border-bottom:none}
+.refs ol li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:11px;font-family:var(--mono);font-size:11px;color:var(--trail);font-weight:700;letter-spacing:.04em}
+.refs em{color:var(--ink);font-style:italic}
+
+.foot{margin-top:60px;padding:40px 24px;text-align:center;border-top:1px solid var(--hair);background:var(--paper)}
+.foot p{font-size:14px;color:var(--muted);margin-bottom:14px}
+.foot a.cta{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--ink);color:#fff;border-radius:999px;font-size:14.5px;font-weight:600;letter-spacing:-.005em;transition:background .15s,transform .15s}
+.foot a.cta:hover{background:var(--trail);transform:translateY(-1px)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="brand">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="42" cy="14" r="5" fill="currentColor"/>
+      </svg>
+      <span>flow<span class="acc">run</span></span>
+    </a>
+    <a href="/" class="back">← Volver</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <p class="kicker">Ciencia detrás</p>
+    <h1>En qué nos basamos para construir FlowRun.</h1>
+    <p class="lede">No inventamos un método nuevo. Tomamos lo que la fisiología del ejercicio dice hace 40 años y lo simplificamos para que un corredor amateur pueda usarlo sin leer un paper. Acá está la base.</p>
+
+    <h2>1. La idea central: ritmo sostenible</h2>
+    <p>El mayor error del corredor amateur es <strong>correr demasiado rápido los días fáciles</strong> y demasiado lento los días duros. El cuerpo termina viviendo en una zona gris — ni recupera, ni mejora el motor aeróbico, ni gana velocidad real.</p>
+    <p>La solución viene del modelo de <strong>entrenamiento polarizado</strong>, popularizado por el fisiólogo noruego Stephen Seiler: 80% del volumen a ritmo muy fácil (zona 2), 20% a ritmo fuerte (zonas 3-5). Los días fáciles fáciles. Los días duros, duros. Sin gris en el medio.</p>
+
+    <div class="card">
+      <span class="label">El principio en una línea</span>
+      <p><strong>La mayoría de los días corrés muy lento. Pocos días, corrés muy rápido. Casi nunca corrés "moderado".</strong> Eso construye motor aeróbico sin acumular fatiga crónica.</p>
+    </div>
+
+    <h2>2. Cómo medimos el esfuerzo: talk test antes que pulsómetro</h2>
+    <p>El estándar de oro para medir esfuerzo en laboratorio es la <strong>lactatemia</strong>. Para el amateur, eso es inaccesible. La frecuencia cardíaca es útil pero variable (calor, estrés, sueño, café).</p>
+    <p>El <strong>talk test</strong> — capacidad de hablar mientras corrés — es el proxy más confiable y barato para identificar zonas de intensidad. Validado en estudios desde los años 80:</p>
+    <ul class="bullet">
+      <li><strong>Zona 1-2 (fácil):</strong> hablás en frases completas, podés cantar. Es la base aeróbica.</li>
+      <li><strong>Zona 3 (umbral aeróbico):</strong> hablás en frases entrecortadas. Es la zona gris a evitar.</li>
+      <li><strong>Zona 4 (umbral anaeróbico):</strong> palabras sueltas. Es el ritmo de "media maratón".</li>
+      <li><strong>Zona 5 (VO2 máx):</strong> no podés hablar. Es para intervalos cortos.</li>
+    </ul>
+    <p>FlowRun pregunta después de cada sesión: <em>"¿pudiste hablar?"</em>. Esa respuesta combinada con tu pulso (si lo tenés) ajusta lo que viene.</p>
+
+    <h2>3. Zona 2: el motor que cuesta más construir</h2>
+    <p>La zona 2 es donde el cuerpo aprende a oxidar grasa eficientemente, construye densidad mitocondrial y mejora la red capilar muscular. Es la base sobre la que se construye todo lo demás — incluida la velocidad.</p>
+    <p>El problema es que <strong>la zona 2 se siente "demasiado lenta"</strong>. La mayoría de los amateurs no la respeta. Por eso FlowRun la insiste, la mide y la protege.</p>
+    <p><a href="/blog/zona-2" style="color:var(--trail);font-weight:600;border-bottom:1.5px solid var(--trail);padding-bottom:1px">Leer la nota completa sobre zona 2 →</a></p>
+
+    <h2>4. Periodización: bloques + descarga</h2>
+    <p>El cuerpo no mejora por entrenar duro todos los días — mejora por la <strong>alternancia entre carga y recuperación</strong>. Seguimos un modelo de bloques de 3-4 semanas: cargas progresivas seguidas de una semana de descarga (deload) donde el volumen baja ~20%.</p>
+    <p>Cada bloque tiene un foco: base aeróbica, fuerza específica, velocidad, peak para carrera. La estructura sale de literatura clásica de periodización (Bompa, Tudor) adaptada a corredores aficionados — sin gimnasio caro, sin tests de lactato.</p>
+
+    <h2>5. Adaptación basada en sensación + datos</h2>
+    <p>La diferencia entre un plan de PDF y un coach es que <strong>el coach ajusta semana a semana</strong> según cómo estés. FlowRun replica eso con un motor adaptativo:</p>
+    <ul class="bullet">
+      <li><strong>Después de cada sesión</strong> hacés un check-in de 20 segundos: RPE (escala de Borg simplificada 1-5), respiración, fatiga en piernas, dolor, intent.</li>
+      <li><strong>Al final de la semana</strong> el motor evalúa: ¿estás recuperando bien? ¿se sintió duro lo que debía ser fácil? ¿saltaste sesiones?</li>
+      <li><strong>La próxima semana</strong> se ajusta automáticamente: volumen ±10-20%, distribución de intensidad, o pausa preventiva si hay señales de sobreentrenamiento.</li>
+    </ul>
+
+    <h2>6. Bloques de entrenamiento: cuáles y por qué</h2>
+    <p>Tenemos un catálogo de <strong>22 bloques de entrenamiento</strong> que se combinan para armar las sesiones. Cada bloque está respaldado por un objetivo fisiológico claro:</p>
+    <ul class="bullet">
+      <li><strong>Rodaje sostenible (RS):</strong> base aeróbica. Z1-Z2. La columna vertebral del plan.</li>
+      <li><strong>Tirada larga (TL / TLM):</strong> resistencia. Construye capacidad de tiempo en pie.</li>
+      <li><strong>Intervalos al umbral (IU):</strong> mejora del umbral anaeróbico. Z3-Z4.</li>
+      <li><strong>Cuestas (SC / SF):</strong> fuerza y potencia con menos impacto que el llano. Z2-Z4.</li>
+      <li><strong>Strides:</strong> técnica + economía + velocidad. Sin sumar fatiga.</li>
+      <li><strong>Fartlek / Tempo / Progresivo:</strong> trabajos de intensidad estructurada.</li>
+      <li><strong>Fuerza (FG / FE) + Pliometría (PL):</strong> prevención de lesiones + economía. La evidencia es clarísima: corredores que entrenan fuerza duran más y mejoran economía.</li>
+      <li><strong>Recuperación activa + Movilidad:</strong> regeneración. Lo más subestimado.</li>
+    </ul>
+
+    <h2>7. Planes pro: basados en Sarah McCormack</h2>
+    <p>Los 5 planes para carreras (10K, media maratón, maratón, 50 millas, 100K) están estructurados siguiendo los lineamientos de <strong>Sarah McCormack</strong> — coach reconocida de trail con planes publicados para distancias largas. Adaptamos su filosofía de progresión gradual + mucha base aeróbica + simulaciones específicas de la carrera objetivo.</p>
+
+    <blockquote>
+      Hay tres cosas que importan en el entrenamiento de resistencia: consistencia, paciencia, y respetar los días fáciles. El resto son detalles.
+      <span class="src">— Steve Magness, <em>The Science of Running</em></span>
+    </blockquote>
+
+    <h2>8. Lo que NO somos</h2>
+    <p>FlowRun <strong>no</strong> es:</p>
+    <ul class="bullet">
+      <li>Un reemplazo de tu reloj GPS o pulsómetro — usamos esos datos, no los generamos.</li>
+      <li>Un plan rígido que ignora tu día a día — el motor adapta.</li>
+      <li>Una promesa de "PR garantizado" — el running tiene incertidumbre, somos honestos con eso.</li>
+      <li>Un coach humano profesional — para objetivos elite, buscá un coach real. FlowRun es para el corredor amateur que quiere progresar sin lesionarse.</li>
+    </ul>
+
+    <div class="card dark">
+      <span class="label">Cómo trabajamos</span>
+      <p>Iteramos con corredores reales (vos incluido). Cada check-in alimenta el modelo. Cada lesión, cada PR, cada DNF nos ajusta. <strong>El plan que entrenás vos hoy es mejor que el de hace 6 meses porque otros 100 corredores lo usaron antes.</strong></p>
+    </div>
+
+    <section class="refs">
+      <h2>Bibliografía y fuentes</h2>
+      <ol>
+        <li>Seiler, S. (2010). <em>What is best practice for training intensity and duration distribution in endurance athletes?</em> International Journal of Sports Physiology and Performance, 5(3).</li>
+        <li>Magness, S. (2014). <em>The Science of Running: How to find your limit and train to maximize your performance.</em> Origin Press.</li>
+        <li>Daniels, J. (2014). <em>Daniels' Running Formula</em> (3rd ed). Human Kinetics. Tablas VDOT y zonas de ritmo.</li>
+        <li>Foster, C. et al. (2008). <em>The Talk Test as a Marker of Exercise Training Intensity.</em> Journal of Cardiopulmonary Rehabilitation and Prevention, 28(1).</li>
+        <li>Borg, G. (1998). <em>Borg's Perceived Exertion and Pain Scales.</em> Human Kinetics.</li>
+        <li>Beattie, K. et al. (2017). <em>The Effect of Strength Training on Performance Indicators in Distance Runners.</em> Journal of Strength and Conditioning Research, 31(1).</li>
+        <li>Bompa, T. & Buzzichelli, C. (2018). <em>Periodization: Theory and Methodology of Training</em> (6th ed). Human Kinetics.</li>
+        <li>McCormack, S. — Planes y filosofía publicada en <em>Running Up That Hill</em> y materiales de coaching para ultradistance trail running.</li>
+        <li>San-Millán, I. & Brooks, G. (2017). <em>Assessment of metabolic flexibility by means of measuring blood lactate, fat, and carbohydrate oxidation responses to exercise.</em> Sports Medicine, 48(2).</li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<section class="foot">
+  <p>¿Querés probar todo esto en una app que entiende cómo te sentís?</p>
+  <a href="https://app.flowrun.fun/login" class="cta">Empezá gratis · 15 días →</a>
+</section>
+
+</body>
+</html>

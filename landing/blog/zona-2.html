@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zona 2: por qué el ritmo lento es el que más te hace mejorar · FlowRun Blog</title>
+<meta name="description" content="La zona 2 es el ritmo donde podés hablar en frases completas. Se siente demasiado lento, pero es el que construye motor aeróbico, mejora densidad mitocondrial y te permite progresar sin lesionarte.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --trail:#3D6B3F; --trail-deep:#2B4F2D; --trail-tint:oklch(96% 0.018 145);
+  --lichen:oklch(94% 0.018 145); --moss:oklch(88% 0.022 145);
+  --cream:oklch(98% 0.006 90); --paper:oklch(99.4% 0.004 90); --paper-2:#ffffff;
+  --ink:#1B1F1B; --fg:oklch(20% 0.012 145); --muted:oklch(48% 0.012 145);
+  --soft:oklch(72% 0.010 145); --hair:oklch(94% 0.008 90);
+  --font:'Inter',-apple-system,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--cream);color:var(--fg);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{max-width:680px;margin:0 auto;padding:0 24px}
+
+nav{position:sticky;top:0;background:var(--cream);border-bottom:1px solid var(--hair);z-index:10;padding:18px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between;max-width:780px}
+nav .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+nav .brand svg{color:var(--trail);width:28px;height:28px}
+nav .brand .acc{color:var(--trail)}
+nav .back{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--hair);background:var(--paper-2);transition:all .15s}
+nav .back:hover{color:var(--ink);border-color:var(--moss)}
+
+main{padding:48px 0 80px}
+.meta-top{font-family:var(--mono);font-size:11px;color:var(--trail);letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
+.meta-top::before{content:'';width:24px;height:1.5px;background:var(--trail);border-radius:1px}
+h1{font-size:clamp(34px,5vw,46px);font-weight:800;letter-spacing:-.032em;line-height:1.08;color:var(--ink);margin-bottom:14px}
+.byline{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;margin-bottom:40px;display:flex;align-items:center;gap:12px}
+.byline .dot{width:3px;height:3px;background:var(--soft);border-radius:50%}
+.lede{font-size:19px;color:var(--ink);line-height:1.5;letter-spacing:-.012em;font-weight:500;margin-bottom:44px;padding-bottom:24px;border-bottom:1px solid var(--hair)}
+
+article p{margin-bottom:18px;font-size:16.5px;line-height:1.7;letter-spacing:-.005em;color:var(--fg)}
+article p:last-child{margin-bottom:0}
+article strong{font-weight:600;color:var(--ink)}
+article em{font-style:italic}
+
+article h2{font-size:26px;font-weight:700;letter-spacing:-.024em;color:var(--ink);margin:44px 0 16px;line-height:1.18}
+article h2::before{content:'';display:block;width:32px;height:2px;background:var(--trail);margin-bottom:12px;border-radius:1px}
+article h3{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.012em;margin:26px 0 10px;line-height:1.3}
+
+article ul{margin:14px 0 22px;padding:0;list-style:none}
+article ul li{padding:10px 0 10px 24px;position:relative;border-bottom:1px solid var(--hair);font-size:15.5px;line-height:1.55;color:var(--fg)}
+article ul li:last-child{border-bottom:none}
+article ul li::before{content:'';position:absolute;left:6px;top:18px;width:6px;height:6px;background:var(--trail);border-radius:50%}
+
+blockquote{margin:28px 0;padding:20px 26px;border-left:3px solid var(--trail);background:var(--lichen);border-radius:0 14px 14px 0;font-size:17px;line-height:1.55;color:var(--ink);font-style:italic}
+
+.callout{background:var(--paper-2);border:1px solid var(--hair);border-radius:16px;padding:20px 24px;margin:28px 0}
+.callout .label{font-family:var(--mono);font-size:10.5px;color:var(--trail);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:10px;display:block}
+.callout p{margin:0;font-size:15.5px;line-height:1.55}
+
+.tldr{background:var(--ink);color:rgba(255,255,255,.92);border-radius:16px;padding:22px 26px;margin:0 0 40px;font-size:15.5px;line-height:1.55}
+.tldr .label{font-family:var(--mono);font-size:10.5px;color:var(--moss);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:block}
+.tldr strong{color:#fff;font-weight:600}
+
+.endcta{margin-top:50px;padding:32px 28px;background:var(--paper-2);border:1px solid var(--hair);border-radius:18px;text-align:center}
+.endcta p{font-size:15px;color:var(--muted);margin-bottom:14px}
+.endcta a{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--ink);color:#fff;border-radius:999px;font-size:14.5px;font-weight:600;letter-spacing:-.005em;transition:background .15s,transform .15s}
+.endcta a:hover{background:var(--trail);transform:translateY(-1px)}
+
+.next{margin-top:30px;padding-top:24px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.next a{font-family:var(--mono);font-size:12px;color:var(--trail);font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="brand">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="42" cy="14" r="5" fill="currentColor"/>
+      </svg>
+      <span>flow<span class="acc">run</span></span>
+    </a>
+    <a href="/blog" class="back">← Blog</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <p class="meta-top">Entrenamiento · 02 Jun 2026</p>
+    <h1>Zona 2: por qué el ritmo que se siente "demasiado lento" es el que más te hace mejorar</h1>
+    <p class="byline">
+      <span>FlowRun</span>
+      <span class="dot"></span>
+      <span>8 min de lectura</span>
+    </p>
+
+    <p class="lede">Si cuando entrenás zona 2 pensás <em>"esto es demasiado tranquilo, no me sirve"</em> — felicitaciones, vas bien. Es la paradoja más frustrante del entrenamiento de resistencia: <strong>lo que más rinde a largo plazo es lo que más cuesta respetar día a día</strong>.</p>
+
+    <article>
+      <div class="tldr">
+        <span class="label">TL;DR</span>
+        <strong>Z2 es el ritmo donde podés hablar en frases completas.</strong> Construye el motor aeróbico (mitocondrias, capilares, eficiencia oxidando grasa). Si lo respetás 80% del tiempo, podés meter intensidad fuerte el otro 20% sin lesionarte y mejorando de verdad. Si todo lo corrés "moderado", no progresás.
+      </div>
+
+      <h2>¿Qué es exactamente la zona 2?</h2>
+      <p>Hay varias formas de definirla, pero la más útil para el corredor amateur es la del <strong>talk test</strong>:</p>
+      <ul>
+        <li>Podés hablar en <strong>frases completas</strong> sin cortar para respirar.</li>
+        <li>Si te tomaran un dictado, podrías leerlo de corrido.</li>
+        <li>Es ese ritmo donde te sentís "como si pudiera seguir horas".</li>
+      </ul>
+      <p>En términos fisiológicos: estás <strong>por debajo del primer umbral ventilatorio (VT1)</strong>. La energía la sacás casi enteramente del sistema aeróbico, con grasa como sustrato principal. La acumulación de lactato es mínima.</p>
+
+      <p>Si usás pulsómetro, suele caer entre <strong>60-70% de tu frecuencia cardíaca máxima</strong>. Si tu FC máx es 190, estás hablando de 114-133 ppm. Sí, eso es lento. <strong>Tiene que serlo.</strong></p>
+
+      <h2>El error universal del amateur</h2>
+      <p>El corredor amateur promedio entrena en lo que los fisiólogos llaman la <strong>"zona gris" (zona 3)</strong>. Es la zona del <em>medio-fuerte</em>: ya respirás cargado, ya no podés hablar tan suelto, pero todavía no estás haciendo un esfuerzo de intervalos.</p>
+      <p>Esa zona <strong>cansa pero no entrena bien</strong>:</p>
+      <ul>
+        <li>Es demasiado dura para construir base aeróbica de verdad (acumula fatiga residual).</li>
+        <li>Es demasiado fácil para mover el umbral anaeróbico hacia arriba.</li>
+        <li>El día siguiente arrancás con piernas pesadas — y vas a la sesión dura "moderado" también.</li>
+      </ul>
+      <p>Resultado: entrenás 4 veces por semana sintiéndote siempre cansado, no progresás, te lesionás cada par de meses.</p>
+
+      <blockquote>
+        El error #1 del corredor amateur no es entrenar poco. Es correr los días fáciles demasiado rápido y los días duros demasiado suave.
+      </blockquote>
+
+      <h2>Por qué la Z2 funciona (la fisiología en 4 puntos)</h2>
+
+      <h3>1. Densidad mitocondrial</h3>
+      <p>Las mitocondrias son las plantas de energía dentro de tus músculos. Más mitocondrias = más capacidad de producir ATP usando oxígeno = más tiempo antes de fatigarte. Z2 es <strong>el estímulo más potente conocido</strong> para aumentar densidad mitocondrial.</p>
+
+      <h3>2. Red capilar</h3>
+      <p>Las series de Z2 prolongadas estimulan la angiogénesis: crecen nuevos capilares en el músculo. Más capilares = mejor entrega de oxígeno y nutrientes. Z3 también lo hace, pero a un costo de fatiga mucho mayor.</p>
+
+      <h3>3. Oxidación de grasa</h3>
+      <p>En Z2 tu cuerpo aprende a tirar de grasa como combustible principal. Eso es enorme: la grasa es prácticamente ilimitada (incluso una persona delgada tiene 30.000+ kcal almacenadas), mientras que el glucógeno se agota en 60-90 minutos a intensidad media. Quien quema grasa eficientemente, dura más.</p>
+
+      <h3>4. Recuperación entre sesiones duras</h3>
+      <p>Z2 es bajo impacto sistémico. Salís a entrenar y al día siguiente <strong>estás listo para la sesión dura</strong>. Eso es lo que te permite hacer la sesión dura realmente dura — y ahí está el otro 20% donde mejora la velocidad.</p>
+
+      <h2>"Pero me siento ridículo corriendo tan lento"</h2>
+      <p>Ese sentimiento es <strong>la prueba de que lo estás haciendo bien</strong>. Tres mentalizaciones que ayudan:</p>
+      <ul>
+        <li><strong>"Hoy estoy entrenando para los próximos 6 meses, no para hoy".</strong> El motor aeróbico se construye con ladrillos chiquitos. Cada salida lenta es un ladrillo.</li>
+        <li><strong>"Si voy más rápido, lesiono el plan".</strong> Z2 a ritmo Z3 es la receta para llegar al fin de semana cansado y bajar la calidad del intervalo importante.</li>
+        <li><strong>"Los élites lo hacen así".</strong> Eliud Kipchoge corre ~80% de su volumen a ritmo que cualquier corredor amateur respetable podría sostener (5:00-5:30 min/km). No lo hacen porque sea lento — lo hacen porque funciona.</li>
+      </ul>
+
+      <h2>Cómo entrenar Z2 sin volverte loco</h2>
+
+      <h3>1. Empezá midiendo, no estimando</h3>
+      <p>Salí a correr en un lugar plano. Cada 5 minutos, intentá decir una frase larga en voz alta: <em>"Hola, soy Santiago y estoy entrenando zona 2 acá en el parque de Alta Gracia"</em>. Si la podés decir entera sin cortar a respirar, estás en Z2. Si tenés que cortar a la mitad, bajá el paso.</p>
+
+      <h3>2. Aceptá caminar al principio</h3>
+      <p>Si recién arrancás, tu Z2 puede ser <strong>caminata rápida</strong>. Eso es perfectamente válido. En 4-6 semanas vas a poder trotar muy suave manteniendo el talk test. En 3-6 meses ese mismo esfuerzo va a corresponder a un ritmo más rápido.</p>
+
+      <h3>3. Respetá la regla 80/20</h3>
+      <p><strong>80% de tu volumen semanal en Z1-Z2.</strong> 20% en Z3-Z5 (intervalos, tempo, cuestas). No "20% de las sesiones" — 20% del <em>tiempo total</em> en pie. Eso suele ser 1-2 sesiones duras por semana en un plan de 4-5 días.</p>
+
+      <div class="callout">
+        <span class="label">Trampa común</span>
+        <p>"Corro 4 días por semana, 1 es de intervalos, los otros 3 a ritmo cómodo." → Si tu "ritmo cómodo" en realidad es Z3, estás corriendo el 25% en Z5 (intervalo) y el 75% en Z3. Cero Z2. Cero base. Resultado: estancamiento y lesiones.</p>
+      </div>
+
+      <h3>4. Cuestas y trail: cuidado</h3>
+      <p>En cuestas tu pulso sube rápido aunque vayas "suave". Si estás entrenando Z2 en terreno con desnivel, <strong>aceptá caminar las subidas fuertes</strong>. Mantenés el talk test, mantenés Z2 metabólica, no destrozás la zona objetivo del día.</p>
+
+      <h2>Cómo FlowRun te ayuda con esto</h2>
+      <p>Hicimos FlowRun porque vimos que la mayoría de los corredores amateur saben en teoría que Z2 importa, pero nunca la respetan en la práctica. La solución que armamos:</p>
+      <ul>
+        <li>El <strong>check-in de 20 segundos</strong> después de cada sesión te pregunta si pudiste hablar de corrido. Si dijiste "no" en una sesión que era Z2, el motor lo nota.</li>
+        <li>Los <strong>rodajes sostenibles (RS)</strong> son la base del plan — no las cuestas ni los intervalos. Eso te obliga a poner en el suelo el volumen donde rinde.</li>
+        <li>Cuando el motor detecta que sistemáticamente saturás el talk test en sesiones easy, te <strong>baja el ritmo objetivo o pausa</strong> antes de que se rompa algo.</li>
+      </ul>
+
+      <h2>El cierre, sin vueltas</h2>
+      <p>Z2 no es sexy. No te da likes en Strava. Te hace sentir lento. Pero es lo que separa a los corredores que progresan año a año <strong>de los que se estancan y se lesionan ciclo tras ciclo</strong>.</p>
+      <p>La próxima salida easy: <strong>poné cinco minutos más lento de lo que pensás que necesitás</strong>. Hablá en voz alta. Si te suena ridículo, es porque está bien.</p>
+
+      <div class="next">
+        <a href="/blog">← Volver al blog</a>
+        <a href="/ciencia">Más ciencia detrás →</a>
+      </div>
+
+      <div class="endcta">
+        <p>¿Querés probar un plan que respeta tu Z2 sin pensar?</p>
+        <a href="https://app.flowrun.fun/login">Empezá gratis · 15 días →</a>
+      </div>
+    </article>
+  </div>
+</main>
+
+</body>
+</html>
