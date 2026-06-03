@@ -167,7 +167,7 @@ export async function setSensacion(choice: SensacionChoice) {
   redirect('/onboarding/esfuerzo')
 }
 
-// P5 — Cómo medís esfuerzo (última pregunta del onboarding)
+// P5 — Cómo medís esfuerzo
 export async function setEsfuerzo(mode: EffortMode) {
   const supabase = await createClient()
   const {
@@ -181,36 +181,9 @@ export async function setEsfuerzo(mode: EffortMode) {
     .eq('user_id', user.id)
   if (error) throw new Error(error.message)
 
-  // Asignar plan inicial. assignPlan es idempotente — si ya hay plan
-  // activo, retorna sin tocar nada.
+  // Última pregunta del onboarding: asignar plan inicial.
+  // assignPlan es idempotente — si ya hay plan activo, retorna sin tocar nada.
   await assignPlan(user.id)
-
-  // Crear suscripción trial si todavía no existe. Desde la migración 0018
-  // el trigger de Supabase ya NO crea sub en signup — la creamos acá al
-  // finalizar onboarding. El trial 15 días arranca desde este momento,
-  // no desde el signup.
-  const { data: existingSub } = await supabase
-    .from('subscriptions')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle()
-
-  if (!existingSub) {
-    const periodEnd = new Date()
-    periodEnd.setUTCDate(periodEnd.getUTCDate() + 15)
-    const { error: subError } = await supabase
-      .from('subscriptions')
-      .insert({
-        user_id: user.id,
-        status: 'trialing',
-        plan: null,
-        payment_method: null,
-        currency: null,
-        amount: null,
-        current_period_end: periodEnd.toISOString().slice(0, 10),
-      })
-    if (subError) throw new Error(subError.message)
-  }
 
   redirect('/dashboard')
 }
