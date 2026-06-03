@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Términos y Condiciones · FlowRun</title>
-<meta name="description" content="Términos y condiciones de uso de FlowRun. Naturaleza del servicio, responsabilidad del usuario, requisito de apto físico vigente, suscripción y jurisdicción.">
+<meta name="description" content="Términos y Condiciones de uso de FlowRun: servicio, responsabilidad del usuario, apto físico, suscripciones, IA, propiedad intelectual, responsabilidad y jurisdicción.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -45,6 +45,7 @@ h2::before{content:'';display:block;width:32px;height:2px;background:var(--trail
 h3{font-size:15.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em;margin:22px 0 8px;line-height:1.3}
 p{margin-bottom:14px;color:var(--fg);font-size:15.5px;line-height:1.65;letter-spacing:-.005em}
 strong{font-weight:600;color:var(--ink)}
+em{font-style:italic}
 ul{margin:8px 0 20px;padding:0;list-style:none}
 ul li{padding:8px 0 8px 22px;position:relative;font-size:15px;line-height:1.55;color:var(--fg)}
 ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5px;background:var(--trail);border-radius:50%}
@@ -52,8 +53,18 @@ ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5p
 .alert strong{color:var(--alert);font-weight:700}
 .callout{background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;padding:16px 20px;margin:20px 0}
 .callout p{margin:0;font-size:14.5px;line-height:1.55}
+.section-toc{background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;padding:18px 22px;margin-bottom:36px;font-size:13px}
+.section-toc strong{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--trail);font-weight:700;margin-bottom:10px}
+.section-toc ol{list-style:none;counter-reset:t;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.section-toc ol li{counter-increment:t;padding:3px 0;font-size:12.5px;color:var(--muted)}
+.section-toc ol li::before{display:none}
+.section-toc ol li a{color:var(--fg);text-decoration:none}
+.section-toc ol li a:hover{color:var(--trail)}
+.section-toc ol li::marker{display:none}
+.section-toc ol li::before{content:counter(t,decimal-leading-zero);font-family:var(--mono);font-size:10px;color:var(--trail);font-weight:700;margin-right:8px;position:static}
 .foot-nav{margin-top:60px;padding-top:24px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px}
 .foot-nav a{color:var(--trail);font-weight:600;letter-spacing:.04em}
+@media (max-width:600px){.section-toc ol{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -62,14 +73,38 @@ ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5p
 <main><div class="container">
 <p class="kicker">Legal</p>
 <h1>Términos y Condiciones</h1>
-<p class="meta"><span>Versión 0.2</span><span class="dot"></span><span>Vigente desde: 3 jun 2026</span></p>
-<div class="draft-banner"><strong>⚠ Versión preliminar.</strong> En proceso de revisión legal. Las cláusulas son vinculantes en su versión vigente, pueden actualizarse con notificación previa.</div>
+<p class="meta"><span>Versión 0.3</span><span class="dot"></span><span>Vigente desde: 3 jun 2026</span></p>
 
-<h2>1. Aceptación</h2>
-<p>Al crear cuenta, completar el onboarding o usar FlowRun, aceptás estos Términos y nuestra <a href="/privacidad" style="color:var(--trail);font-weight:600;border-bottom:1.5px solid var(--trail)">Política de Privacidad</a>. FlowRun es un servicio operado desde Argentina.</p>
+<div class="draft-banner"><strong>⚠ Versión preliminar.</strong> Este documento está en proceso de revisión legal. Las cláusulas son vinculantes en su versión vigente. Podemos actualizarlo con notificación previa por email.</div>
 
-<h2>2. Naturaleza del Servicio</h2>
-<p>FlowRun ofrece planes de entrenamiento de running estructurados, seguimiento de sesiones y feedback automatizado.</p>
+<div class="section-toc">
+<strong>Contenido</strong>
+<ol>
+<li><a href="#s1">Aceptación de los Términos</a></li>
+<li><a href="#s2">Naturaleza del Servicio</a></li>
+<li><a href="#s3">Responsabilidad del Usuario sobre su Salud</a></li>
+<li><a href="#s4">Cuentas y Seguridad</a></li>
+<li><a href="#s5">Datos y Privacidad</a></li>
+<li><a href="#s6">Suscripción y Pagos</a></li>
+<li><a href="#s7">Inteligencia Artificial</a></li>
+<li><a href="#s8">Contenido de Terceros — Planes Pro</a></li>
+<li><a href="#s9">Propiedad Intelectual</a></li>
+<li><a href="#s10">Indemnización</a></li>
+<li><a href="#s11">Limitación de Responsabilidad</a></li>
+<li><a href="#s12">Plazo para Reclamos</a></li>
+<li><a href="#s13">Terminación y Suspensión</a></li>
+<li><a href="#s14">Modificaciones de los Términos</a></li>
+<li><a href="#s15">Disposiciones Generales</a></li>
+<li><a href="#s16">Jurisdicción y Ley Aplicable</a></li>
+<li><a href="#s17">Contacto</a></li>
+</ol>
+</div>
+
+<h2 id="s1">1. Aceptación de los Términos</h2>
+<p>Al crear una cuenta, completar el onboarding o usar FlowRun, aceptás estos Términos y nuestra <a href="/privacidad" style="color:var(--trail);font-weight:600;border-bottom:1.5px solid var(--trail)">Política de Privacidad</a>. Si no estás de acuerdo, no uses el servicio. FlowRun es un servicio de entrenamiento de running operado desde Argentina.</p>
+
+<h2 id="s2">2. Naturaleza del Servicio</h2>
+<p>FlowRun ofrece planes de entrenamiento estructurados, seguimiento de sesiones y feedback automatizado basado en check-ins post-corrida.</p>
 <p><strong>FlowRun NO es</strong>:</p>
 <ul>
 <li>Un servicio médico, sanitario ni de fisioterapia</li>
@@ -78,11 +113,11 @@ ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5p
 <li>Una prescripción individual: los planes son guías generales que vos adaptás a tu cuerpo</li>
 </ul>
 
-<h2>3. Responsabilidad del Usuario sobre su Salud</h2>
+<h2 id="s3">3. Responsabilidad del Usuario sobre su Salud</h2>
 <p>El uso de FlowRun es <strong>bajo tu propia responsabilidad y riesgo</strong>.</p>
 
-<h3>3.1 Apto físico vigente — REQUERIDO</h3>
-<div class="alert"><strong>Es requisito tener un apto físico (certificado médico de aptitud para la práctica deportiva) emitido por un profesional de la salud, vigente al momento de empezar y mantener cualquier plan de entrenamiento dentro de FlowRun.</strong><p style="margin-top:8px">Si no tenés un apto físico vigente, no usés la app para entrenar. Hacelo solo después de obtener uno y consultá con tu médico cualquier duda específica.</p></div>
+<h3>3.1 Apto físico vigente — requerido</h3>
+<div class="alert"><strong>Es requisito tener un apto físico (certificado médico de aptitud para la práctica deportiva) emitido por un profesional de la salud, vigente al momento de empezar y mantener cualquier plan de entrenamiento dentro de FlowRun.</strong><p style="margin-top:8px">Si no tenés un apto físico vigente, no uses la app para entrenar. Hacelo solo después de obtener uno y consultá con tu médico cualquier duda específica sobre tu capacidad.</p></div>
 
 <h3>3.2 Tu responsabilidad como usuario</h3>
 <p>Al usar FlowRun, declarás y reconocés que:</p>
@@ -97,39 +132,149 @@ ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5p
 
 <h3>3.3 Deslinde de responsabilidad de FlowRun</h3>
 <div class="alert"><strong>FlowRun se deslinda expresamente de toda responsabilidad</strong> por lesiones, dolores, accidentes, enfermedades, agravamiento de condiciones preexistentes, problemas cardíacos o cualquier consecuencia física, psicológica o material —directa o indirecta— derivada del uso de la app o de la ejecución de los planes.</div>
-<p>Los planes son <strong>orientativos y de carácter general</strong>. Pueden contener errores, inadecuaciones para tu situación o no adaptarse a tus condiciones. La responsabilidad de evaluar la idoneidad de cada sesión, detenerse ante señales del cuerpo y consultar profesional recae exclusivamente en el usuario.</p>
-<p>FlowRun no garantiza resultados de performance, prevención de lesiones, mejora de condición física ni ningún outcome específico. Los entrenamientos implican riesgo inherente que el usuario asume voluntariamente.</p>
+<p>Los planes son <strong>orientativos y de carácter general</strong>. Pueden contener errores, inadecuaciones para tu situación o no adaptarse a tus condiciones. La responsabilidad de evaluar la idoneidad de cada sesión, detenerse ante señales del cuerpo y consultar profesional recae exclusivamente en el usuario. FlowRun no garantiza resultados de performance, prevención de lesiones, mejora de condición física ni ningún outcome específico.</p>
 
-<h2>4. Datos y Privacidad</h2>
-<p>El tratamiento de tus datos se rige por nuestra <a href="/privacidad" style="color:var(--trail);font-weight:600;border-bottom:1.5px solid var(--trail)">Política de Privacidad</a>, parte integrante de estos Términos.</p>
+<h2 id="s4">4. Cuentas y Seguridad</h2>
 
-<h2>5. Suscripción y Pagos</h2>
-<h3>5.1 Trial gratuito</h3>
-<p>15 días de acceso completo sin pedir tarjeta. Al día 15, requiere suscripción activa para seguir entrenando con la app.</p>
-<h3>5.2 Planes pagos</h3>
-<ul><li>Mensual: $7.000 ARS o USD 5</li><li>Pack 3 meses: $16.800 ARS o USD 12</li></ul>
-<p>Procesado por proveedores de pago externos (Commet) sujetos a sus propios términos.</p>
-<h3>5.3 Cancelación</h3>
-<p>Podés cancelar en cualquier momento. Mantenés acceso hasta el final del período en curso. No prorrateamos ni reembolsamos períodos parciales.</p>
+<h3>4.1 Edad mínima</h3>
+<p>Para usar FlowRun debés tener <strong>18 años o más</strong>. Si tenés entre 16 y 17 años, necesitás consentimiento expreso de tu tutor legal, quien acepta estos Términos en tu nombre. Si sos menor de 16, no podés usar el servicio.</p>
 
-<h2>6. Contenido de Terceros — Planes "Pro"</h2>
-<p>Los planes "Pro" (10K, media maratón, maratón, 50 millas, 100K) corresponden a planes publicados por <em>inov-8</em> en su blog público, diseñados por <strong>Sarah McCormack</strong> (campeona mundial de Mountain Running 2019).</p>
-<div class="callout"><p><strong>FlowRun no está afiliado, asociado, autorizado, respaldado por, ni vinculado oficialmente con inov-8, Sarah McCormack ni sus filiales.</strong> Las marcas se mencionan exclusivamente con fines de atribución de la fuente original.</p></div>
+<h3>4.2 Información de la cuenta</h3>
+<p>Al crear cuenta te comprometés a:</p>
+<ul>
+<li>Brindar información veraz, actualizada y completa (nombre, edad, país, género).</li>
+<li>Mantener esa información actualizada.</li>
+<li>Crear <strong>una sola cuenta</strong> para tu uso personal.</li>
+<li>No compartir tu cuenta ni tu suscripción con terceros.</li>
+<li>Que todas las actividades registradas en tu cuenta reflejen actividades genuinas realizadas por vos.</li>
+</ul>
 
-<h2>7. Propiedad Intelectual</h2>
-<p>El nombre "FlowRun", el logo, el diseño, los planes generados por nuestro coach, los algoritmos de adaptación y todos los textos son propiedad exclusiva de FlowRun. No podés copiarlos, redistribuirlos ni hacer ingeniería inversa sin autorización.</p>
+<h3>4.3 Seguridad de tu cuenta</h3>
+<p>Sos responsable de mantener la confidencialidad de tu acceso (magic link, sesión) y de prevenir accesos no autorizados. Aceptás responsabilidad por todas las actividades realizadas desde tu cuenta. <strong>Si detectás un acceso no autorizado, debés notificarlo inmediatamente</strong> a <a href="mailto:flowrun200@gmail.com" style="color:var(--trail);font-weight:600">flowrun200@gmail.com</a>.</p>
 
-<h2>8. Conducta del Usuario</h2>
-<p>Te comprometés a usar la app sólo con fines personales y legítimos, no compartir tu cuenta, no usarla para fines comerciales sin autorización, reportar errores a <a href="mailto:flowrun200@gmail.com" style="color:var(--trail);font-weight:600">flowrun200@gmail.com</a>, y no usarla si sos menor de 16 sin consentimiento de tutor.</p>
+<h3>4.4 Login con terceros</h3>
+<p>Podés crear cuenta o iniciar sesión a través de proveedores externos como Google. Al hacerlo, autorizás a FlowRun a usar la información que esos proveedores nos envíen (nombre, email) para completar tu perfil. La información recolectada por esos terceros se rige por sus propias políticas (no por las nuestras).</p>
+<p>Si en el futuro habilitamos integraciones con servicios deportivos (Strava, Garmin Connect, Apple Health, etc.), aplican las mismas reglas: lo que esos servicios hagan con tus datos se rige por sus términos.</p>
 
-<h2>9. Modificaciones</h2>
-<p>Podemos modificar estos Términos en cualquier momento. Te notificaremos por email si los cambios son sustanciales. El uso continuo implica aceptación.</p>
+<h3>4.5 Uso personal — no comercial</h3>
+<p>FlowRun es <strong>únicamente para uso personal</strong>. No podés:</p>
+<ul>
+<li>Cobrar a terceros por acceso a la app, los planes o tu cuenta.</li>
+<li>Usar el servicio para fines comerciales (ej. ofrecer entrenamiento personal usando los planes de FlowRun a tus propios clientes).</li>
+<li>Revender, redistribuir ni sublicenciar el acceso al servicio.</li>
+</ul>
 
-<h2>10. Jurisdicción</h2>
-<p>Estos Términos se rigen <strong>exclusivamente por las leyes de la República Argentina</strong>. Cualquier disputa se somete a la competencia exclusiva de los <strong>tribunales ordinarios de la Ciudad Autónoma de Buenos Aires</strong>, con renuncia expresa a cualquier otro fuero. Aplica a todos los usuarios sin importar su país de origen.</p>
+<h2 id="s5">5. Datos y Privacidad</h2>
+<p>El tratamiento de tus datos personales se rige por nuestra <a href="/privacidad" style="color:var(--trail);font-weight:600;border-bottom:1.5px solid var(--trail)">Política de Privacidad</a>, que forma parte integrante de estos Términos.</p>
 
-<h2>11. Contacto</h2>
-<p>Para preguntas: <a href="mailto:flowrun200@gmail.com" style="color:var(--trail);font-weight:600">flowrun200@gmail.com</a>.</p>
+<h2 id="s6">6. Suscripción y Pagos</h2>
+
+<h3>6.1 Trial gratuito</h3>
+<p>Ofrecemos <strong>15 días de trial sin tarjeta</strong> al completar el onboarding. El trial es <strong>de uso único por cuenta y por persona</strong>: si abriste cuenta, hiciste trial y te diste de baja, no podés reabrir cuenta para volver a hacer trial. Si abrís segunda cuenta, podemos darla de baja sin previo aviso.</p>
+<p>Al finalizar los 15 días del trial, <strong>la app deja de funcionar</strong> hasta que actives una suscripción paga. No te cobramos automáticamente al final del trial — necesitás iniciar la suscripción vos.</p>
+
+<h3>6.2 Planes pagos</h3>
+<ul>
+<li><strong>Mensual</strong>: $7.000 ARS o USD 5</li>
+<li><strong>Pack 3 meses</strong>: $16.800 ARS o USD 12 (≈ 20% off vs mensual × 3)</li>
+</ul>
+<p>Procesado por proveedores externos (Commet) sujetos a sus propios términos. Dependiendo de tu banco y país, puede haber cargos adicionales (ej. comisión por transacción internacional).</p>
+
+<h3>6.3 Renovación automática</h3>
+<p>Las suscripciones se <strong>renuevan automáticamente</strong> al final de cada período (mensual o cada 3 meses, según el plan) hasta que las canceles. Para evitar la renovación, tenés que cancelar al menos <strong>24 horas antes</strong> del final del período en curso.</p>
+<p>Si al renovar cambió el precio o las condiciones, te notificaremos por email con al menos 30 días de anticipación.</p>
+
+<h3>6.4 Cancelación</h3>
+<p>Podés cancelar desde la app en cualquier momento. La cancelación toma efecto al final del período en curso — mantenés acceso hasta esa fecha. <strong>No prorrateamos ni reembolsamos períodos parciales.</strong></p>
+
+<h3>6.5 Cambios de precio</h3>
+<p>Podemos modificar los precios con <strong>aviso previo de 30 días por email</strong>. Los cambios aplican a la próxima renovación de cada suscripción.</p>
+
+<h2 id="s7">7. Inteligencia Artificial</h2>
+<p>FlowRun usa inteligencia artificial (IA) y algoritmos para personalizar tu plan, generar feedback de tus sesiones y adaptar el entrenamiento a tu progreso. Las decisiones del motor adaptativo son <strong>automatizadas</strong>, no las revisa un humano antes de aplicarse a tu cuenta.</p>
+<div class="callout"><p>La IA tiene <strong>limitaciones conocidas y desconocidas</strong>: puede equivocarse, dar recomendaciones inadecuadas para tu situación o malinterpretar los datos de tu check-in. Usás las recomendaciones de la IA <strong>bajo tu propio criterio y riesgo</strong>. Antes de seguir una sesión, ajuste o sugerencia generada por IA, verificá que sea apropiada y segura para vos.</p></div>
+<p>FlowRun no se hace responsable por errores, inexactitudes o consecuencias derivadas de recomendaciones generadas por IA. Aplican las exclusiones de responsabilidad de la sección 3 y la limitación de responsabilidad de la sección 11.</p>
+
+<h2 id="s8">8. Contenido de Terceros — Planes Pro</h2>
+<p>Los planes etiquetados como <strong>"Pro"</strong> dentro de FlowRun (10K, media maratón, maratón, 50 millas, 100K) corresponden a planes publicados originalmente por <em>inov-8</em> en su blog público, diseñados por la entrenadora certificada <strong>Sarah McCormack</strong> (campeona mundial de Mountain Running 2019, certificada por UK Athletics).</p>
+<div class="callout"><p><strong>FlowRun no está afiliado, asociado, autorizado, respaldado por, ni vinculado oficialmente con inov-8, Sarah McCormack ni ninguna de sus filiales.</strong> Las marcas se mencionan exclusivamente con fines de atribución de la fuente original y no implican endorsement.</p></div>
+<p>FlowRun no garantiza la exactitud, completitud ni aplicabilidad de estos planes a tu situación particular.</p>
+
+<h2 id="s9">9. Propiedad Intelectual</h2>
+<p>El nombre "FlowRun", el logo, el diseño de la app, los planes generados por nuestro coach (no los Pro), los algoritmos de adaptación, las descripciones de bloques de entrenamiento, las imágenes y todos los textos del producto son propiedad exclusiva de FlowRun.</p>
+<p>No podés copiar, redistribuir, comercializar, modificar ni hacer ingeniería inversa del servicio sin autorización expresa por escrito. Tampoco podés acceder al servicio por medios automatizados (bots, scraping, crawlers) ni recolectar datos del servicio sin autorización.</p>
+
+<h2 id="s10">10. Indemnización</h2>
+<p>Aceptás <strong>indemnizar y mantener indemne</strong> a FlowRun, sus dueños, empleados, directores y representantes, frente a cualquier reclamo, demanda, daño, pérdida o gasto (incluidos honorarios legales razonables) presentado por un tercero y derivado de:</p>
+<ul>
+<li>El contenido que subas, postees o transmitas mediante el servicio (presente o futuro).</li>
+<li>Tu uso del servicio en violación de estos Términos o de leyes aplicables.</li>
+<li>La falsedad de cualquier declaración hecha al aceptar estos Términos (ej. declarar que tenés apto físico cuando no lo tenés).</li>
+<li>Tu violación de derechos de terceros (propiedad intelectual, privacidad, imagen, etc.).</li>
+<li>Tu conducta durante o en relación con sesiones de entrenamiento ejecutadas siguiendo los planes de FlowRun.</li>
+</ul>
+<p>Esta obligación de indemnización se mantiene vigente incluso después de la terminación de tu cuenta.</p>
+
+<h2 id="s11">11. Limitación de Responsabilidad</h2>
+<p><strong>EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY:</strong></p>
+<p>FlowRun y sus representantes <strong>no son responsables</strong> por daños indirectos, incidentales, especiales, punitivos o consecuenciales, lucro cesante, pérdida de datos, interrupción de actividades, lesiones físicas o psicológicas, ni cualquier otra pérdida derivada o relacionada con el uso o imposibilidad de uso del servicio, incluso si fuimos advertidos de la posibilidad de tales daños.</p>
+<div class="alert"><strong>Tope máximo de responsabilidad.</strong> La responsabilidad total acumulada de FlowRun frente a vos por cualquier reclamo derivado del servicio no podrá exceder, en ningún caso, <strong>la mayor entre USD 100 (o su equivalente en pesos argentinos) y el total de las fees pagadas por vos a FlowRun en los 12 meses inmediatamente anteriores a la fecha del reclamo</strong>.</div>
+<p>Si tu jurisdicción no permite alguna de estas exclusiones o limitaciones, las restantes seguirán aplicándose en la mayor medida permitida.</p>
+
+<h2 id="s12">12. Plazo para Reclamos</h2>
+<p>Cualquier reclamo, acción o controversia que tengas contra FlowRun derivada de tu uso del servicio o de estos Términos debe iniciarse <strong>dentro del plazo de un (1) año</strong> contado desde el hecho que dio origen al reclamo. Pasado ese plazo, el reclamo quedará definitivamente prescripto y no podrá ser iniciado.</p>
+
+<h2 id="s13">13. Terminación y Suspensión</h2>
+
+<h3>13.1 Por parte tuya</h3>
+<p>Podés cerrar tu cuenta en cualquier momento desde la app o escribiendo a soporte. La cancelación de tu suscripción mantiene tu cuenta activa hasta el final del período en curso; el cierre de cuenta es un paso adicional que elimina tu perfil y datos asociados (con las salvedades de retención por ley descritas en la Política de Privacidad).</p>
+
+<h3>13.2 Por parte de FlowRun</h3>
+<p>Podemos <strong>suspender o cerrar tu cuenta sin previo aviso</strong> en cualquiera de estos casos:</p>
+<ul>
+<li>Violación de estos Términos o de nuestras políticas.</li>
+<li>Comportamiento que ponga en riesgo a otros usuarios o a la integridad del servicio.</li>
+<li>Sospecha de fraude, abuso del trial, creación de cuentas duplicadas o uso comercial no autorizado.</li>
+<li>Falta de pago de fees adeudadas.</li>
+<li>Inactividad prolongada (más de 24 meses sin sesión iniciada).</li>
+<li>Requerimiento de una autoridad legal.</li>
+<li>Discontinuación del servicio o de funcionalidades clave.</li>
+</ul>
+
+<h3>13.3 Cláusulas que sobreviven a la terminación</h3>
+<p>Las siguientes secciones siguen vigentes después de cerrada la cuenta o terminado el contrato: <strong>Propiedad Intelectual, Indemnización, Limitación de Responsabilidad, Plazo para Reclamos, Jurisdicción y Disposiciones Generales</strong>.</p>
+
+<h2 id="s14">14. Modificaciones de los Términos</h2>
+<p>Podemos modificar estos Términos cuando lo consideremos necesario. Si los cambios son <strong>sustanciales</strong>, te notificaremos por email con anticipación razonable (no menor a 15 días) antes de que entren en vigor. Los cambios menores (correcciones de redacción, ajustes de formato, aclaraciones) entran en vigor al publicarse acá.</p>
+<p>Si continuás usando el servicio después de la fecha de entrada en vigor de una versión modificada, se entiende que <strong>aceptás la versión actualizada</strong>. Si no estás de acuerdo, tu único recurso es dejar de usar el servicio y cerrar tu cuenta.</p>
+
+<h2 id="s15">15. Disposiciones Generales</h2>
+
+<h3>15.1 Acuerdo completo</h3>
+<p>Estos Términos, junto con la Política de Privacidad y cualquier documento incorporado por referencia, constituyen el <strong>acuerdo completo</strong> entre vos y FlowRun respecto al uso del servicio, y reemplazan cualquier acuerdo, comunicación o representación previa, sea oral o escrita.</p>
+
+<h3>15.2 Independencia de cláusulas (severability)</h3>
+<p>Si alguna disposición de estos Términos resulta inválida, ilegal o inejecutable según ley, esa disposición se entenderá modificada en la medida estrictamente necesaria para hacerla válida, y <strong>el resto de los Términos permanecerá en pleno vigor</strong>.</p>
+
+<h3>15.3 Cesión</h3>
+<p><strong>No podés ceder, transferir ni delegar</strong> tu cuenta, tus derechos ni tus obligaciones bajo estos Términos sin nuestro consentimiento previo por escrito.</p>
+<p>FlowRun sí puede ceder o transferir sus derechos y obligaciones (por ejemplo, en una venta o reestructuración del negocio), notificándote por email cuando esto ocurra.</p>
+
+<h3>15.4 No renuncia</h3>
+<p>El hecho de que FlowRun no exija el cumplimiento de alguna disposición en un momento dado no implica renuncia a hacerlo en el futuro.</p>
+
+<h3>15.5 No relación societaria</h3>
+<p>Estos Términos no crean ninguna relación de sociedad, joint venture, agencia, fideicomiso, empleo ni representación entre vos y FlowRun.</p>
+
+<h3>15.6 Notificaciones</h3>
+<p>Las notificaciones que te enviemos por email, dentro de la app o publicadas en esta página son válidas y eficaces para todos los efectos legales. Aceptás recibir comunicaciones de FlowRun por estos medios electrónicos.</p>
+
+<h2 id="s16">16. Jurisdicción y Ley Aplicable</h2>
+<p>Estos Términos se rigen <strong>exclusivamente por las leyes de la República Argentina</strong>. Cualquier disputa, controversia o reclamo derivado de o relacionado con el servicio o estos Términos se somete a la competencia exclusiva de los <strong>tribunales ordinarios de la Ciudad Autónoma de Buenos Aires, República Argentina</strong>, con renuncia expresa a cualquier otro fuero o jurisdicción que pudiera corresponder.</p>
+<p>Esto aplica a todos los usuarios sin importar su país de origen. Al usar el servicio, los usuarios fuera de Argentina aceptan someterse a esta jurisdicción.</p>
+
+<h2 id="s17">17. Contacto</h2>
+<p>Para preguntas sobre estos Términos o sobre el servicio: <a href="mailto:flowrun200@gmail.com" style="color:var(--trail);font-weight:600">flowrun200@gmail.com</a></p>
 
 <div class="foot-nav"><a href="/privacidad">Política de Privacidad →</a><a href="/">← Volver al inicio</a></div>
 </div></main>
