@@ -11,12 +11,13 @@ import type {
   Gender,
 } from '@/types/database'
 
-// P1 — Sobre vos (nombre, edad, país, género)
+// P1 — Sobre vos (nombre, edad, país, género, aceptación de T&C)
 export async function setSobreVos(input: {
   name: string
   age: number
   country: string
   gender: Gender
+  acceptedTerms: boolean
 }) {
   const supabase = await createClient()
   const {
@@ -24,9 +25,36 @@ export async function setSobreVos(input: {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // Defensa server-side: el formulario ya bloquea, pero rechazamos por las dudas.
+  if (!input.acceptedTerms) {
+    throw new Error('Debés aceptar los términos para continuar')
+  }
+
+  const profileFields = {
+    name: input.name,
+    age: input.age,
+    country: input.country,
+    gender: input.gender,
+  }
+
+  // Solo marcamos accepted_terms_at si todavía no estaba seteado, para
+  // preservar el timestamp original de la primera aceptación.
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('accepted_terms_at')
+    .eq('id', user.id)
+    .single()
+
+  const update = {
+    ...profileFields,
+    ...(existing?.accepted_terms_at
+      ? {}
+      : { accepted_terms_at: new Date().toISOString() }),
+  }
+
   const { error } = await supabase
     .from('profiles')
-    .update(input)
+    .update(update)
     .eq('id', user.id)
   if (error) throw new Error(error.message)
 
