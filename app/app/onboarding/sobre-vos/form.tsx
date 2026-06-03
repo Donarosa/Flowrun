@@ -30,7 +30,6 @@ export function SobreVosForm({
   const [age, setAge] = useState<string>(initialAge?.toString() ?? '')
   const [country, setCountry] = useState(initialCountry ?? DEFAULT_COUNTRY)
   const [gender, setGender] = useState<Gender | null>(initialGender)
-  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const ageNum = Number.parseInt(age, 10)
@@ -40,8 +39,7 @@ export function SobreVosForm({
     ageNum >= 12 &&
     ageNum <= 120 &&
     country.length === 2 &&
-    gender !== null &&
-    acceptedTerms
+    gender !== null
 
   const onContinue = async () => {
     if (!valid || !gender) return
@@ -51,7 +49,6 @@ export function SobreVosForm({
       age: ageNum,
       country,
       gender,
-      acceptedTerms,
     })
   }
 
@@ -126,38 +123,6 @@ export function SobreVosForm({
               })}
             </div>
           </Field>
-        </div>
-
-        <div className="mt-6 mb-4 p-4 rounded-xl bg-paper-2 shadow-[inset_0_0_0_1px_var(--color-border)]">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-0.5 w-4 h-4 accent-trail shrink-0 cursor-pointer"
-            />
-            <span className="text-[12.5px] text-fg leading-[1.5] tracking-[-0.005em]">
-              Declaro que tengo un <strong className="text-ink font-semibold">apto físico vigente</strong> y entiendo que el uso de FlowRun es bajo mi propia responsabilidad. Acepto los{' '}
-              <a
-                href="https://flowrun.fun/terminos"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-trail font-semibold underline underline-offset-2"
-              >
-                Términos y Condiciones
-              </a>{' '}
-              y la{' '}
-              <a
-                href="https://flowrun.fun/privacidad"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-trail font-semibold underline underline-offset-2"
-              >
-                Política de Privacidad
-              </a>
-              .
-            </span>
-          </label>
         </div>
 
         <button
