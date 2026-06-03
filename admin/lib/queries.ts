@@ -177,12 +177,21 @@ export type UserRow = {
   periodEnd: string | null
   paidSince: string | null
   daysOnSub: number | null
+  lastSignInAt: string | null
+  lastSessionAt: string | null
+  lastCheckinAt: string | null
 }
 
 export async function getUsers(): Promise<UserRow[]> {
   const supa = createAdminClient()
 
-  const [{ data: profiles }, { data: subs }] = await Promise.all([
+  const [
+    { data: profiles },
+    { data: subs },
+    { data: completedSessions },
+    { data: checkins },
+    authList,
+  ] = await Promise.all([
     supa
       .from('profiles')
       .select('id,email,name,country,created_at')
@@ -192,11 +201,73 @@ export async function getUsers(): Promise<UserRow[]> {
       .select(
         'user_id,status,plan,payment_method,currency,amount,current_period_end,trial_started_on,updated_at',
       ),
+    // user_sessions completadas + user_id (vía user_plans). Limit alto para
+    // que entren todas las sesiones del MVP; cuando crezca la base, mover
+    // a una VIEW agregada o RPC con max(completed_at) group by user_id.
+    supa
+      .from('user_sessions')
+      .select('completed_at, user_plans!inner(user_id)')
+      .eq('status', 'completed')
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+      .limit(50000),
+    // session_checkins + user_id (vía user_sessions → user_plans).
+    supa
+      .from('session_checkins')
+      .select(
+        'created_at, user_session:user_sessions!inner(user_plan:user_plans!inner(user_id))',
+      )
+      .order('created_at', { ascending: false })
+      .limit(50000),
+    // Auth users con last_sign_in_at: solo accesible via auth.admin con
+    // service-role key. listUsers retorna paginado.
+    supa.auth.admin.listUsers({ page: 1, perPage: 1000 }),
   ])
 
   const subsById = new Map(
     (subs ?? []).map((s) => [s.user_id, s] as const),
   )
+
+  // Helper para extraer user_id desde nested select (Supabase devuelve obj | obj[])
+  const userIdFromNested = (
+    nested: unknown,
+    path: string[],
+  ): string | undefined => {
+    let cur: unknown = nested
+    for (const key of path) {
+      if (Array.isArray(cur)) cur = cur[0]
+      if (cur && typeof cur === 'object' && key in cur) {
+        cur = (cur as Record<string, unknown>)[key]
+      } else {
+        return undefined
+      }
+    }
+    return typeof cur === 'string' ? cur : undefined
+  }
+
+  // Map user_id → max(completed_at) y user_id → max(created_at de checkin)
+  const lastSessionByUser = new Map<string, string>()
+  for (const s of completedSessions ?? []) {
+    const uid = userIdFromNested(s.user_plans, ['user_id'])
+    if (!uid || !s.completed_at) continue
+    if (!lastSessionByUser.has(uid)) {
+      lastSessionByUser.set(uid, s.completed_at)
+    }
+  }
+
+  const lastCheckinByUser = new Map<string, string>()
+  for (const c of checkins ?? []) {
+    const uid = userIdFromNested(c.user_session, ['user_plan', 'user_id'])
+    if (!uid || !c.created_at) continue
+    if (!lastCheckinByUser.has(uid)) {
+      lastCheckinByUser.set(uid, c.created_at)
+    }
+  }
+
+  const lastSignInByUser = new Map<string, string>()
+  for (const u of authList.data?.users ?? []) {
+    if (u.last_sign_in_at) lastSignInByUser.set(u.id, u.last_sign_in_at)
+  }
 
   const now = Date.now()
 
@@ -238,6 +309,9 @@ export async function getUsers(): Promise<UserRow[]> {
       periodEnd: sub?.current_period_end ?? null,
       paidSince,
       daysOnSub,
+      lastSignInAt: lastSignInByUser.get(p.id) ?? null,
+      lastSessionAt: lastSessionByUser.get(p.id) ?? null,
+      lastCheckinAt: lastCheckinByUser.get(p.id) ?? null,
     }
   })
 }

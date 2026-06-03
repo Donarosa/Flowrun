@@ -22,6 +22,22 @@ function fmtDate(iso: string): string {
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}`
 }
 
+// Devuelve "Hoy", "Ayer", "Hace Xd" o la fecha. Para mostrar timestamps de
+// actividad reciente de forma legible.
+function fmtRelative(iso: string | null): { label: string; muted: boolean } {
+  if (!iso) return { label: '—', muted: true }
+  const d = new Date(iso)
+  const now = new Date()
+  const diffMs = now.getTime() - d.getTime()
+  const diffDays = Math.floor(diffMs / 86400000)
+  if (diffDays < 0) return { label: fmtDate(iso), muted: false }
+  if (diffDays === 0) return { label: 'Hoy', muted: false }
+  if (diffDays === 1) return { label: 'Ayer', muted: false }
+  if (diffDays < 7) return { label: `Hace ${diffDays}d`, muted: false }
+  if (diffDays < 30) return { label: `Hace ${Math.floor(diffDays / 7)}sem`, muted: true }
+  return { label: fmtDate(iso), muted: true }
+}
+
 function fmtMoney(amount: number | null, currency: string | null): string {
   if (amount == null || !currency) return '—'
   return currency === 'ARS'
@@ -71,6 +87,9 @@ export default async function UsuariosPage() {
                 <Th>Pago</Th>
                 <Th>Tiempo sub</Th>
                 <Th>Period end</Th>
+                <Th>Último login</Th>
+                <Th>Última sesión</Th>
+                <Th>Último check-in</Th>
               </tr>
             </thead>
             <tbody>
@@ -80,7 +99,7 @@ export default async function UsuariosPage() {
               {users.length === 0 && (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={12}
                     className="px-4 py-10 text-center text-[var(--color-muted)]"
                   >
                     Sin usuarios todavía.
@@ -144,7 +163,24 @@ function UserRowView({ u }: { u: UserRow }) {
         )}
       </Td>
       <Td muted>{u.periodEnd ? fmtDate(u.periodEnd) : <Dash />}</Td>
+      <RelativeCell iso={u.lastSignInAt} />
+      <RelativeCell iso={u.lastSessionAt} />
+      <RelativeCell iso={u.lastCheckinAt} />
     </tr>
+  )
+}
+
+function RelativeCell({ iso }: { iso: string | null }) {
+  const { label, muted } = fmtRelative(iso)
+  return (
+    <td
+      className={`px-4 py-2.5 align-baseline font-mono text-[12px] tabular-nums ${
+        muted ? 'text-[var(--color-soft)]' : 'text-[var(--color-fg)]'
+      }`}
+      title={iso ?? undefined}
+    >
+      {label}
+    </td>
   )
 }
 
