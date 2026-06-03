@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ProgressBar } from '@/components/onboarding/progress-bar'
-import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries'
+import { COUNTRIES_BY_REGION, DEFAULT_COUNTRY } from '@/lib/countries'
 import type { Gender } from '@/types/database'
 import { setSobreVos } from '../actions'
 
@@ -18,6 +18,8 @@ type Props = {
   initialAge: number | null
   initialCountry: string | null
   initialGender: Gender | null
+  /** True si initialName viene precargado del provider (Google). */
+  nameFromProvider: boolean
 }
 
 export function SobreVosForm({
@@ -25,12 +27,15 @@ export function SobreVosForm({
   initialAge,
   initialCountry,
   initialGender,
+  nameFromProvider,
 }: Props) {
   const [name, setName] = useState(initialName)
   const [age, setAge] = useState<string>(initialAge?.toString() ?? '')
   const [country, setCountry] = useState(initialCountry ?? DEFAULT_COUNTRY)
   const [gender, setGender] = useState<Gender | null>(initialGender)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [nameEdited, setNameEdited] = useState(false)
 
   const ageNum = Number.parseInt(age, 10)
   const valid =
@@ -39,7 +44,8 @@ export function SobreVosForm({
     ageNum >= 12 &&
     ageNum <= 120 &&
     country.length === 2 &&
-    gender !== null
+    gender !== null &&
+    acceptedTerms
 
   const onContinue = async () => {
     if (!valid || !gender) return
@@ -49,8 +55,11 @@ export function SobreVosForm({
       age: ageNum,
       country,
       gender,
+      acceptedTerms,
     })
   }
+
+  const showNameHint = nameFromProvider && !nameEdited && name === initialName
 
   return (
     <>
@@ -68,11 +77,16 @@ export function SobreVosForm({
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => { setName(e.target.value); setNameEdited(true) }}
               autoComplete="name"
               placeholder="Tu nombre y apellido"
               className="w-full px-4 py-3 rounded-xl bg-paper-2 text-ink text-[15px] placeholder:text-muted shadow-[inset_0_0_0_1px_var(--color-border)] focus:outline-none focus:shadow-[inset_0_0_0_2px_var(--color-trail)] transition"
             />
+            {showNameHint && (
+              <span className="font-mono text-[9.5px] tracking-[0.04em] text-soft mt-1">
+                Lo trajimos de tu cuenta de Google · podés editarlo
+              </span>
+            )}
           </Field>
 
           <Field label="Edad">
@@ -83,7 +97,7 @@ export function SobreVosForm({
               max={120}
               value={age}
               onChange={(e) => setAge(e.target.value)}
-              placeholder="35"
+              placeholder="Ej. 35"
               className="w-full px-4 py-3 rounded-xl bg-paper-2 text-ink text-[15px] placeholder:text-muted shadow-[inset_0_0_0_1px_var(--color-border)] focus:outline-none focus:shadow-[inset_0_0_0_2px_var(--color-trail)] transition"
             />
           </Field>
@@ -94,10 +108,14 @@ export function SobreVosForm({
               onChange={(e) => setCountry(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-paper-2 text-ink text-[15px] shadow-[inset_0_0_0_1px_var(--color-border)] focus:outline-none focus:shadow-[inset_0_0_0_2px_var(--color-trail)] transition appearance-none"
             >
-              {COUNTRIES.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
+              {Object.entries(COUNTRIES_BY_REGION).map(([region, group]) => (
+                <optgroup key={region} label={group.label}>
+                  {group.items.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.flag} {c.name}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </Field>
@@ -123,6 +141,38 @@ export function SobreVosForm({
               })}
             </div>
           </Field>
+        </div>
+
+        <div className="mt-6 mb-4 p-4 rounded-xl bg-paper-2 shadow-[inset_0_0_0_1px_var(--color-border)]">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-trail shrink-0 cursor-pointer"
+            />
+            <span className="text-[12.5px] text-fg leading-[1.5] tracking-[-0.005em]">
+              Declaro que tengo un <strong className="text-ink font-semibold">apto físico vigente</strong> y entiendo que el uso de FlowRun es bajo mi propia responsabilidad. Acepto los{' '}
+              <a
+                href="https://flowrun.fun/terminos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-trail font-semibold underline underline-offset-2"
+              >
+                Términos y Condiciones
+              </a>{' '}
+              y la{' '}
+              <a
+                href="https://flowrun.fun/privacidad"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-trail font-semibold underline underline-offset-2"
+              >
+                Política de Privacidad
+              </a>
+              .
+            </span>
+          </label>
         </div>
 
         <button

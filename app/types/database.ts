@@ -162,6 +162,7 @@ export type Database = {
           experience_level: ExperienceLevel | null
           goal_type: GoalType | null
           weekly_days: number | null
+          accepted_terms_at: string | null
           created_at: string
           updated_at: string
         }
@@ -175,6 +176,7 @@ export type Database = {
           experience_level?: ExperienceLevel | null
           goal_type?: GoalType | null
           weekly_days?: number | null
+          accepted_terms_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -188,6 +190,7 @@ export type Database = {
           experience_level?: ExperienceLevel | null
           goal_type?: GoalType | null
           weekly_days?: number | null
+          accepted_terms_at?: string | null
           created_at?: string
           updated_at?: string
         }

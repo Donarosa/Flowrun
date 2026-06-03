@@ -10,12 +10,19 @@ export default async function SobreVosPage() {
   const data = await getProfileWithMetrics(user.id)
   const profile = data?.profile
 
+  // El trigger de Supabase popula profiles.name desde raw_user_meta_data.full_name
+  // si el provider lo trae (Google). Si el usuario nunca editó el campo y aún
+  // matchea ese valor, mostramos la hint "Lo trajimos de Google".
+  const initialName = profile?.name ?? ''
+  const nameFromProvider = initialName.length > 0
+
   return (
     <SobreVosForm
-      initialName={profile?.name ?? ''}
+      initialName={initialName}
       initialAge={profile?.age ?? null}
       initialCountry={profile?.country ?? null}
       initialGender={profile?.gender ?? null}
+      nameFromProvider={nameFromProvider}
     />
   )
 }

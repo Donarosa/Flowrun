@@ -11,12 +11,13 @@ import type {
   Gender,
 } from '@/types/database'
 
-// P1 — Sobre vos (nombre, edad, país, género)
+// P1 — Sobre vos (nombre, edad, país, género, aceptación de T&C)
 export async function setSobreVos(input: {
   name: string
   age: number
   country: string
   gender: Gender
+  acceptedTerms: boolean
 }) {
   const supabase = await createClient()
   const {
@@ -24,9 +25,33 @@ export async function setSobreVos(input: {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  if (!input.acceptedTerms) {
+    throw new Error('Debés aceptar los términos para continuar')
+  }
+
+  const profileFields = {
+    name: input.name,
+    age: input.age,
+    country: input.country,
+    gender: input.gender,
+  }
+
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('accepted_terms_at')
+    .eq('id', user.id)
+    .single()
+
+  const update = {
+    ...profileFields,
+    ...(existing?.accepted_terms_at
+      ? {}
+      : { accepted_terms_at: new Date().toISOString() }),
+  }
+
   const { error } = await supabase
     .from('profiles')
-    .update(input)
+    .update(update)
     .eq('id', user.id)
   if (error) throw new Error(error.message)
 
@@ -156,6 +181,33 @@ export async function setEsfuerzo(mode: EffortMode) {
   // Última pregunta del onboarding: asignar plan inicial.
   // assignPlan es idempotente — si ya hay plan activo, retorna sin tocar nada.
   await assignPlan(user.id)
+
+  // Crear suscripción trial si no existe. El trigger de Supabase ya no la crea
+  // en signup (migración 0018), justamente para evitar huérfanos con trial
+  // cuando alguien crea cuenta y se va sin completar onboarding. El trial 15d
+  // arranca desde acá, no desde el signup.
+  const { data: existingSub } = await supabase
+    .from('subscriptions')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (!existingSub) {
+    const periodEnd = new Date()
+    periodEnd.setUTCDate(periodEnd.getUTCDate() + 15)
+    const { error: subError } = await supabase
+      .from('subscriptions')
+      .insert({
+        user_id: user.id,
+        status: 'trialing',
+        plan: null,
+        payment_method: null,
+        currency: null,
+        amount: null,
+        current_period_end: periodEnd.toISOString().slice(0, 10),
+      })
+    if (subError) throw new Error(subError.message)
+  }
 
   redirect('/dashboard')
 }
