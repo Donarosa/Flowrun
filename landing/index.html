@@ -108,24 +108,33 @@ section{padding:80px 0;position:relative}
 .hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
 .hero-bg-shape{position:absolute;width:520px;height:520px;background:linear-gradient(160deg,var(--trail-deep) 0%,var(--trail) 60%,var(--pine) 100%);border-radius:60% 40% 50% 50%/55% 45% 55% 45%;z-index:0;opacity:.92}
 .hero-phone{position:relative;z-index:1;width:280px;height:580px;background:var(--paper-2);border-radius:38px;overflow:hidden;box-shadow:0 50px 100px -32px rgba(20,30,20,0.35),0 20px 30px -10px rgba(20,30,20,0.18)}
-.hero-phone .pscreen{padding:24px 18px;height:100%;display:flex;flex-direction:column}
-.hero-phone .date{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;font-weight:600}
-.hero-phone .greet{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.025em;margin-bottom:18px;line-height:1.1}
-.hero-phone .card{background:var(--cream);border-radius:18px;padding:16px;margin-bottom:12px}
-.hero-phone .card .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;font-weight:600}
-.hero-phone .card .title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em}
-.hero-phone .card .meta{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.hero-phone .coach-msg{background:var(--lichen);border-radius:16px;padding:14px;display:flex;gap:10px;align-items:flex-start;margin-top:auto;margin-bottom:8px}
-.hero-phone .coach-msg .ic{font-size:18px}
-.hero-phone .coach-msg .txt{font-size:12px;color:var(--pine);line-height:1.45;font-style:italic;font-weight:500}
-.hero-phone .session-card{background:linear-gradient(155deg,var(--pine) 0%,var(--trail-deep) 100%);color:#fff;border-radius:20px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
-.hero-phone .session-card::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%}
-.hero-phone .session-card .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:10px;font-weight:600}
-.hero-phone .session-card .title{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px;line-height:1.15}
-.hero-phone .session-card .pace-row{display:flex;gap:14px;align-items:baseline;margin-bottom:12px}
-.hero-phone .session-card .pace{font-family:var(--mono);font-size:22px;font-weight:700;color:#fff;letter-spacing:-.02em}
-.hero-phone .session-card .pace-lbl{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:.14em;text-transform:uppercase}
-.hero-phone .session-card .meta{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:.06em}
+.hero-phone .pscreen{padding:22px 16px 14px;height:100%;display:flex;flex-direction:column}
+.hero-phone .date{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px;font-weight:600}
+.hero-phone .greet{font-size:23px;font-weight:800;color:var(--ink);letter-spacing:-.03em;margin-bottom:15px;line-height:1}
+.hero-phone .greet .acc{color:var(--trail)}
+.hero-phone .session-card{position:relative;background:var(--cream);border:1px solid var(--hair);border-radius:18px;padding:14px;margin-bottom:15px;overflow:hidden}
+.hero-phone .session-card .done{position:absolute;top:0;right:0;background:var(--lichen);color:var(--trail-deep);font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px 9px 15px;border-radius:0 0 0 20px}
+.hero-phone .session-card .lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.hero-phone .session-card .title{font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px;line-height:1.05}
+.hero-phone .session-card .desc{font-size:10.5px;color:var(--muted);line-height:1.4;margin-bottom:12px}
+.hero-phone .session-card .stats{display:flex;gap:16px}
+.hero-phone .session-card .stats > div{display:flex;flex-direction:column}
+.hero-phone .session-card .stats .n{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1}
+.hero-phone .session-card .stats .l{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;font-weight:600}
+.hero-phone .train-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.hero-phone .train-head .a{color:var(--trail)}
+.hero-phone .train-head .b{color:var(--soft)}
+.hero-phone .steps{display:flex;flex-direction:column;gap:1px;margin-bottom:14px}
+.hero-phone .step{display:flex;align-items:center;gap:10px;padding:5px 0}
+.hero-phone .step .dot{flex:none;width:23px;height:23px;border-radius:50%;border:1.5px solid var(--moss);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted)}
+.hero-phone .step.active .dot{background:var(--trail);border-color:var(--trail);color:#fff}
+.hero-phone .step .t{flex:1;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.hero-phone .step .d{font-family:var(--mono);font-size:9.5px;color:var(--muted)}
+.hero-phone .plan-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-top:auto;margin-bottom:6px}
+.hero-phone .plan-row .pct{color:var(--trail)}
+.hero-phone .bar{height:6px;background:var(--lichen);border-radius:3px;overflow:hidden;margin-bottom:9px}
+.hero-phone .bar i{display:block;height:100%;background:var(--trail);border-radius:3px}
+.hero-phone .foot{font-family:var(--mono);font-size:8.5px;color:var(--soft);letter-spacing:.05em;margin-bottom:9px}
 .hero-phone .home-pill{margin:0 auto;width:90px;height:4px;background:var(--soft);border-radius:3px;opacity:.5}
 
 /* === SECTION: PROBLEM === */
@@ -367,27 +376,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="hero-bg-shape"></div>
       <div class="hero-phone">
         <div class="pscreen">
-          <div class="date" data-i18n="phone.date">Semana 4 · Martes</div>
-          <div class="greet" data-i18n="phone.greet">Buenos días, Santi</div>
+          <div class="date" data-i18n="phone.date">Hoy · Jueves 4</div>
+          <div class="greet" data-i18n-html="phone.greet">Hola, <span class="acc">santiago</span>.</div>
           <div class="session-card">
-            <div class="lbl" data-i18n="phone.today">Sesión de hoy</div>
-            <div class="title" data-i18n="phone.session">Tirada larga Z2</div>
-            <div class="pace-row">
-              <div>
-                <div class="pace">5:48</div>
-                <div class="pace-lbl" data-i18n="phone.paceLbl">RITMO /KM</div>
-              </div>
-              <div>
-                <div class="pace">132–144</div>
-                <div class="pace-lbl" data-i18n="phone.hrLbl">LPM</div>
-              </div>
+            <div class="done" data-i18n="phone.done">✓ Hecha</div>
+            <div class="lbl" data-i18n="phone.sessLbl">Semana 2 · Sesión</div>
+            <div class="title" data-i18n="phone.session">Tirada Larga</div>
+            <div class="desc" data-i18n="phone.sessDesc">Resistencia específica para trail. Terreno mixto que el llano nunca replica.</div>
+            <div class="stats">
+              <div><span class="n">99'</span><span class="l" data-i18n="phone.durLbl">Duración</span></div>
+              <div><span class="n">3</span><span class="l" data-i18n="phone.stepsLbl">Pasos</span></div>
+              <div><span class="n" data-i18n="phone.typeN">Trail</span><span class="l" data-i18n="phone.typeLbl">Tipo</span></div>
             </div>
-            <div class="meta" data-i18n="phone.sessionMeta">50 MIN · TERRENO MIXTO · RPE 5</div>
           </div>
-          <div class="coach-msg">
-            <div class="ic">🟢</div>
-            <div class="txt" data-i18n="phone.coach">El domingo fuiste 8% más rápido que tu Z2. Hoy bajá un cambio: la idea es terminar fresco, no fundido.</div>
+          <div class="train-head"><span class="a" data-i18n="phone.trainHead">El entrenamiento</span><span class="b" data-i18n="phone.trainSteps">3 pasos</span></div>
+          <div class="steps">
+            <div class="step"><span class="dot">1</span><span class="t" data-i18n="phone.s1">Entrada en calor</span><span class="d">~10 min</span></div>
+            <div class="step active"><span class="dot">2</span><span class="t" data-i18n="phone.s2">Tirada Larga Montaña</span><span class="d">99 min</span></div>
+            <div class="step"><span class="dot">3</span><span class="t" data-i18n="phone.s3">Vuelta a la calma</span><span class="d">~5 min</span></div>
           </div>
+          <div class="plan-row"><span data-i18n="phone.planLbl">Plan completo</span><span class="pct">7%</span></div>
+          <div class="bar"><i style="width:7%"></i></div>
+          <div class="foot" data-i18n="phone.foot">Semana 1 de 10 · 4/58 sesiones</div>
           <div class="home-pill"></div>
         </div>
       </div>
@@ -881,14 +891,23 @@ const TRANSLATIONS = {
     'hero.sub': 'Prepará tus próximos desafíos con un plan que evoluciona junto a vos. FlowRun ajusta la progresión según tu respuesta al entrenamiento, para que llegues más fuerte y mejor preparado.',
     'hero.cta1': 'Empezá gratis · 15 días',
     'hero.cta2': 'Cómo funciona',
-    'phone.date': 'Semana 4 · Martes',
-    'phone.greet': 'Buenos días, Santi',
-    'phone.today': 'Sesión de hoy',
-    'phone.session': 'Tirada larga Z2',
-    'phone.paceLbl': 'RITMO /KM',
-    'phone.hrLbl': 'LPM',
-    'phone.sessionMeta': '50 MIN · TERRENO MIXTO · RPE 5',
-    'phone.coach': 'El domingo fuiste 8% más rápido que tu Z2. Hoy bajá un cambio: la idea es terminar fresco, no fundido.',
+    'phone.date': 'Hoy · Jueves 4',
+    'phone.greet': 'Hola, <span class="acc">santiago</span>.',
+    'phone.done': '✓ Hecha',
+    'phone.sessLbl': 'Semana 2 · Sesión',
+    'phone.session': 'Tirada Larga',
+    'phone.sessDesc': 'Resistencia específica para trail. Terreno mixto que el llano nunca replica.',
+    'phone.durLbl': 'Duración',
+    'phone.stepsLbl': 'Pasos',
+    'phone.typeN': 'Trail',
+    'phone.typeLbl': 'Tipo',
+    'phone.trainHead': 'El entrenamiento',
+    'phone.trainSteps': '3 pasos',
+    'phone.s1': 'Entrada en calor',
+    'phone.s2': 'Tirada Larga Montaña',
+    'phone.s3': 'Vuelta a la calma',
+    'phone.planLbl': 'Plan completo',
+    'phone.foot': 'Semana 1 de 10 · 4/58 sesiones',
     'problem.kicker': '¿Te suena?',
     'problem.title': 'Salís a correr.<br>Pero no sabés cómo.',
     'problem.sub': 'La mayoría de los runners corren demasiado rápido los días fáciles y demasiado lento los duros. Resultado: lesiones, agotamiento, y ganas de dejar.',
@@ -1038,14 +1057,23 @@ const TRANSLATIONS = {
     'hero.sub': 'Get ready for your next challenges with a plan that evolves with you. FlowRun adjusts your progression based on how you respond to training, so you arrive stronger and better prepared.',
     'hero.cta1': 'Start free · 15 days',
     'hero.cta2': 'How it works',
-    'phone.date': 'Week 4 · Tuesday',
-    'phone.greet': 'Good morning, Santi',
-    'phone.today': 'Today\'s session',
-    'phone.session': 'Long Z2 run',
-    'phone.paceLbl': 'PACE /KM',
-    'phone.hrLbl': 'BPM',
-    'phone.sessionMeta': '50 MIN · MIXED TERRAIN · RPE 5',
-    'phone.coach': 'On Sunday you ran 8% faster than your Z2. Ease back a notch today — finish fresh, not fried.',
+    'phone.date': 'Today · Thursday 4',
+    'phone.greet': 'Hi, <span class="acc">santiago</span>.',
+    'phone.done': '✓ Done',
+    'phone.sessLbl': 'Week 2 · Session',
+    'phone.session': 'Long Run',
+    'phone.sessDesc': 'Trail-specific endurance. Mixed terrain the flats never replicate.',
+    'phone.durLbl': 'Duration',
+    'phone.stepsLbl': 'Steps',
+    'phone.typeN': 'Trail',
+    'phone.typeLbl': 'Type',
+    'phone.trainHead': 'The workout',
+    'phone.trainSteps': '3 steps',
+    'phone.s1': 'Warm-up',
+    'phone.s2': 'Mountain Long Run',
+    'phone.s3': 'Cool-down',
+    'phone.planLbl': 'Full plan',
+    'phone.foot': 'Week 1 of 10 · 4/58 sessions',
     'problem.kicker': 'Sound familiar?',
     'problem.title': 'You go running.<br>But you don\'t know how.',
     'problem.sub': 'Most runners go too fast on easy days and too slow on hard ones. The result: injuries, burnout, and the urge to quit.',
