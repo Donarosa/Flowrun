@@ -78,6 +78,10 @@ blockquote{margin:28px 0;padding:20px 26px;border-left:3px solid var(--trail);ba
 
 .next{margin-top:30px;padding-top:24px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;gap:14px}
 .next a{font-family:var(--mono);font-size:12px;color:var(--trail);font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px}
+/* Botón flotante "Iniciá sesión" → app */
+.float-login{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:var(--trail);color:#fff;border-radius:999px;font-size:15px;font-weight:600;letter-spacing:-.005em;box-shadow:0 12px 28px -8px rgba(20,30,20,.45),0 4px 10px -4px rgba(20,30,20,.3);transition:transform .15s,background .15s}
+.float-login:hover{background:var(--trail-deep);transform:translateX(-50%) translateY(-2px)}
+@media(max-width:780px){.float-login{bottom:16px;padding:13px 26px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -208,5 +212,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </main>
 
+<!-- Botón flotante a la app -->
+<a href="https://app.flowrun.fun/login" class="float-login">Iniciá sesión</a>
 </body>
 </html>

@@ -56,6 +56,10 @@ ul li{padding:8px 0 8px 22px;position:relative;font-size:15px;line-height:1.55;c
 ul li::before{content:'';position:absolute;left:6px;top:16px;width:5px;height:5px;background:var(--trail);border-radius:50%}
 .foot-nav{margin-top:60px;padding-top:24px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px}
 .foot-nav a{color:var(--trail);font-weight:600;letter-spacing:.04em}
+/* Botón flotante "Iniciá sesión" → app */
+.float-login{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:var(--trail);color:#fff;border-radius:999px;font-size:15px;font-weight:600;letter-spacing:-.005em;box-shadow:0 12px 28px -8px rgba(20,30,20,.45),0 4px 10px -4px rgba(20,30,20,.3);transition:transform .15s,background .15s}
+.float-login:hover{background:var(--trail-deep);transform:translateX(-50%) translateY(-2px)}
+@media(max-width:780px){.float-login{bottom:16px;padding:13px 26px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -115,4 +119,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="foot-nav"><a href="/terminos">Términos y Condiciones →</a><a href="/">← Volver al inicio</a></div>
 </div></main>
+<!-- Botón flotante a la app -->
+<a href="https://app.flowrun.fun/login" class="float-login">Iniciá sesión</a>
 </body></html>

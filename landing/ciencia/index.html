@@ -82,6 +82,10 @@ blockquote .src{display:block;margin-top:10px;font-style:normal;font-family:var(
 .foot p{font-size:14px;color:var(--muted);margin-bottom:14px}
 .foot a.cta{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--ink);color:#fff;border-radius:999px;font-size:14.5px;font-weight:600;letter-spacing:-.005em;transition:background .15s,transform .15s}
 .foot a.cta:hover{background:var(--trail);transform:translateY(-1px)}
+/* Botón flotante "Iniciá sesión" → app */
+.float-login{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:var(--trail);color:#fff;border-radius:999px;font-size:15px;font-weight:600;letter-spacing:-.005em;box-shadow:0 12px 28px -8px rgba(20,30,20,.45),0 4px 10px -4px rgba(20,30,20,.3);transition:transform .15s,background .15s}
+.float-login:hover{background:var(--trail-deep);transform:translateX(-50%) translateY(-2px)}
+@media(max-width:780px){.float-login{bottom:16px;padding:13px 26px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -203,5 +207,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a href="https://app.flowrun.fun/login" class="cta">Empezá gratis · 15 días →</a>
 </section>
 
+<!-- Botón flotante a la app -->
+<a href="https://app.flowrun.fun/login" class="float-login">Iniciá sesión</a>
 </body>
 </html>

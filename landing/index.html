@@ -302,6 +302,10 @@ footer{background:var(--pine-deep);color:rgba(255,255,255,0.7);padding:64px 0 32
 .footer-bot .made{display:inline-flex;align-items:center;gap:6px}
 .footer-bot .made::before{content:'';width:6px;height:6px;background:var(--trail);border-radius:50%}
 
+/* Botón flotante "Iniciá sesión" → app */
+.float-login{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:var(--trail);color:#fff;border-radius:999px;font-size:15px;font-weight:600;letter-spacing:-.005em;box-shadow:0 12px 28px -8px rgba(20,30,20,.45),0 4px 10px -4px rgba(20,30,20,.3);transition:transform .15s,background .15s}
+.float-login:hover{background:var(--trail-deep);transform:translateX(-50%) translateY(-2px)}
+@media(max-width:780px){.float-login{bottom:16px;padding:13px 26px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -873,6 +877,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 const TRANSLATIONS = {
   es: {
     'meta.title': 'FlowRun · Corré al ritmo correcto. Disfrutá más.',
+    'float.login': 'Iniciá sesión',
     'meta.description': 'FlowRun es tu coach AI de running. Aprendé tu ritmo sostenible usando los datos de tu reloj y cómo te sentís. De cero al trail, con planes adaptativos y ciencia simple.',
     'geo.detected': 'Detectamos que estás en',
     'geo.showing': 'mostrando contenido en',
@@ -1032,6 +1037,7 @@ const TRANSLATIONS = {
   },
   en: {
     'meta.title': 'FlowRun · Run at the right pace. Enjoy more.',
+    'float.login': 'Log in',
     'meta.description': 'FlowRun is your AI running coach. Learn your sustainable pace using watch data and how you felt. From zero to trail, with adaptive plans and clear science.',
     'geo.detected': 'We detected you are in',
     'geo.showing': 'showing content in',
@@ -1326,5 +1332,7 @@ document.querySelectorAll('.units-toggle button').forEach(btn => {
 });
 </script>
 
+<!-- Botón flotante a la app -->
+<a href="https://app.flowrun.fun/login" class="float-login" data-i18n="float.login">Iniciá sesión</a>
 </body>
 </html>
