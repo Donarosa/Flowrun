@@ -722,7 +722,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="pricing-grid">
       <div class="price-card">
         <div class="ptag" data-i18n="price.c1.tag">Mensual</div>
-        <h3 data-i18n="price.c1.name">Pay-as-you-go</h3>
+        <h3 data-i18n="price.c1.name">Mes a mes</h3>
         <div class="price-row">
           <span class="amount" id="priceMonthly">$7.000</span>
           <span class="currency" id="currencyMonthly">ARS</span>
@@ -991,7 +991,7 @@ const TRANSLATIONS = {
     'price.sub': 'Durante 15 días tenés acceso a toda la app: las 4 pistas, los 5 planes Avanzados, el motor de adaptación y el feedback del profe. Sin tarjeta, sin trampas. <strong style="color:var(--ink)">A partir del día 15 necesitás suscripción activa para seguir usando la app.</strong>',
     'price.perMonth': '/ mes',
     'price.per3': '/ 3 meses',
-    'price.c1.tag': 'Mensual','price.c1.name': 'Pay-as-you-go',
+    'price.c1.tag': 'Mensual','price.c1.name': 'Mes a mes',
     'price.c1.f1': 'Acceso completo · todo incluido',
     'price.c1.f2': 'Las 4 pistas + 5 planes Avanzados',
     'price.c1.f3': 'Motor de adaptación + Mensaje del Profe',
@@ -1157,7 +1157,7 @@ const TRANSLATIONS = {
     'price.sub': 'For 15 days you get full access to the whole app: the 4 tracks, the 5 Advanced plans, the adaptation engine and the coach feedback. No card, no tricks. <strong style="color:var(--ink)">After day 15, an active subscription is required to keep using the app.</strong>',
     'price.perMonth': '/ month',
     'price.per3': '/ 3 months',
-    'price.c1.tag': 'Monthly','price.c1.name': 'Pay-as-you-go',
+    'price.c1.tag': 'Monthly','price.c1.name': 'Month to month',
     'price.c1.f1': 'Full access · everything included',
     'price.c1.f2': 'All 4 tracks + 5 Advanced plans',
     'price.c1.f3': 'Adaptation engine + Coach Message',
@@ -1246,7 +1246,7 @@ function applyTranslations(lang) {
 }
 
 function applyPricing() {
-  const isAR = currentCountry === 'AR';
+  const isAR = !currentCountry || currentCountry === 'AR';
   const dict = TRANSLATIONS[currentLang];
   if (isAR) {
     document.getElementById('priceMonthly').textContent = '$7.000';
