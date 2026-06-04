@@ -40,12 +40,6 @@ export default function LoginPage() {
       </Link>
 
       <div className="mt-auto pt-12 flex flex-col items-center gap-[18px]">
-        <p className="text-[13px] text-muted tracking-[-0.005em]">
-          ¿Ya tenés cuenta?{' '}
-          <Link href="/login/email" className="text-trail font-semibold">
-            Iniciá sesión
-          </Link>
-        </p>
         <div className="flex items-center gap-3.5 font-mono text-[9px] uppercase tracking-[0.14em] text-soft font-semibold">
           <span className="flex items-center gap-1.5">
             <span aria-hidden className="w-[5px] h-[5px] rounded-full bg-trail" />
