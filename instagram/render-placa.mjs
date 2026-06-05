@@ -17,6 +17,8 @@ const OUT = spec.outDir
 mkdirSync(OUT, { recursive: true })
 
 const SWOOSH = `<svg viewBox="0 0 100 100" fill="none"><path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="14" r="5" fill="currentColor"/></svg>`
+// inner del swoosh (sin atributos; el CSS .mark controla fill/stroke)
+const SWOOSH_INNER = `<path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14"/><circle cx="42" cy="14" r="5"/>`
 
 /* ───────────────── ESTILO FLAT (crema · Inter · swoosh) ───────────────── */
 const FLAT_CSS = `
@@ -119,15 +121,51 @@ function vectorHTML(s) {
 ${SCENE}<div class="handle">${s.handle || '@flowrun20'}</div><div class="badge">${s.site || 'flowrun.fun'}</div></div></body></html>`
 }
 
+/* ───────────────── ESTILO FOTO (foto de fondo · "hot take") ───────────────── */
+function fotoHTML(s) {
+  const b64 = readFileSync(s.photo).toString('base64')
+  const ext = s.photo.toLowerCase().endsWith('.png') ? 'png' : 'jpeg'
+  const bg = `data:image/${ext};base64,${b64}`
+  const pos = s.objectPos || '50% 40%'
+  const scale = s.scale || 1.0
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--trail:#3D6B3F;--pine:#1c3320;--run:#9ec79a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--font);-webkit-font-smoothing:antialiased}
+.post{width:${W}px;height:${H}px;position:relative;overflow:hidden;background:var(--pine)}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${pos};transform:scale(${scale});transform-origin:${pos}}
+.scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,22,15,.66) 0%,rgba(12,22,15,.30) 30%,rgba(12,22,15,.36) 55%,rgba(12,22,15,.86) 100%),radial-gradient(120% 80% at 50% 120%,rgba(28,51,32,.6),transparent 60%)}
+.mark path{fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}.mark circle{fill:currentColor}
+.lockup{display:flex;align-items:center;gap:18px;color:#fff}
+.lockup .wm{font-size:38px;font-weight:600;letter-spacing:-.04em;line-height:1;text-transform:lowercase}.lockup .wm .run{color:var(--run)}
+.top{position:absolute;top:64px;left:72px;right:72px;display:flex;align-items:center;justify-content:space-between;color:#fff;z-index:5}
+.top .kick{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.headline{position:absolute;left:72px;right:72px;bottom:200px;color:#fff;z-index:5}
+.headline .ey{font-family:var(--mono);font-size:23px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--run);margin-bottom:26px}
+.headline h1{font-size:96px;font-weight:800;line-height:1.0;letter-spacing:-.035em}
+.headline h1 .l1{color:#fff}.headline h1 .l2{color:var(--run)}
+.footer{position:absolute;left:72px;right:72px;bottom:88px;display:flex;align-items:center;justify-content:space-between;color:#fff;z-index:5}
+.footer .src{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:.08em;color:rgba(255,255,255,.62)}.footer .src b{color:#fff;font-weight:600}
+</style></head><body>
+<div class="post">
+  <img class="photo" src="${bg}" alt="">
+  <div class="scrim"></div>
+  <div class="top"><div class="lockup"><svg class="mark" width="48" height="48" viewBox="0 0 100 100" style="color:#fff">${SWOOSH_INNER}</svg><span class="wm">flow<span class="run">run</span></span></div>${s.kick ? '<span class="kick">'+s.kick+'</span>' : ''}</div>
+  <div class="headline">${s.eyebrow ? '<div class="ey">'+s.eyebrow+'</div>' : ''}<h1><span class="l1">${s.line1 || ''}</span>${s.line2 ? '<br><span class="l2">'+s.line2+'</span>' : ''}</h1></div>
+  <div class="footer"><span class="src">${s.src || ''}</span><div class="lockup"><svg class="mark" width="34" height="34" viewBox="0 0 100 100" style="color:#fff">${SWOOSH_INNER}</svg></div></div>
+</div></body></html>`
+}
+
 /* ───────────────── render ───────────────── */
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--no-sandbox', '--font-render-hinting=none'] })
 const page = await browser.newPage()
 await page.setViewport({ width: W, height: H, deviceScaleFactor: 2 })
 for (const s of spec.slides) {
-  const html = s.style === 'vector' ? vectorHTML(s) : flatHTML(s)
+  const html = s.style === 'vector' ? vectorHTML(s) : s.style === 'foto' ? fotoHTML(s) : flatHTML(s)
   await page.setContent(html, { waitUntil: 'domcontentloaded' })
   await page.evaluate(async () => { await document.fonts.ready })
-  await new Promise(r => setTimeout(r, 350))
+  await new Promise(r => setTimeout(r, s.style === 'foto' ? 600 : 350))
   await page.screenshot({ path: `${OUT}/${s.name}.png` })
   console.log('  ✓', s.name + '.png', `(${s.style}${s.type ? '/' + s.type : ''})`)
 }

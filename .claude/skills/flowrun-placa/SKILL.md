@@ -17,10 +17,11 @@ Genera placas/carruseles de Instagram con la identidad EXACTA de FlowRun, render
 - **Voz:** leé `content/voice.md` y `content/about-me.md` antes de escribir copy. Voseo argentino, concreto, sin humo. Hooks: afirmación incómoda + giro. CTA simple ("Empezá gratis 15 días → link en bio"). Nunca gurú motivacional, nunca promesas garantizadas.
 - **En placas de ciencia: SIEMPRE citar la fuente** (campo `fuente`). Bibliografía completa en `landing/ciencia/index.html`.
 
-## Dos estilos (preguntar "con o sin vector" por placa)
+## Tres estilos (preguntar por placa)
 
-- **Sin vector (flat):** fondo crema, fuente **Inter**, swoosh. Para contenido informativo (ciencia, producto, datos, listas).
-- **Con vector (aspiracional):** fondo **olivo `#4A5D3A`**, fuente serif **Fraunces** con itálicas verde sage, ilustración de montañas + sendero switchback a la cumbre. Para frases inspiracionales, pistas, hooks fuertes.
+- **Flat:** fondo crema, fuente **Inter**, swoosh. Para contenido informativo (ciencia, producto, datos, listas).
+- **Vector (aspiracional):** fondo **olivo `#4A5D3A`**, fuente serif **Fraunces** con itálicas verde sage, montañas + sendero switchback. Para frases inspiracionales, pistas.
+- **Foto (hot take):** **foto de fondo** con scrim verde-tintado. Wordmark "flow**run**" (run en `#9ec79a`), eyebrow + frase bold en 2 líneas (blanco + verde `#9ec79a`), kick arriba-derecha, remate abajo. Para hooks/opiniones contrarian sobre una imagen potente. **Requiere que el usuario dé la ruta de una foto.**
 
 ## Templates disponibles (campos del spec)
 
@@ -34,6 +35,8 @@ Estilo `flat` (`style:"flat"`), elegí `type`:
 
 Estilo `vector` (`style:"vector"`): campos `eyebrow`, `headline` (usá `<em>…</em>` para resaltar 1-2 palabras en serif itálica), `handle?`, `site?`.
 
+Estilo `foto` (`style:"foto"`): campos `photo` (ruta absoluta a la imagen — OBLIGATORIO, pedísela al usuario), `kick` (arriba-der), `eyebrow` (acento), `line1` (blanco), `line2` (verde), `src` (remate abajo, admite `<b>`), `objectPos?` (ej "50% 38%"), `scale?` (ej 1.18, para encuadrar la foto).
+
 > En títulos/headlines podés resaltar con `<span class="acc">palabra</span>` (flat) o `<em>palabra</em>` (vector). Negrita en body con `<b>`. Para carruseles, poné `idx` tipo "01/05".
 
 ## Workflow
@@ -41,8 +44,8 @@ Estilo `vector` (`style:"vector"`): campos `eyebrow`, `headline` (usá `<em>…<
 ### Paso 1 — Preguntar (AskUserQuestion)
 Hacé las preguntas con la herramienta AskUserQuestion (no como texto). Combiná en 1-2 llamadas:
 1. **¿Placa única o carrusel?** (si carrusel, cuántas placas).
-2. **¿Con o sin vector?** (con = olivo/serif/montañas · sin = crema/Inter). Si es carrusel, se puede mezclar — preguntá por placa o aplicá uno a todas.
-3. **Tipo** (si es flat: cover/body/steps/pista/trial/biblio).
+2. **¿Qué estilo?** → **flat** (crema/Inter) · **vector** (olivo/serif/montañas) · **foto** (foto de fondo, hot take). En carrusel se puede mezclar.
+3. Si **foto**: **pedí la ruta de la foto de fondo** (ruta absoluta al archivo). Si **flat**: preguntá el **tipo** (cover/body/steps/pista/trial/biblio).
 4. **Tema / copy** (texto exacto, o un tema para que lo escribas en la voz de marca).
 
 Si el usuario dice "vos decidí" o "tu call", aplicá defaults sensatos y avanzá sin bloquear.

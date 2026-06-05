@@ -100,6 +100,24 @@
   .vscene{position:absolute;left:0;right:0;bottom:0;width:1080px;height:640px;z-index:2}
   .vhandle{position:absolute;bottom:60px;left:72px;z-index:6;font-family:var(--mono);font-size:26px;font-weight:600;color:rgba(245,242,237,.78)}
   .vbadge{position:absolute;bottom:58px;right:72px;z-index:6;font-family:var(--mono);font-size:19px;font-weight:600;color:var(--sand);letter-spacing:.06em;background:rgba(245,242,237,.14);padding:12px 22px;border-radius:100px}
+
+  /* ════ PLACA — estilo FOTO (hot take) ════ */
+  .placa.foto{padding:0;background:#1c3320}
+  .fphoto{position:absolute;inset:0;background:linear-gradient(135deg,#2f4a33,#1c3320 55%,#243a1f)}
+  .fphoto::after{content:'📷  tu foto de fondo';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.16);font-family:var(--mono);font-size:30px;letter-spacing:.12em}
+  .fscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,22,15,.66),rgba(12,22,15,.30) 30%,rgba(12,22,15,.36) 55%,rgba(12,22,15,.86))}
+  .placa.foto .flock{display:flex;align-items:center;gap:18px;color:#fff}
+  .placa.foto svg{width:48px;height:48px;color:#fff}
+  .placa.foto .ffoot svg{width:34px;height:34px}
+  .placa.foto .wm{font-size:38px;font-weight:600;letter-spacing:-.04em;text-transform:lowercase;color:#fff}.placa.foto .wm .run{color:#9ec79a}
+  .ftop{position:absolute;top:64px;left:72px;right:72px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+  .fkick{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+  .fhead{position:absolute;left:72px;right:72px;bottom:200px;color:#fff;z-index:5}
+  .fey{font-family:var(--mono);font-size:23px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#9ec79a;margin-bottom:26px}
+  .fhead h1{font-size:96px;font-weight:800;line-height:1;letter-spacing:-.035em}
+  .fhead .l1{color:#fff}.fhead .l2{color:#9ec79a}
+  .ffoot{position:absolute;left:72px;right:72px;bottom:88px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+  .ffoot .src{font-family:var(--mono);font-size:19px;color:rgba(255,255,255,.62)}.ffoot .src b{color:#fff;font-weight:600}
 </style>
 </head>
 <body>
@@ -123,12 +141,13 @@
 
       <div class="q" id="q2">
         <span class="chip">Estilo</span>
-        <div class="qtext">2 · ¿Con o sin vector?</div>
-        <div class="opts" data-q="vector">
-          <button class="opt active" data-v="sin">Sin vector<span class="sub">crema · Inter</span></button>
-          <button class="opt" data-v="con">Con vector<span class="sub">olivo · Fraunces · montañas</span></button>
+        <div class="qtext">2 · ¿Qué estilo?</div>
+        <div class="opts" data-q="style">
+          <button class="opt active" data-v="flat">Flat<span class="sub">crema · Inter</span></button>
+          <button class="opt" data-v="vector">Vector<span class="sub">olivo · serif · montañas</span></button>
+          <button class="opt" data-v="foto">Foto<span class="sub">foto de fondo · hot take</span></button>
         </div>
-        <div class="hint">En carrusel se puede mezclar; acá aplica a la placa de ejemplo.</div>
+        <div class="hint">"Foto" te pide la ruta de una imagen. En carrusel se puede mezclar.</div>
       </div>
 
       <div class="q" id="q3">
@@ -187,11 +206,13 @@ const EX = {
     html: ptop('08/08')+'<div class="pcontent top"><div class="pkick">Sin humo</div><div class="ptitle">Bibliografía</div><ol class="prefs"><li>Seiler, S. (2010). <em>Training intensity distribution.</em></li><li>Foster, C. et al. (2008). <em>The Talk Test.</em></li><li>Bompa &amp; Buzzichelli (2018). <em>Periodization.</em></li><li>Beattie, K. et al. (2017). <em>Strength training.</em></li></ol></div>'+pfoot('flowrun.fun',''), cls:'dark', tema:'Cierre de carrusel de ciencia → las fuentes citadas'},
   vector: {spec:{name:'01-aspiracional',style:'vector',eyebrow:'Tu primer paso',headline:'Empezá a correr a <em>tu ritmo</em>...',handle:'@flowrun20'},
     html: '<div class="vtopo"></div><div class="vwm"><div class="sym">'+SWOOSH+'</div><div class="txt">flowrun</div></div><div class="vcontent"><div class="veyebrow">Tu primer paso</div><h1 class="vheadline">Empezá a correr a <em>tu ritmo</em>.<br>Disfrutá de la <em>montaña</em>.</h1></div>'+SCENE+'<div class="vhandle">@flowrun20</div><div class="vbadge">flowrun.fun</div>', cls:'vector', tema:'Tema: frase aspiracional → serif + montañas'},
+  foto: {spec:{name:'01-hottake',style:'foto',photo:'/ruta/a/tu-foto.jpg',kick:'Zona 2',eyebrow:'Opinión impopular',line1:'Corré lento',line2:'para correr mejor.',src:'Es ciencia, no humo.'},
+    html: '<div class="fphoto"></div><div class="fscrim"></div><div class="ftop"><div class="flock">'+SWOOSH+'<span class="wm">flow<span class="run">run</span></span></div><span class="fkick">Zona 2</span></div><div class="fhead"><div class="fey">Opinión impopular</div><h1><span class="l1">Corré lento</span><br><span class="l2">para correr mejor.</span></h1></div><div class="ffoot"><span class="src">Es <b>ciencia</b>, no humo.</span>'+SWOOSH+'</div>', cls:'foto', tema:'Tema: hook/opinión sobre una foto → te pido la ruta de la foto de fondo'},
 };
 
-const state = {formato:'unica', vector:'sin', tipo:'cover', tema:''};
+const state = {formato:'unica', style:'flat', tipo:'cover', tema:''};
 
-function currentKey(){ return state.vector === 'con' ? 'vector' : state.tipo; }
+function currentKey(){ return state.style === 'flat' ? state.tipo : state.style; }
 
 function render(){
   const ex = EX[currentKey()];
@@ -208,8 +229,8 @@ function render(){
   if(state.formato==='carrusel'){ spec.slides=[ex.spec,{name:'02-…','…':'(más placas)'}]; }
   document.getElementById('spec').innerHTML = syntax(JSON.stringify(spec,null,2));
   document.getElementById('temaEcho').textContent = ex.tema;
-  // q3 disabled si vector
-  document.getElementById('q3').classList.toggle('disabled', state.vector==='con');
+  // q3 (tipo) solo aplica a flat
+  document.getElementById('q3').classList.toggle('disabled', state.style!=='flat');
 }
 function syntax(s){ return s.replace(/"([^"]+)":/g,'<span class="k">"$1"</span>:').replace(/: "([^"]*)"/g,': <span class="s">"$1"</span>'); }
 
