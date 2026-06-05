@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>/flowrun-placa · cómo funciona</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --trail:#3D6B3F;--trail-deep:#2B4F2D;--pine:#1f3a25;--lichen:#e7eee1;--moss:#c2d3b6;
+    --cream:#FAF8F2;--ink:#1B1F1B;--fg:#33402f;--muted:#6c7a66;--soft:#9aa893;--hair:#e8e6dd;
+    --olive:#4A5D3A;--olive-soft:#7A9E6B;--sand:#F5F2ED;
+    --mono:'JetBrains Mono',monospace;--font:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:#eceae3;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px}
+  header h1{font-size:30px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:12px}
+  header h1 .cmd{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--trail);background:#fff;padding:4px 12px;border-radius:8px}
+  header p{color:var(--muted);font-size:15px;margin-top:8px;max-width:680px}
+  .layout{display:grid;grid-template-columns:1fr 420px;gap:28px;margin-top:32px;align-items:start}
+  @media(max-width:920px){.layout{grid-template-columns:1fr}}
+
+  /* ── columna preguntas ── */
+  .q{background:#fff;border:1px solid var(--hair);border-radius:16px;padding:20px 22px;margin-bottom:16px;transition:opacity .2s}
+  .q.disabled{opacity:.4;pointer-events:none}
+  .q .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--trail);background:var(--lichen);padding:4px 10px;border-radius:6px;margin-bottom:12px}
+  .q .qtext{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
+  .opts{display:flex;flex-wrap:wrap;gap:10px}
+  .opt{font-size:14px;font-weight:600;padding:11px 16px;border-radius:10px;border:1.5px solid var(--hair);background:#fff;cursor:pointer;transition:all .12s;color:var(--fg)}
+  .opt:hover{border-color:var(--moss);background:#fafdf8}
+  .opt.active{background:var(--trail);border-color:var(--trail);color:#fff}
+  .opt .sub{display:block;font-size:11px;font-weight:500;opacity:.7;margin-top:2px}
+  .hint{font-size:12px;color:var(--soft);margin-top:10px;font-style:italic}
+
+  /* ── columna resultado ── */
+  .result{position:sticky;top:24px}
+  .result h2{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .stage{width:100%;aspect-ratio:1080/1350;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -24px rgba(20,30,20,.4);position:relative;background:#000}
+  .scaler{position:absolute;top:0;left:0;width:1080px;height:1350px;transform-origin:top left}
+  .spec{margin-top:18px;background:#10140f;border-radius:12px;padding:16px 18px;font-family:var(--mono);font-size:11.5px;line-height:1.6;color:#cfe0c4;overflow:auto;max-height:230px;white-space:pre-wrap;word-break:break-word}
+  .spec .k{color:#8fb47f}.spec .s{color:#e9d6a3}
+  .cmd-line{margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--muted);background:#fff;border:1px solid var(--hair);border-radius:8px;padding:10px 12px}
+  .cmd-line b{color:var(--trail)}
+
+  /* ════ PLACA — estilo FLAT ════ */
+  .placa{width:1080px;height:1350px;position:relative;overflow:hidden;padding:96px 88px 84px;display:flex;flex-direction:column;font-family:var(--font)}
+  .placa.light{background:var(--cream);color:var(--fg)}
+  .placa.trial{background:var(--lichen);color:var(--fg)}
+  .placa.dark{background:linear-gradient(155deg,var(--pine) 0%,var(--trail-deep) 100%);color:#fff}
+  .placa .ptop{display:flex;justify-content:space-between;align-items:center}
+  .pbrand{display:flex;align-items:center;gap:13px}
+  .pbrand svg{width:40px;height:40px;color:var(--trail)}
+  .pbrand .wm{font-size:31px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+  .pbrand .wm .acc{color:var(--trail)}
+  .placa.dark .pbrand svg,.placa.dark .pbrand .wm{color:#fff}.placa.dark .pbrand .wm .acc{color:var(--moss)}
+  .pidx{font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:.1em;color:var(--soft)}
+  .placa.dark .pidx{color:rgba(255,255,255,.55)}
+  .pcontent{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .pcontent.top{justify-content:flex-start;padding-top:56px}
+  .pkick{font-family:var(--mono);font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--trail);font-weight:600;display:inline-flex;align-items:center;gap:14px;margin-bottom:34px}
+  .pkick::before{content:'';width:34px;height:2px;background:var(--trail)}
+  .placa.dark .pkick{color:var(--moss)}.placa.dark .pkick::before{background:var(--moss)}
+  .ptitle{font-size:76px;font-weight:800;letter-spacing:-.035em;line-height:1.02;color:var(--ink);margin-bottom:30px}
+  .placa.dark .ptitle{color:#fff}
+  .ptitle.big{font-size:92px}.ptitle .acc{color:var(--trail)}.placa.dark .ptitle .acc{color:var(--moss)}
+  .pbody{font-size:34px;line-height:1.46;color:var(--muted);font-weight:450;max-width:880px}
+  .placa.dark .pbody{color:rgba(255,255,255,.82)}.pbody b{color:var(--ink);font-weight:700}.placa.dark .pbody b{color:#fff}
+  .pfuente{margin-top:30px;padding-top:24px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:19px;color:var(--muted)}
+  .pfuente b{color:var(--trail);font-weight:600}
+  .placa.dark .pfuente{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
+  .pfoot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:19px;letter-spacing:.08em;color:var(--soft);text-transform:uppercase}
+  .placa.dark .pfoot{color:rgba(255,255,255,.5)}.pfoot .hint{color:var(--trail);font-weight:600}.placa.dark .pfoot .hint{color:var(--moss)}
+  .psteps{display:flex;flex-direction:column;margin-top:8px}
+  .pstep{display:flex;gap:26px;align-items:flex-start;padding:30px 0;border-top:1px solid var(--hair)}
+  .pstep .n{flex:none;width:60px;height:60px;border-radius:50%;background:var(--trail);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:24px;font-weight:700}
+  .pstep .sk{font-family:var(--mono);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--trail);font-weight:600;margin-bottom:9px}
+  .pstep .st{font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:7px}
+  .pstep .sd{font-size:24px;line-height:1.4;color:var(--muted)}
+  .pemoji{font-size:104px;line-height:1;margin-bottom:30px}
+  .pchips{display:flex;gap:13px;flex-wrap:wrap;margin-top:38px}
+  .pchip{font-family:var(--mono);font-size:19px;font-weight:600;padding:12px 20px;border-radius:999px;background:var(--lichen);color:var(--trail-deep)}
+  .ppill{display:inline-flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:15px 26px;font-family:var(--mono);font-size:18px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--trail);margin-bottom:34px}
+  .ppill .dot{width:9px;height:9px;border-radius:50%;background:var(--trail)}
+  .prefs{list-style:none;counter-reset:r;margin-top:10px}
+  .prefs li{counter-increment:r;position:relative;padding:15px 0 15px 48px;border-bottom:1px solid rgba(255,255,255,.13);font-family:var(--mono);font-size:19px;line-height:1.4;color:rgba(255,255,255,.78)}
+  .prefs li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:17px;font-family:var(--mono);font-size:16px;color:var(--moss);font-weight:700}
+  .prefs li em{color:#fff;font-style:italic;font-weight:500}
+
+  /* ════ PLACA — estilo VECTOR ════ */
+  .placa.vector{background:var(--olive);color:var(--sand);padding:0}
+  .vtopo{position:absolute;inset:0;background-image:radial-gradient(ellipse 1500px 500px at 50% -8%,rgba(245,242,237,.10) 0%,transparent 60%),radial-gradient(ellipse 900px 320px at 18% 8%,rgba(245,242,237,.06) 0%,transparent 60%);z-index:1}
+  .vwm{position:absolute;top:64px;left:72px;display:flex;align-items:center;gap:16px;z-index:6}
+  .vwm .sym{width:56px;height:56px;border-radius:15px;background:rgba(245,242,237,.16);color:var(--sand);display:flex;align-items:center;justify-content:center}
+  .vwm .sym svg{width:30px;height:30px}.vwm .txt{font-size:27px;font-weight:700;color:var(--sand);letter-spacing:-.01em}
+  .vcontent{position:absolute;z-index:5;padding:250px 80px 0;left:0;right:0;top:0}
+  .veyebrow{font-family:var(--mono);font-size:23px;font-weight:600;color:var(--olive-soft);letter-spacing:.10em;text-transform:uppercase;margin-bottom:34px}
+  .vheadline{font-family:'Fraunces',serif;font-weight:400;font-size:112px;line-height:1.0;letter-spacing:-.035em;color:var(--sand);max-width:920px}
+  .vheadline em{font-style:italic;color:var(--olive-soft);font-weight:500}
+  .vscene{position:absolute;left:0;right:0;bottom:0;width:1080px;height:640px;z-index:2}
+  .vhandle{position:absolute;bottom:60px;left:72px;z-index:6;font-family:var(--mono);font-size:26px;font-weight:600;color:rgba(245,242,237,.78)}
+  .vbadge{position:absolute;bottom:58px;right:72px;z-index:6;font-family:var(--mono);font-size:19px;font-weight:600;color:var(--sand);letter-spacing:.06em;background:rgba(245,242,237,.14);padding:12px 22px;border-radius:100px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="cmd">/flowrun-placa</span> cómo funciona</h1>
+    <p>Demo interactivo de la skill. Elegí opciones a la izquierda (como te las preguntaría con AskUserQuestion) y mirá a la derecha la placa que se generaría + el <em>spec</em> que arma el motor. Esto es una maqueta — la skill real renderiza el PNG.</p>
+  </header>
+
+  <div class="layout">
+    <!-- PREGUNTAS -->
+    <div class="questions">
+      <div class="q" id="q1">
+        <span class="chip">Formato</span>
+        <div class="qtext">1 · ¿Placa única o carrusel?</div>
+        <div class="opts" data-q="formato">
+          <button class="opt active" data-v="unica">Placa única<span class="sub">una imagen</span></button>
+          <button class="opt" data-v="carrusel">Carrusel<span class="sub">varias placas</span></button>
+        </div>
+      </div>
+
+      <div class="q" id="q2">
+        <span class="chip">Estilo</span>
+        <div class="qtext">2 · ¿Con o sin vector?</div>
+        <div class="opts" data-q="vector">
+          <button class="opt active" data-v="sin">Sin vector<span class="sub">crema · Inter</span></button>
+          <button class="opt" data-v="con">Con vector<span class="sub">olivo · Fraunces · montañas</span></button>
+        </div>
+        <div class="hint">En carrusel se puede mezclar; acá aplica a la placa de ejemplo.</div>
+      </div>
+
+      <div class="q" id="q3">
+        <span class="chip">Tipo</span>
+        <div class="qtext">3 · ¿Qué tipo de placa? <span style="font-weight:400;color:var(--soft)">(solo sin vector)</span></div>
+        <div class="opts" data-q="tipo">
+          <button class="opt active" data-v="cover">Portada</button>
+          <button class="opt" data-v="body">Cuerpo + cita</button>
+          <button class="opt" data-v="steps">Pasos</button>
+          <button class="opt" data-v="pista">Pista</button>
+          <button class="opt" data-v="trial">Trial / CTA</button>
+          <button class="opt" data-v="biblio">Bibliografía</button>
+        </div>
+      </div>
+
+      <div class="q" id="q4">
+        <span class="chip">Tema</span>
+        <div class="qtext">4 · Tema o copy</div>
+        <div class="opts" data-q="tema" style="display:block">
+          <div style="font-size:14px;color:var(--fg)">Pasás el texto exacto, o un tema y lo escribo en la voz de <code>content/voice.md</code> (voseo, sin humo).</div>
+          <div class="hint" id="temaEcho">Ejemplo cargado según el tipo elegido ↑</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result">
+      <h2>Se generaría →</h2>
+      <div class="stage"><div class="scaler" id="scaler"></div></div>
+      <div class="spec" id="spec"></div>
+      <div class="cmd-line">$ cd instagram &amp;&amp; node <b>render-placa.mjs</b> spec.json</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SWOOSH = '<svg viewBox="0 0 100 100" fill="none"><path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="14" r="5" fill="currentColor"/></svg>';
+const SCENE = '<svg class="vscene" viewBox="0 0 1080 640" fill="none" preserveAspectRatio="xMidYMax meet"><path d="M0,300 L170,250 L330,308 L520,205 L700,292 L880,224 L1080,286 L1080,640 L0,640 Z" fill="#7A9E6B" fill-opacity="0.22"/><path d="M0,430 L240,338 L470,418 L690,300 L905,394 L1080,344 L1080,640 L0,640 Z" fill="#3A4A2D"/><path d="M0,566 L165,505 L325,548 L460,476 L575,250 L705,470 L865,524 L1080,492 L1080,640 L0,640 Z" fill="#2C3A22"/><path d="M 360 632 L 520 588 L 432 548 L 575 506 L 470 464 L 600 422 L 505 384 L 600 344 L 545 312 L 575 270" fill="none" stroke="#F5F2ED" stroke-opacity="0.18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M 360 632 L 520 588 L 432 548 L 575 506 L 470 464 L 600 422 L 505 384 L 600 344 L 545 312 L 575 270" fill="none" stroke="#F5F2ED" stroke-opacity="0.92" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 22"/><circle cx="575" cy="250" r="11" fill="#7A9E6B"/><circle cx="575" cy="250" r="20" fill="none" stroke="#7A9E6B" stroke-opacity="0.45" stroke-width="3"/></svg>';
+const brand = '<div class="pbrand">'+SWOOSH+'<span class="wm">flow<span class="acc">run</span></span></div>';
+const ptop = idx => '<div class="ptop">'+brand+(idx?'<span class="pidx">'+idx+'</span>':'')+'</div>';
+const pfoot = (l,h) => '<div class="pfoot"><span>'+(l||'flowrun.fun')+'</span>'+(h?'<span class="hint">'+h+'</span>':'')+'</div>';
+
+// contenido de ejemplo por tipo
+const EX = {
+  cover: {idx:'01/05', spec:{name:'01-portada',style:'flat',type:'cover',kick:'Ciencia · Carrusel',title:'La ciencia detrás de FlowRun',body:'40 años de fisiología, usable.',idx:'01/05'},
+    html: ptop('01/05')+'<div class="pcontent"><div class="pkick">Ciencia · Carrusel</div><div class="ptitle big">La ciencia<br>detrás de <span class="acc">FlowRun</span></div><div class="pbody">No inventamos un método nuevo. 40 años de fisiología, usable.</div></div>'+pfoot('flowrun.fun','Deslizá →'), cls:'dark', tema:'"La ciencia detrás de FlowRun" — portada de carrusel'},
+  body: {spec:{name:'02-polarizado',style:'flat',type:'body',kick:'01 · Polarizado',title:'Corré fácil de verdad',body:'80% suave, 20% fuerte. Sin gris en el medio.',fuente:'Seiler, S. (2010)'},
+    html: ptop('02/05')+'<div class="pcontent"><div class="pkick">01 · Polarizado</div><div class="ptitle">Corré fácil de verdad</div><div class="pbody">El error #1: los días fáciles muy rápido. El modelo polarizado: <b>80% suave, 20% fuerte</b>.</div></div><div class="pfuente">Fuente — <b>Seiler, S. (2010)</b></div>'+pfoot('flowrun.fun',''), cls:'light', tema:'Tema: "entrenamiento polarizado" → con cita de fuente (obligatoria en ciencia)'},
+  steps: {spec:{name:'03-comofunciona',style:'flat',type:'steps',kick:'Cómo funciona',title:'Datos + sensación + ciencia',steps:'[3 pasos]'},
+    html: ptop('')+'<div class="pcontent"><div class="pkick">Cómo funciona</div><div class="ptitle">Datos + sensación + ciencia</div><div class="psteps"><div class="pstep"><div class="n">1</div><div><div class="sk">Elegí</div><div class="st">Elegí tu objetivo</div><div class="sd">La app te asigna el plan.</div></div></div><div class="pstep"><div class="n">2</div><div><div class="sk">Corré</div><div class="st">Check-in 20 seg</div><div class="sd">Cómo te sentiste.</div></div></div><div class="pstep"><div class="n">3</div><div><div class="sk">Aprendé</div><div class="st">Recibí tu coaching</div><div class="sd">Qué viene mañana.</div></div></div></div></div>'+pfoot('flowrun.fun',''), cls:'light', tema:'Tema: "cómo funciona FlowRun" → pasos numerados'},
+  pista: {spec:{name:'pista-cero',style:'flat',type:'pista',emoji:'🌱',kick:'Pista 01',title:'Empezar de cero',chips:'["8 semanas","3 días/sem","Sin presión"]'},
+    html: ptop('')+'<div class="pcontent"><div class="pemoji">🌱</div><div class="pkick">Pista 01 · Para quién es</div><div class="ptitle">Empezar a correr de cero</div><div class="pbody">De caminar a correr 30 min seguidos en 8 semanas, sin lesionarte.</div><div class="pchips"><span class="pchip">8 semanas</span><span class="pchip">3 días/sem</span><span class="pchip">Sin presión</span></div></div>'+pfoot('flowrun.fun','app.flowrun.fun'), cls:'light', tema:'Tema: la pista "Empezar de cero" → emoji + chips'},
+  trial: {spec:{name:'trial',style:'flat',type:'trial',pill:'15 días gratis · sin tarjeta',title:'Probá todo 15 días.'},
+    html: '<div class="ptop">'+brand+'</div><div class="pcontent"><div class="ppill"><span class="dot"></span>15 días gratis · sin tarjeta</div><div class="ptitle">Probá todo 15 días.<br>Después elegís.</div><div class="pbody">Acceso a las <b>4 pistas</b>, los <b>5 planes Avanzados</b> y el motor de adaptación.</div></div>'+pfoot('flowrun.fun','Empezá gratis →'), cls:'trial', tema:'Tema: prueba gratis → estilo verde con pill'},
+  biblio: {spec:{name:'biblio',style:'flat',type:'biblio',refs:'[9 referencias]'},
+    html: ptop('08/08')+'<div class="pcontent top"><div class="pkick">Sin humo</div><div class="ptitle">Bibliografía</div><ol class="prefs"><li>Seiler, S. (2010). <em>Training intensity distribution.</em></li><li>Foster, C. et al. (2008). <em>The Talk Test.</em></li><li>Bompa &amp; Buzzichelli (2018). <em>Periodization.</em></li><li>Beattie, K. et al. (2017). <em>Strength training.</em></li></ol></div>'+pfoot('flowrun.fun',''), cls:'dark', tema:'Cierre de carrusel de ciencia → las fuentes citadas'},
+  vector: {spec:{name:'01-aspiracional',style:'vector',eyebrow:'Tu primer paso',headline:'Empezá a correr a <em>tu ritmo</em>...',handle:'@flowrun20'},
+    html: '<div class="vtopo"></div><div class="vwm"><div class="sym">'+SWOOSH+'</div><div class="txt">flowrun</div></div><div class="vcontent"><div class="veyebrow">Tu primer paso</div><h1 class="vheadline">Empezá a correr a <em>tu ritmo</em>.<br>Disfrutá de la <em>montaña</em>.</h1></div>'+SCENE+'<div class="vhandle">@flowrun20</div><div class="vbadge">flowrun.fun</div>', cls:'vector', tema:'Tema: frase aspiracional → serif + montañas'},
+};
+
+const state = {formato:'unica', vector:'sin', tipo:'cover', tema:''};
+
+function currentKey(){ return state.vector === 'con' ? 'vector' : state.tipo; }
+
+function render(){
+  const ex = EX[currentKey()];
+  // placa preview (escalada)
+  const scaler = document.getElementById('scaler');
+  scaler.className = 'scaler';
+  scaler.innerHTML = '<div class="placa '+ex.cls+'">'+ex.html+'</div>';
+  // escalar al ancho del stage
+  const stage = document.querySelector('.stage');
+  const scale = stage.clientWidth / 1080;
+  scaler.style.transform = 'scale('+scale+')';
+  // spec json
+  const spec = {outDir:'instagram/placas-2026-06-05', slides:[ex.spec]};
+  if(state.formato==='carrusel'){ spec.slides=[ex.spec,{name:'02-…','…':'(más placas)'}]; }
+  document.getElementById('spec').innerHTML = syntax(JSON.stringify(spec,null,2));
+  document.getElementById('temaEcho').textContent = ex.tema;
+  // q3 disabled si vector
+  document.getElementById('q3').classList.toggle('disabled', state.vector==='con');
+}
+function syntax(s){ return s.replace(/"([^"]+)":/g,'<span class="k">"$1"</span>:').replace(/: "([^"]*)"/g,': <span class="s">"$1"</span>'); }
+
+document.querySelectorAll('.opts').forEach(group=>{
+  const q = group.dataset.q;
+  if(q==='tema') return;
+  group.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      group.querySelectorAll('.opt').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state[q]=btn.dataset.v;
+      render();
+    });
+  });
+});
+window.addEventListener('resize', render);
+render();
+</script>
+</body>
+</html>
