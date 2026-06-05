@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowRun · Banner · Empezá a correr a tu ritmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #4A5D3A;
+    --moss-deep: #3A4A2D;
+    --moss-darker: #2C3A22;
+    --moss-soft: #7A9E6B;
+    --moss-tint: #E8EEE3;
+    --deep: #1B3A4B;
+    --stone: #8C8578;
+    --sand: #F5F2ED;
+    --terracotta: #C4826D;
+    --ink: #2C2C2C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: #D8D3C5;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 0 80px;
+  }
+
+  .doc-header {
+    max-width: 1080px; margin: 0 auto 24px; padding: 28px 32px;
+    background: white; border-radius: 20px;
+  }
+  .doc-header h1 { font-size: 24px; font-weight: 700; color: var(--deep); letter-spacing: -0.02em; margin-bottom: 8px; }
+  .doc-header p { color: var(--ink); font-size: 14px; line-height: 1.5; }
+
+  /* ===== SLIDE ===== */
+  .slide {
+    width: 1080px; height: 1350px; margin: 0 auto;
+    position: relative; overflow: hidden;
+    background: var(--moss);
+    color: var(--sand);
+    font-family: 'Inter', sans-serif;
+    display: flex; flex-direction: column;
+  }
+
+  .topo-bg {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(ellipse 1500px 500px at 50% -8%, rgba(245,242,237,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 900px 320px at 18% 8%, rgba(245,242,237,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 1;
+  }
+
+  .watermark {
+    position: absolute; top: 64px; left: 72px;
+    display: flex; align-items: center; gap: 16px; z-index: 6;
+  }
+  .wm-symbol {
+    width: 56px; height: 56px; border-radius: 15px;
+    background: rgba(245,242,237,0.16); color: var(--sand);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .wm-symbol svg { width: 30px; height: 30px; }
+  .wm-text { font-size: 27px; font-weight: 700; color: var(--sand); letter-spacing: -0.01em; }
+
+  .content {
+    position: relative; z-index: 5;
+    padding: 250px 80px 0;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 23px; font-weight: 600;
+    color: var(--moss-soft); letter-spacing: 0.10em;
+    text-transform: uppercase; margin-bottom: 34px;
+  }
+  .headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 112px; line-height: 1.0;
+    letter-spacing: -0.035em;
+    color: var(--sand);
+    max-width: 920px;
+  }
+  .headline em {
+    font-style: italic;
+    color: var(--moss-soft);
+    font-weight: 500;
+  }
+
+  .scene {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    width: 1080px; height: 640px; z-index: 2;
+  }
+
+  .handle {
+    position: absolute; bottom: 60px; left: 72px; z-index: 6;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px; font-weight: 600;
+    color: rgba(245,242,237,0.78); letter-spacing: 0.02em;
+  }
+  .badge {
+    position: absolute; bottom: 58px; right: 72px; z-index: 6;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; font-weight: 600;
+    color: var(--sand); letter-spacing: 0.06em;
+    background: rgba(245,242,237,0.14);
+    padding: 12px 22px; border-radius: 100px;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;">
+  <symbol id="switchback" viewBox="0 0 100 100">
+    <path d="M 14 84 L 72 80 C 88 79 88 63 72 62 L 28 58 C 12 57 12 41 28 40 L 72 36 C 88 35 88 19 72 18 L 42 14" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="42" cy="14" r="5" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div class="doc-header">
+  <h1>Banner feed · Empezá a correr a tu ritmo</h1>
+  <p><strong>1 imagen · 1080×1350 px (4:5, óptimo para feed)</strong> · Fraunces + Inter + JetBrains Mono · paleta de marca · montaña y sendero vectorizados.</p>
+</div>
+
+<div class="slide">
+  <div class="topo-bg"></div>
+
+  <!-- logo -->
+  <div class="watermark">
+    <div class="wm-symbol"><svg><use href="#switchback"/></svg></div>
+    <div class="wm-text">flowrun</div>
+  </div>
+
+  <!-- texto -->
+  <div class="content">
+    <div class="eyebrow">tu primer paso</div>
+    <h1 class="headline">Empezá a correr<br>a <em>tu ritmo</em>.<br>Disfrutá de la <em>montaña.</em></h1>
+  </div>
+
+  <!-- escena: montaña + sendero -->
+  <svg class="scene" viewBox="0 0 1080 640" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+    <path d="M0,300 L170,250 L330,308 L520,205 L700,292 L880,224 L1080,286 L1080,640 L0,640 Z"
+          fill="#7A9E6B" fill-opacity="0.22"/>
+    <path d="M0,430 L240,338 L470,418 L690,300 L905,394 L1080,344 L1080,640 L0,640 Z"
+          fill="#3A4A2D"/>
+    <path d="M0,566 L165,505 L325,548 L460,476 L575,250 L705,470 L865,524 L1080,492 L1080,640 L0,640 Z"
+          fill="#2C3A22"/>
+
+    <!-- sendero switchback (dotted) -->
+    <path d="M 360 632 L 520 588 L 432 548 L 575 506 L 470 464 L 600 422 L 505 384 L 600 344 L 545 312 L 575 270"
+          fill="none" stroke="#F5F2ED" stroke-opacity="0.92"
+          stroke-width="7" stroke-linecap="round" stroke-linejoin="round"
+          stroke-dasharray="2 22"/>
+    <!-- línea base tenue -->
+    <path d="M 360 632 L 520 588 L 432 548 L 575 506 L 470 464 L 600 422 L 505 384 L 600 344 L 545 312 L 575 270"
+          fill="none" stroke="#F5F2ED" stroke-opacity="0.18"
+          stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- punto cumbre -->
+    <circle cx="575" cy="250" r="11" fill="#7A9E6B"/>
+    <circle cx="575" cy="250" r="20" fill="none" stroke="#7A9E6B" stroke-opacity="0.45" stroke-width="3"/>
+  </svg>
+
+  <!-- footer -->
+  <div class="handle">@flowrun20</div>
+  <div class="badge">flowrun.fun</div>
+</div>
+
+</body>
+</html>
