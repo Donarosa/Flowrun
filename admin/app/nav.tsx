@@ -7,6 +7,7 @@ const ITEMS = [
   { href: '/', label: 'Dashboard' },
   { href: '/flujos', label: 'Flujos' },
   { href: '/usuarios', label: 'Usuarios' },
+  { href: '/analytics', label: 'Analytics' },
 ]
 
 export function Nav() {
