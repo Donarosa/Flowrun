@@ -26,7 +26,7 @@ Genera placas/carruseles de Instagram con la identidad EXACTA de FlowRun, render
 ## Templates disponibles (campos del spec)
 
 Estilo `flat` (`style:"flat"`), elegí `type`:
-- `cover` — portada de carrusel (fondo oscuro). Campos: `kick`, `title`, `body`, `idx?`.
+- `cover` — portada de carrusel (fondo oscuro). Campos: `kick`, `title`, `body`, `src?` (línea sutil de fuentes abajo), `idx?`.
 - `body` — kicker + título + párrafo (+cita opcional). Campos: `kick`, `title`, `body`, `fuente?`, `theme?` ("light"|"trial"|"dark"), `idx?`.
 - `steps` — pasos numerados. Campos: `kick`, `title`, `steps:[{n,k,t,d}]`, `idx?`.
 - `pista` — emoji + badge + título + desc + chips. Campos: `emoji`, `kick`, `title`, `body`, `chips:[]`, `idx?`.

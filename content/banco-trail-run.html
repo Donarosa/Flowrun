@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco Informativo — Trail Run & Running</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2ED;
+    --card: #FDFCFA;
+    --text: #1A1710;
+    --muted: #7A7060;
+    --accent: #2D6A4F;
+    --accent2: #D4622A;
+    --accent3: #2B4C8C;
+    --border: rgba(26,23,16,0.1);
+    --tag-bg: rgba(45,106,79,0.08);
+    --tag-text: #1A4433;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.7; }
+  
+  header { padding: 3rem 2rem 2rem; max-width: 960px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+  .header-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 0.75rem; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; color: var(--text); margin-bottom: 0.75rem; }
+  h1 em { color: var(--accent); font-style: italic; }
+  .subtitle { color: var(--muted); font-size: 15px; max-width: 560px; }
+  
+  .controls { padding: 1.5rem 2rem; max-width: 960px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .filter-btn { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px; font-size: 13px; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .search-wrap { margin-left: auto; position: relative; }
+  .search-wrap input { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 6px 16px 6px 36px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text); width: 200px; outline: none; }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; padding: 1rem 2rem 3rem; max-width: 960px; margin: 0 auto; }
+  
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+  .card-num { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 0.75rem; font-weight: 500; }
+  .card h2 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; line-height: 1.25; margin-bottom: 0.5rem; }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tag { background: var(--tag-bg); color: var(--tag-text); font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 500; letter-spacing: 0.03em; }
+  .tag.trail { background: rgba(212,98,42,0.08); color: #7A2E0A; }
+  .tag.ruta { background: rgba(43,76,140,0.08); color: #1A2E5C; }
+  .card-preview { font-size: 13px; color: var(--muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-accent { position: absolute; top: 0; right: 0; width: 4px; height: 100%; }
+  .cat-fisiologia .card-accent { background: var(--accent); }
+  .cat-tecnica .card-accent { background: var(--accent2); }
+  .cat-nutricion .card-accent { background: #E9A820; }
+  .cat-mental .card-accent { background: var(--accent3); }
+  .cat-recuperacion .card-accent { background: #7B5EA7; }
+  .cat-entrenamiento .card-accent { background: #3A7D8C; }
+
+  /* Modal */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(20,18,14,0.6); z-index: 100; padding: 2rem 1rem; overflow-y: auto; }
+  .overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal { background: var(--card); border-radius: 20px; max-width: 680px; width: 100%; padding: 2.5rem; position: relative; margin: auto; }
+  .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 18px; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .modal-num { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1.2; margin-bottom: 0.75rem; }
+  .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .modal-section { margin-bottom: 1.5rem; }
+  .modal-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 500; margin-bottom: 0.6rem; }
+  .modal-section p { font-size: 14px; color: var(--text); line-height: 1.75; }
+  .modal-section ul { padding-left: 1.25rem; }
+  .modal-section ul li { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 0.25rem; }
+  .fact-box { background: #F0F7F4; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .fact-box .fact-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 500; margin-bottom: 0.3rem; }
+  .fact-box p { font-size: 14px; color: #1A4433; line-height: 1.6; font-style: italic; }
+  .sources { font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1.5rem; }
+  .copy-btn { background: var(--accent); color: white; border: none; border-radius: 100px; padding: 10px 22px; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 1rem; font-weight: 500; }
+  .copy-btn:hover { background: #1A4433; }
+
+  #count { font-size: 13px; color: var(--muted); padding: 0 2rem; max-width: 960px; margin: 0 auto 0.5rem; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Banco de contenido científico</div>
+  <h1>Trail Run &amp; Running<br><em>Plazas Informáticas</em></h1>
+  <p class="subtitle">Base de conocimiento estructurada con fisiología, técnica, nutrición y entrenamiento. Hacé clic en cualquier tema para ver el contenido completo.</p>
+</header>
+
+<div class="controls">
+  <button class="filter-btn active" data-cat="all">Todos</button>
+  <button class="filter-btn" data-cat="fisiologia">Fisiología</button>
+  <button class="filter-btn" data-cat="tecnica">Técnica</button>
+  <button class="filter-btn" data-cat="nutricion">Nutrición</button>
+  <button class="filter-btn" data-cat="entrenamiento">Entrenamiento</button>
+  <button class="filter-btn" data-cat="recuperacion">Recuperación</button>
+  <button class="filter-btn" data-cat="mental">Mental</button>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Buscar tema...">
+  </div>
+</div>
+
+<p id="count"></p>
+<div class="grid" id="grid"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
+    <button class="copy-btn" onclick="copyContent()">Copiar contenido para generar plaza ↗</button>
+  </div>
+</div>
+
+<script>
+const banco = [
+  {
+    id: "01",
+    title: "Zona 2 y el motor mitocondrial",
+    cat: "fisiologia",
+    tags: ["Fisiología", "Zona 2", "Trail", "Ruta"],
+    preview: "El entrenamiento en Zona 2 es la base del rendimiento aeróbico sostenible. Activa la biogénesis mitocondrial y enseña al cuerpo a usar grasa como combustible.",
+    ciencia: "La Zona 2 corresponde al umbral de lactato 1 (LT1): la intensidad más alta a la que las mitocondrias pueden oxidar lactato tan rápido como se produce. A esta intensidad, el lactato en sangre se mantiene entre 1.7 y 2.0 mmol/L. El investigador Iñigo San Millán (Universidad de Colorado) demostró que atletas de élite como Tadej Pogacar y Eliud Kipchoge pasan el 80% de su tiempo de entrenamiento en Zona 2. Esta distribución polarizada (80% suave, 20% duro) maximiza las adaptaciones sin acumular fatiga sistémica.",
+    fact: "Cada mitocondria nueva creada por el entrenamiento en Z2 es como agregar un motor extra. Un corredor entrenado puede tener hasta 3 veces más densidad mitocondrial que un sedentario.",
+    aplicacion: [
+      "Para identificar tu Zona 2: deberías poder mantener una conversación fluida. Si te cuesta hablar, subiste demasiado.",
+      "Frecuencia cardíaca aproximada: 60-70% de tu FCmáx (ejemplo: si tu FC máx es 180, Z2 = 108-126 bpm).",
+      "En trail: los ascensos te sacarán de Z2 fácilmente. Usá la FC como referencia, no el ritmo.",
+      "Mínimo 45-90 minutos por sesión para obtener adaptaciones mitocondriales significativas.",
+      "Paciencia: las mejoras visibles aparecen recién a las 6-8 semanas de consistencia."
+    ],
+    fuentes: "San Millán I. & Brooks GA. (2018) — Inigo San Millán Lab, University of Colorado. Seiler S. (2010) — Polarized Training."
+  },
+  {
+    id: "02",
+    title: "VO₂ máx: qué es y cómo mejorar",
+    cat: "fisiologia",
+    tags: ["Fisiología", "Trail", "Ruta"],
+    preview: "El VO₂ máx es el techo del motor aeróbico. Genética más entrenamiento específico determinan cuánto podés alcanzar y cuánto podés mejorar.",
+    ciencia: "El VO₂ máx (consumo máximo de oxígeno) mide cuánto O₂ puede usar tu cuerpo por minuto por kilogramo de peso. Los valores de élite en trail son 75-85 ml/kg/min (hombres) y 65-75 (mujeres). Pero el VO₂ máx solo no predice el rendimiento: la economía de carrera y el umbral de lactato son igual o más importantes. Según Bassett & Howley (2000), el 50% del VO₂ máx es determinado genéticamente, pero el entrenamiento puede mejorarlo entre 15-25% en personas no entrenadas.",
+    fact: "Kilian Jornet tiene un VO₂ máx estimado de 92 ml/kg/min. Eliud Kipchoge tiene 85. Pero Kipchoge usa ese VO₂ máx a >90% de eficiencia durante horas. La economía importa tanto como el techo.",
+    aplicacion: [
+      "Para mejorar el VO₂ máx: intervalos de alta intensidad (4x4 min al 90-95% FCmáx, con 3 min de recuperación) 1-2 veces por semana.",
+      "El entrenamiento HIIT en montaña (cuestas cortas de 30-60 seg al máximo esfuerzo) es muy efectivo para trail runners.",
+      "No descuides el volumen en Z2: sin base aeróbica, el trabajo de alta intensidad no se sostiene.",
+      "Medición práctica: test de Cooper (distancia recorrida en 12 minutos) da una estimación confiable."
+    ],
+    fuentes: "Bassett & Howley (2000) — Limiting factors for maximum oxygen uptake. Journal of Applied Physiology."
+  },
+  {
+    id: "03",
+    title: "Economía de carrera en trail",
+    cat: "tecnica",
+    tags: ["Técnica", "Trail", "Fisiología"],
+    preview: "Dos corredores con el mismo VO₂ máx pueden rendir muy diferente. La economía de carrera — cuánto O₂ usás a una velocidad dada — es el diferencial real.",
+    ciencia: "La economía de carrera (CR) se define como el O₂ consumido a una velocidad submáxima constante. Un atleta con alta CR gasta menos energía por kilómetro. En trail, la variabilidad del terreno hace que la CR sea aún más determinante que en pista. Investigaciones de Saugy et al. (2013) mostraron que la CR explica hasta el 65% de la variabilidad de rendimiento entre atletas de nivel similar en ultra-trail.",
+    fact: "Bajar 1% en el coste de O₂ a ritmo de carrera puede mejorar el tiempo en un 1%. En una carrera de 4 horas, eso equivale a 2 minutos y 24 segundos.",
+    aplicacion: [
+      "Trabajá cadencia: 170-180 pasos/min es eficiente. Una cadencia baja suele indicar zancadas largas que generan impacto innecesario.",
+      "En descensos de trail: flexioná rodillas, brazos separados del cuerpo (equilibrio), mirá 3-4 metros adelante, no a tus pies.",
+      "El trabajo de fuerza (sentadillas, estocadas, single leg) mejora la CR entre 2-8% según metanálisis de Blagrove et al. (2018).",
+      "Correr descalzo o con calzado minimalista ocasionalmente mejora la activación de la cadena posterior y la propiocepción."
+    ],
+    fuentes: "Saugy et al. (2013) — Altitudinal changes of running economy. Blagrove et al. (2018) — Effects of strength training on performance in endurance athletes."
+  },
+  {
+    id: "04",
+    title: "Técnica de ascenso en montaña",
+    cat: "tecnica",
+    tags: ["Técnica", "Trail"],
+    preview: "Subir eficientemente en trail es una habilidad. El uso correcto de bastones, el patrón de pisada y la cadencia marcan la diferencia entre llegar fresco o agotado a la cima.",
+    ciencia: "En pendientes superiores al 20-25%, la marcha rápida (caminar) es más económica que correr. Un estudio de Minetti et al. (2002) demostró que el umbral energético se cruza alrededor del 15-20% de pendiente: correr más empinado que eso cuesta más energía por metro horizontal. Los bastones reducen el consumo energético en subidas un 23% y disminuyen la tensión en cuádriceps en bajadas.",
+    fact: "Los mejores trail runners alternan correr y caminar en ascensos de forma estratégica, no por fatiga. Esta técnica se llama 'power hiking' y la practican Kilian Jornet, François D'Haene y todos los grandes del ultra.",
+    aplicacion: [
+      "Power hiking: inclinación hacia adelante desde los tobillos (no la cintura), pasos cortos y rápidos, cadencia alta.",
+      "Bastones: usarlos en diagonal hacia atrás durante la subida para impulsar. Ajustar largo: que el codo forme 90° en terreno plano.",
+      "Apoyá el pie completo en pendientes pronunciadas (no solo la punta): activa glúteos y distribuye el esfuerzo.",
+      "Regla práctica: si no podés mantener Z2 corriendo, caminá. Es más rápido en general que correr oxidado.",
+      "Entrenamiento: subidas de 15-30 minutos a FC controlada (Z2), 1-2 por semana."
+    ],
+    fuentes: "Minetti et al. (2002) — Energy cost of walking and running at extreme uphill and downhill slopes. Journal of Experimental Biology."
+  },
+  {
+    id: "05",
+    title: "Técnica de descenso: velocidad con control",
+    cat: "tecnica",
+    tags: ["Técnica", "Trail"],
+    preview: "El descenso en trail es donde se hacen y deshacen las carreras. También es donde más lesiones ocurren. La técnica correcta combina anticipación visual, postura y confianza.",
+    ciencia: "Los cuádriceps absorben entre 2.5 y 4 veces el peso corporal en cada impacto al bajar. Estudios de Millet et al. (2011) sobre el Ultra Trail du Mont Blanc (UTMB) mostraron que el daño muscular en cuádriceps es máximo en los primeros 30 km de descenso acumulado, y la recuperación funcional tarda entre 3 y 5 días.",
+    fact: "El daño muscular excéntrico en los cuádriceps después de un descenso prolongado se llama DOMS (Delayed Onset Muscle Soreness). El entrenamiento específico de descensos reduce este daño hasta un 40% por el fenómeno de 'repeated bout effect'.",
+    aplicacion: [
+      "Postura: leve inclinación hacia adelante (no hacia atrás), rodillas flexionadas, brazos abiertos para equilibrio.",
+      "Mirada: mínimo 2-3 metros adelante. Planificar la línea antes de llegar, no en el momento.",
+      "Pasos cortos y rápidos en terreno técnico: más control, menos impacto.",
+      "Entrenamiento de cuádriceps excéntrico (sentadilla búlgara, bajada de escalones lenta) reduce el daño en descensos.",
+      "En terreno húmedo: buscá piedras y raíces con firmeza, no las evites. Muchas veces tienen más agarre que la tierra mojada."
+    ],
+    fuentes: "Millet et al. (2011) — Alterations of neuromuscular function after the World's most challenging mountain ultramarathon. PLOS ONE."
+  },
+  {
+    id: "06",
+    title: "Glucógeno: el combustible limitado",
+    cat: "nutricion",
+    tags: ["Nutrición", "Fisiología", "Trail", "Ruta"],
+    preview: "El glucógeno muscular y hepático es tu combustible de alta potencia. Entender cómo se llena, gasta y recarga es clave para no 'chocar la pared' en carrera.",
+    ciencia: "El cuerpo almacena aproximadamente 400-500g de glucógeno (1600-2000 kcal) entre músculos e hígado. A intensidad moderada-alta, el glucógeno se convierte en el sustrato principal. Cuando se agota (el famoso 'muro'), la intensidad cae dramáticamente porque las grasas no pueden generar ATP tan rápido. Burke et al. (2011) demostraron que la disponibilidad de glucógeno muscular es el principal determinante de rendimiento en esfuerzos mayores a 90 minutos.",
+    fact: "En un maratón a ritmo de élite, el glucógeno se agota completamente en ~2 horas. Por eso el 'muro' aparece típicamente en el km 30-35. En ultra-trail, la estrategia es precisamente NO depender del glucógeno: entrenar el metabolismo de grasas para durar horas.",
+    aplicacion: [
+      "Carga de glucógeno pre-carrera: 2-3 días antes, aumentar carbohidratos a 8-10g/kg de peso corporal.",
+      "Durante el esfuerzo: ingesta de 30-60g de carbohidratos por hora en carreras de más de 75 minutos.",
+      "En ultra: 60-90g/hora (con múltiples transportadores: glucosa + fructosa).",
+      "Recuperación: los primeros 30 minutos post-esfuerzo son la 'ventana de oro' para recargar glucógeno.",
+      "Entrenamiento en ayunas (fasted training) ocasional mejora la capacidad de usar grasas como combustible."
+    ],
+    fuentes: "Burke et al. (2011) — Carbohydrates for training and competition. Journal of Sports Sciences."
+  },
+  {
+    id: "07",
+    title: "Hidratación e hiponatremia: el equilibrio del sodio",
+    cat: "nutricion",
+    tags: ["Nutrición", "Trail", "Ruta"],
+    preview: "Beber demasiado puede ser tan peligroso como beber poco. La hiponatremia (sodio bajo en sangre) es una de las causas más subestimadas de colapso en ultra-trail.",
+    ciencia: "La hiponatremia es la dilución del sodio en sangre por beber demasiada agua. Según Noakes et al. (2005), el 30% de los finishers del Ironman de Kona presentaron hiponatremia leve. En ultra-trail, el riesgo aumenta porque los corredores lentos beben mucho más de lo necesario. La recomendación actual (American College of Sports Medicine, 2016) es beber según la sed, no por horario fijo.",
+    fact: "Los síntomas de hiponatremia (mareo, náuseas, desorientación, hinchazón) se confunden frecuentemente con deshidratación. Darle más agua a alguien con hiponatremia lo puede matar. La solución es sodio, no agua.",
+    aplicacion: [
+      "Regla base: beber cuando tenés sed. Tu mecanismo de sed es evolutivamente preciso.",
+      "Sudor salado (manchas blancas en la ropa) indica mayor necesidad de sodio.",
+      "En carreras largas: incorporar pastillas de sal o electrolitos con sodio, especialmente si bebés mucho.",
+      "Control práctico: si después de correr pesás más que antes, bebiste de más.",
+      "Temperatura y humedad afectan la tasa de sudoración: 0.5 a 2 litros/hora según condiciones."
+    ],
+    fuentes: "Noakes et al. (2005) — Hyponatraemia of exercise. Sports Medicine. ACSM Position Stand (2016) on Exercise and Fluid Replacement."
+  },
+  {
+    id: "08",
+    title: "Sueño: el superpoder del corredor",
+    cat: "recuperacion",
+    tags: ["Recuperación", "Trail", "Ruta"],
+    preview: "El entrenamiento estresa al cuerpo. El sueño es donde ocurre la adaptación real. Sin sueño de calidad, el volumen de entrenamiento trabaja en contra.",
+    ciencia: "Durante el sueño profundo (fase N3 y REM), se secreta el 70% de la hormona de crecimiento (HGH) del día. Esta hormona es la responsable de la síntesis de proteínas musculares y la reparación de tejidos. Walker et al. (Why We Sleep, 2017) documentaron que atletas con menos de 6 horas de sueño tienen 4.2 veces más riesgo de lesión que los que duermen 9 horas. Cheri Mah (Stanford) demostró que extender el sueño a 10 horas en jugadores de básquet mejoró el rendimiento en un 9%.",
+    fact: "Dormir menos de 6 horas tiene el mismo efecto cognitivo y físico que no dormir 24 horas seguidas. El problema es que el cerebro con privación de sueño no puede evaluar con precisión cuán deteriorado está. Subestimamos el costo constantemente.",
+    aplicacion: [
+      "Priorizar 7-9 horas de sueño. Para atletas en bloques de alto volumen: 8-10 horas.",
+      "Mantener horario consistente (acostarse y levantarse a la misma hora incluso fines de semana).",
+      "Temperatura ideal para dormir: 18-20°C. El descenso de temperatura corporal es una señal de inicio del sueño.",
+      "Evitar pantallas 60 min antes de dormir (la luz azul suprime la melatonina).",
+      "Siestas de 20-25 minutos (no más) mejoran el estado de alerta sin interferir el sueño nocturno."
+    ],
+    fuentes: "Walker M. (2017) — Why We Sleep. Mah C. et al. (2011) — Sleep extension and athletic performance. Sleep."
+  },
+  {
+    id: "09",
+    title: "Fatiga central: el cerebro como límite",
+    cat: "mental",
+    tags: ["Mental", "Fisiología", "Trail"],
+    preview: "No sos los músculos los que se rinden primero. La fatiga en ejercicios prolongados tiene un componente central: el cerebro protege al cuerpo antes de que llegue al daño real.",
+    ciencia: "La hipótesis del 'Gobernador Central' de Tim Noakes (2004) propone que el cerebro regula el esfuerzo de forma anticipatoria para prevenir daño homeostático. El cerebro integra señales de temperatura, glucosa, O₂ y estado muscular para imponer fatiga antes del límite real. Estudios de Marcora et al. (2009) demostraron que la 'percepción del esfuerzo' (RPE) es el principal predictor de performance, más que parámetros fisiológicos objetivos.",
+    fact: "En el estudio de Marcora (2009), mostrar imágenes de caras sonrientes a velocidad subliminal (fuera de la conciencia) durante ejercicio mejoró el rendimiento un 12% vs caras tristes. El cerebro responde a señales emocionales que ni siquiera procesamos conscientemente.",
+    aplicacion: [
+      "Las estrategias cognitivas (disociación, mantras, foco externo) no son 'trucos mentales' sino intervenciones en el gobernador central.",
+      "Descomponer la carrera en tramos pequeños reduce la percepción de esfuerzo (hace la tarea parecer más manejable al cerebro).",
+      "La cafeína funciona en parte reduciendo la percepción del esfuerzo en el sistema nervioso central.",
+      "Entrenamiento en condiciones desfavorables (calor, altitud, lluvia) entrena también al gobernador central a tolerar más.",
+      "Mantra en crisis: elegí uno corto, poderoso y personal. La repetición focaliza la atención y reduce el RPE."
+    ],
+    fuentes: "Noakes T. (2004) — Central Governor Model. Marcora S. et al. (2009) — Mental fatigue impairs physical performance in humans. Journal of Applied Physiology."
+  },
+  {
+    id: "10",
+    title: "Periodización del entrenamiento",
+    cat: "entrenamiento",
+    tags: ["Entrenamiento", "Trail", "Ruta"],
+    preview: "Entrenar más no es entrenar mejor. La periodización es la ciencia de organizar el estrés y la recuperación para maximizar la adaptación en el momento correcto.",
+    ciencia: "El modelo de periodización lineal (Matveev, 1960s) fue el primer sistema formalizado. Hoy el modelo más usado en endurance es la periodización ondulatoria o 'block periodization' (Issurin, 2010). Consiste en bloques de 2-6 semanas con enfoque en una capacidad (aeróbico, umbral, VO₂ máx) antes de integrarlas. El principio de supercompensación de Selye establece que el rendimiento mejora durante la fase de recuperación, no durante el estrés.",
+    fact: "El pico de supercompensación ocurre 3-10 días después de una carga de entrenamiento. Si volvés a entrenar antes de que se complete, acumulás fatiga. Si esperás demasiado, perdés el efecto. El timing es todo.",
+    aplicacion: [
+      "Semana típica de trail runner: 3-4 días de Z2, 1 día de trabajo de calidad (intervalos o umbral), 1 día de fuerza, 1-2 días de descanso.",
+      "Regla del 10%: no aumentar el volumen semanal más de un 10% por semana para evitar lesiones.",
+      "Cada 3-4 semanas de carga, incluir una semana de recuperación con 40-50% del volumen.",
+      "Para trail: incluir desnivelado acumulado como métrica además del kilometraje.",
+      "Tapering pre-carrera: reducir volumen 30-50% en las últimas 2 semanas, manteniendo intensidad."
+    ],
+    fuentes: "Issurin V. (2010) — New horizons for the methodology of training. Sports Medicine. Seiler S. (2010) — What is best practice for training intensity distribution?"
+  },
+  {
+    id: "11",
+    title: "Fuerza para corredores: el eslabón ignorado",
+    cat: "entrenamiento",
+    tags: ["Entrenamiento", "Fisiología", "Trail", "Ruta"],
+    preview: "Los corredores que ignoran la sala de pesas se lesionan más y rinden menos. El entrenamiento de fuerza mejora la economía de carrera, la potencia y la resistencia a lesiones.",
+    ciencia: "Un metanálisis de Blagrove et al. (2018) analizó 24 estudios y concluyó que el entrenamiento de fuerza mejora la economía de carrera entre 2-8% y el rendimiento en distancias de 3km a 42km. El mecanismo principal es el aumento en la rigidez tendinosa (stiffness) que mejora el almacenamiento y liberación de energía elástica en cada zancada. Para trail, la fuerza excéntrica de cuádriceps y la estabilidad de cadera son críticas.",
+    fact: "La mayoría de las lesiones en corredores ocurren en el plano frontal (lateral). El glúteo medio débil genera un colapso de cadera en cada apoyo que sobrecarga rodilla, tibial y fascia plantar. Un ejercicio: pararse en un pie 30 segundos con los ojos cerrados. Si es difícil, tu estabilidad lateral necesita trabajo.",
+    aplicacion: [
+      "Ejercicios clave: sentadilla búlgara (fuerza unilateral), hip thrust (glúteo máximo), step-up (específico del gesto de subida).",
+      "Frecuencia: 2 sesiones de fuerza por semana son suficientes para obtener beneficios sin interferir la corrida.",
+      "Timing: hacer fuerza en día separado de sesiones de calidad, o al menos 6 horas después.",
+      "Progresión: empezar con peso corporal, luego añadir carga. 3-4 series de 6-10 repeticiones para fuerza máxima.",
+      "Fuerza reactiva (pliométrico): saltos, rebotes. Mejora la elasticidad del tendón de Aquiles y la economía."
+    ],
+    fuentes: "Blagrove R. et al. (2018) — Effects of Strength Training on the Physiological Determinants of Middle- and Long-Distance Running Performance. Sports Medicine."
+  },
+  {
+    id: "12",
+    title: "Inflamación, adaptación y recuperación",
+    cat: "recuperacion",
+    tags: ["Recuperación", "Fisiología", "Trail", "Ruta"],
+    preview: "La inflamación post-entrenamiento no es el enemigo. Es la señal que activa la adaptación. Suprimirla siempre con antiinflamatorios puede frenar el progreso.",
+    ciencia: "El entrenamiento genera microlesiones musculares que desencadenan una cascada inflamatoria. Las citoquinas pro-inflamatorias (IL-6, TNF-α) señalizan a las células satélite musculares para reparar y reforzar el tejido. Baar & McGee (2008) demostraron que el ibuprofeno tomado inmediatamente post-entrenamiento inhibe significativamente la síntesis de proteínas musculares y reduce las adaptaciones a largo plazo. La inflamación aguda es adaptativa; la inflamación crónica es dañina.",
+    fact: "Según un estudio de Paulsen et al. (2010), los corredores que tomaron vitamina C y E en dosis altas durante 11 semanas mostraron menores adaptaciones mitocondriales que el grupo placebo. Las megadosis de antioxidantes 'apagan' la señal de entrenamiento.",
+    aplicacion: [
+      "Reservar los antiinflamatorios (ibuprofeno, naproxeno) para lesiones reales, no como rutina post-entrenamiento.",
+      "El hielo inmediato tampoco es siempre ideal: útil en lesiones agudas para dolor, pero puede retrasar la adaptación en DOMS normal.",
+      "Proteína post-entrenamiento (20-40g de proteína de alta calidad) activa la síntesis proteica sin suprimir la inflamación útil.",
+      "La creatina (3-5g/día) tiene evidencia sólida para acelerar la recuperación sin suprimir adaptaciones.",
+      "Sueño es el mejor 'suplemento anti-inflamatorio': la IL-6 se regula parcialmente durante el sueño profundo."
+    ],
+    fuentes: "Baar & McGee (2008). Paulsen et al. (2010) — Vitamin C and E supplementation hampers cellular adaptation. Journal of Physiology."
+  },
+  {
+    id: "13",
+    title: "Variabilidad de la frecuencia cardíaca (HRV)",
+    cat: "fisiologia",
+    tags: ["Fisiología", "Recuperación", "Trail", "Ruta"],
+    preview: "La HRV mide la readiness del sistema nervioso autónomo. Es el biomarcador más accesible para monitorear la recuperación real y ajustar la carga de entrenamiento.",
+    ciencia: "La variabilidad de la frecuencia cardíaca (HRV) refleja el balance entre el sistema nervioso simpático y parasimpático. Una HRV alta indica dominio parasimpático: el cuerpo está recuperado y listo para el estrés. Una HRV baja indica fatiga acumulada, estrés o enfermedad en curso. Buchheit et al. (2010) demostraron que entrenar basándose en HRV (HRV-guided training) produce mejoras equivalentes o superiores a la periodización fija, con menor riesgo de sobreentrenamiento.",
+    fact: "El alcohol reduce la HRV hasta 72 horas después del consumo, incluso en cantidades moderadas. Una noche de alcohol equivale fisiológicamente a 1-2 días de entrenamiento intenso en términos de carga sobre el sistema nervioso.",
+    aplicacion: [
+      "Medir HRV cada mañana, justo al despertar, en posición supina (boca arriba), con app como HRV4Training o Elite HRV.",
+      "Baseline personal: la HRV es individual. Comparate con vos mismo, no con tablas.",
+      "Si la HRV está >5% por debajo de tu promedio de 7 días: reducir intensidad o descansar.",
+      "Si la HRV está en promedio o por encima: día habilitado para entrenamiento de calidad.",
+      "Factores que elevan la HRV: sueño suficiente, meditación, respiración lenta (4-7-8), tiempo en naturaleza."
+    ],
+    fuentes: "Buchheit M. (2010) — Monitoring training status with HR measures: Do all roads lead to Rome? Frontiers in Physiology."
+  },
+  {
+    id: "14",
+    title: "Nutrición en carrera: qué, cuándo y cuánto",
+    cat: "nutricion",
+    tags: ["Nutrición", "Trail", "Ruta"],
+    preview: "La nutrición en movimiento es un entrenamiento en sí mismo. El intestino se adapta. Lo que no entrenás antes de la carrera, no funcionará el día de la carrera.",
+    ciencia: "El intestino delgado tiene transportadores específicos para la absorción de carbohidratos. La glucosa usa el transportador SGLT1; la fructosa usa GLUT5. Estos transportadores tienen capacidad máxima: ~60g/hora para glucosa sola, pero ~90g/hora cuando se combinan glucosa + fructosa (ratio 2:1 o 1:0.8). Jeukendrup (2010) demostró que entrenar el intestino con carbohidratos durante el entrenamiento aumenta la densidad de transportadores, mejorando la tolerancia y absorción.",
+    fact: "El 30-50% de los corredores de ultra experimentan problemas gastrointestinales durante la carrera. Casi todos son prevenibles con entrenamiento nutricional. El intestino es un músculo: necesita práctica para funcionar bien bajo estrés.",
+    aplicacion: [
+      "Entrenar el intestino: consumir carbohidratos durante los entrenos largos (2+ horas), comenzar con 30g/hora y aumentar progresivamente.",
+      "Formato en trail: lo que sea fácil de abrir y comer en movimiento. Dátiles, plátanos, geles, barritas blandas.",
+      "Evitar fibra, grasa y proteína alta en las 2-3 horas antes de una carrera larga.",
+      "Sólidos en carreras de baja intensidad (ultra); geles y líquidos en esfuerzos de alta intensidad (digestión más fácil).",
+      "Nunca probar algo nuevo el día de la carrera: lo que no entrenaste, no funciona."
+    ],
+    fuentes: "Jeukendrup A. (2010) — Carbohydrate and exercise performance. Nutrition Reviews."
+  },
+  {
+    id: "15",
+    title: "Cadencia y biomecánica de pisada",
+    cat: "tecnica",
+    tags: ["Técnica", "Ruta", "Trail"],
+    preview: "La forma en que pisás determina el impacto en cada zancada. Pequeños ajustes en cadencia y postura pueden reducir la carga acumulada en miles de pasos.",
+    ciencia: "Heiderscheit et al. (2011) demostraron que aumentar la cadencia un 10% reduce la carga en rodilla y cadera un 14%. La cadencia óptima para la mayoría de corredores recreativos está entre 165-180 pasos/min. Los corredores con baja cadencia (155 o menos) generalmente tienen zancadas largas con aterrizaje delante del centro de masa, lo que genera un freno en cada paso (overstriding).",
+    fact: "Overstriding (apoyo muy adelante del cuerpo) es la causa más común de síndrome de banda iliotibial, dolor patelofemoral y tibial anterior. Es corregible con trabajo de cadencia, y los cambios se ven en 4-6 semanas de práctica consciente.",
+    aplicacion: [
+      "Para medir cadencia: contar los pasos de un pie por 30 segundos y multiplicar por 4. O usar un reloj GPS.",
+      "Subir cadencia gradualmente: incrementar 5% cada 2 semanas para no generar lesiones por sobreuso.",
+      "Foco clave: el pie debe aterrizar directamente debajo de la cadera, no adelante.",
+      "En trail: la cadencia baja naturalmente en subidas; normalizala en plano y bajadas técnicas.",
+      "Música a 170-175 BPM como metrónomo natural durante los entrenamientos de ajuste de cadencia."
+    ],
+    fuentes: "Heiderscheit B. et al. (2011) — Effects of step rate manipulation on joint mechanics during running. Medicine & Science in Sports & Exercise."
+  },
+  {
+    id: "16",
+    title: "Dopamina, motivación y el loop del runner",
+    cat: "mental",
+    tags: ["Mental", "Fisiología"],
+    preview: "Ese estado eufórico post-carrera no es 'runner's high' de endorfinas (mito). Es dopamina y endocannabinoides. Entender la neurobiología de la motivación te ayuda a entrenar de forma más sostenible.",
+    ciencia: "El llamado 'runner's high' fue atribuido durante décadas a las endorfinas, pero estas no cruzan la barrera hematoencefálica. Investigaciones de Fuss et al. (2015) señalan a los endocannabinoides (anandamida) como los responsables del estado eufórico. La dopamina, en cambio, es la molécula de la anticipación y la motivación: se libera al planificar la carrera, no solo al terminarla. Andrew Huberman explica que el pico de dopamina en la anticipación es mayor que en la recompensa misma.",
+    fact: "Celebrar cada kilómetro o etapa del entrenamiento con emoción genuina libera dopamina y fortalece el hábito. Los corredores que tienen rituales de celebración post-entrenamiento mantienen la consistencia más tiempo que quienes simplemente 'checkean' el entreno.",
+    aplicacion: [
+      "Variabilidad de la recompensa aumenta la dopamina: no siempre el mismo recorrido, variar terrenos, distancias, compañeros.",
+      "El estrés crónico agota la dopamina basal. Correr ayuda a recuperarla, pero requiere descanso para no agotar más.",
+      "El 'cold exposure' (duchas frías) eleva la dopamina 2.5 veces sobre la línea base por horas (Huberman, 2022).",
+      "Música: elevar el BPM de la música gradualmente durante el calentamiento aumenta la motivación y reduce el esfuerzo percibido.",
+      "Evitar recompensas externas excesivas por entrenar: pueden reemplazar la motivación intrínseca (efecto de sobrejustificación)."
+    ],
+    fuentes: "Fuss et al. (2015) — A runner's high depends on cannabinoid receptors. PNAS. Huberman A. (2022) — Dopamine Nation podcast y laboratorio Stanford."
+  },
+  {
+    id: "17",
+    title: "Adaptación al calor y rendimiento",
+    cat: "fisiologia",
+    tags: ["Fisiología", "Trail", "Ruta"],
+    preview: "El calor es uno de los limitadores más poderosos del rendimiento. Pero el cuerpo se adapta de forma notable en 10-14 días de exposición controlada.",
+    ciencia: "La aclimatación al calor produce adaptaciones medibles: aumento del volumen plasmático (+10-12%), inicio de la sudoración más temprano, sudor más diluido (menor pérdida de sodio), reducción de la frecuencia cardíaca a igual intensidad. Brazaitis & Skurvydas (2010) demostraron que el VO₂ máx en condiciones de calor puede reducirse hasta un 7%, pero la aclimatación recupera gran parte de esta pérdida.",
+    fact: "El calor actúa como un 'entrenamiento en altitud del pobre': el aumento de volumen plasmático mejora el rendimiento también en frío. Atletas que se aclimatan al calor mejoran su rendimiento en condiciones templadas hasta un 5%.",
+    aplicacion: [
+      "Protocolo de aclimatación: 10-14 días con 60-90 minutos de ejercicio moderado en calor (o sauna post-entrenamiento).",
+      "Sauna a 80°C por 20-30 minutos, 3-4 veces por semana durante 2 semanas: efectivo para simular aclimatación.",
+      "Signo de adaptación: empezás a sudar antes y más, pero te sentís más fresco a igual esfuerzo.",
+      "Enfriamiento pre-carrera (chaleco de hielo, baño frío antes de salida): puede reducir la temperatura central y mejorar el rendimiento hasta un 3%.",
+      "En carreras calurosas: estrategia de ritmo más conservadora los primeros 30%, enfriamiento activo en puntos de control."
+    ],
+    fuentes: "Brazaitis & Skurvydas (2010) — Heat acclimation and performance. Journal of Strength and Conditioning Research."
+  },
+  {
+    id: "18",
+    title: "Respiración y economía de movimiento",
+    cat: "tecnica",
+    tags: ["Técnica", "Fisiología", "Trail", "Ruta"],
+    preview: "La forma en que respirás afecta el rendimiento, la postura y el sistema nervioso. La respiración nasal, el patrón diafragmático y la sincronización con la zancada son entrenables.",
+    ciencia: "La respiración nasal produce óxido nítrico (NO) en los senos paranasales, que dilata los vasos sanguíneos y mejora la oxigenación. Estudios de Morton (2004) mostraron que la respiración bucal exclusiva durante el ejercicio reduce la producción de CO₂ útil para la entrega de O₂ a los tejidos (efecto Bohr). La hiperventilación reduce el CO₂ en sangre y paradójicamente dificulta la entrega de O₂ a los músculos.",
+    fact: "Los pueblos indígenas de Kenia y Etiopía que dominan el running de fondo respiran predominantemente por la nariz incluso a ritmos muy exigentes. Esto se puede entrenar. Patrick McKeown (The Oxygen Advantage) diseñó protocolos específicos para mejorar el umbral de tolerancia al CO₂.",
+    aplicacion: [
+      "Entrenamiento de respiración nasal: forzar respiración nasal en corridas de Z2. Al principio tu ritmo bajará; en semanas mejorará.",
+      "Respiración diafragmática: la barriga debe moverse antes que el pecho en cada inspiración.",
+      "Sincronización con zancada: patrón 3-2 (3 pasos inhalar, 2 exhalar) reduce el impacto del 'punto de inflexión' del diafragma.",
+      "En alta intensidad: respiración bucal es inevitable y correcta. El objetivo nasal es para Z1-Z2.",
+      "Pranayama básico: respiraciones lentas 4 segundos inhalar / 6 segundos exhalar activan el nervio vago (recuperación activa)."
+    ],
+    fuentes: "Morton A.R. (2004) — Nasal versus oronasal breathing during exercise. Sports Medicine. McKeown P. — The Oxygen Advantage (2015)."
+  }
+];
+
+let activeFilter = "all";
+let searchTerm = "";
+
+function renderCards() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  const filtered = banco.filter(t => {
+    const matchCat = activeFilter === "all" || t.cat === activeFilter;
+    const q = searchTerm.toLowerCase();
+    const matchSearch = !q || t.title.toLowerCase().includes(q) || t.tags.some(tag => tag.toLowerCase().includes(q)) || t.preview.toLowerCase().includes(q);
+    return matchCat && matchSearch;
+  });
+  document.getElementById("count").textContent = filtered.length + " temas";
+  filtered.forEach(t => {
+    const card = document.createElement("div");
+    card.className = `card cat-${t.cat}`;
+    card.innerHTML = `
+      <div class="card-accent"></div>
+      <div class="card-num">N° ${t.id}</div>
+      <h2>${t.title}</h2>
+      <div class="card-tags">${t.tags.map(tag => `<span class="tag ${tag==='Trail'?'trail':tag==='Ruta'?'ruta':''}">${tag}</span>`).join("")}</div>
+      <p class="card-preview">${t.preview}</p>
+    `;
+    card.onclick = () => openModal(t);
+    grid.appendChild(card);
+  });
+}
+
+function openModal(t) {
+  const content = document.getElementById("modal-content");
+  content.innerHTML = `
+    <div class="modal-num">N° ${t.id} · ${t.cat.charAt(0).toUpperCase()+t.cat.slice(1)}</div>
+    <h2>${t.title}</h2>
+    <div class="modal-tags">${t.tags.map(tag => `<span class="tag ${tag==='Trail'?'trail':tag==='Ruta'?'ruta':''}">${tag}</span>`).join("")}</div>
+    <div class="fact-box">
+      <div class="fact-label">Dato clave</div>
+      <p>${t.fact}</p>
+    </div>
+    <div class="modal-section">
+      <h3>Base científica</h3>
+      <p>${t.ciencia}</p>
+    </div>
+    <div class="modal-section">
+      <h3>Aplicación práctica</h3>
+      <ul>${t.aplicacion.map(a => `<li>${a}</li>`).join("")}</ul>
+    </div>
+    <div class="sources">📚 Fuentes: ${t.fuentes}</div>
+  `;
+  document.getElementById("overlay").classList.add("open");
+  document.getElementById("modal").dataset.title = t.title;
+  document.getElementById("modal").dataset.content = JSON.stringify(t);
+}
+
+function closeModal() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+function copyContent() {
+  const t = JSON.parse(document.getElementById("modal").dataset.content);
+  const text = `TEMA: ${t.title}\n\nDATO CLAVE:\n${t.fact}\n\nCIENCIA:\n${t.ciencia}\n\nAPLICACIÓN PRÁCTICA:\n${t.aplicacion.map((a,i) => `${i+1}. ${a}`).join("\n")}\n\nFUENTES: ${t.fuentes}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector(".copy-btn");
+    btn.textContent = "¡Copiado!";
+    setTimeout(() => btn.textContent = "Copiar contenido para generar plaza ↗", 2000);
+  });
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.cat;
+    renderCards();
+  };
+});
+
+document.getElementById("search").addEventListener("input", e => {
+  searchTerm = e.target.value;
+  renderCards();
+});
+
+document.getElementById("overlay").addEventListener("click", e => {
+  if (e.target === document.getElementById("overlay")) closeModal();
+});
+
+renderCards();
+</script>
+</body>
+</html>

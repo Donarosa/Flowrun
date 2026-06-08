@@ -47,10 +47,12 @@ body.dark .kick{color:var(--moss)} body.dark .kick::before{background:var(--moss
 .title{font-size:76px;font-weight:800;letter-spacing:-.035em;line-height:1.02;color:var(--ink);margin-bottom:30px;text-wrap:balance}
 body.dark .title{color:#fff}
 .title .acc{color:var(--trail)} body.dark .title .acc{color:var(--moss)}
-.title.big{font-size:92px}
+.title.big{font-size:92px;line-height:1.16}
 .body{font-size:34px;line-height:1.46;color:var(--muted);font-weight:450;max-width:880px}
 body.dark .body{color:rgba(255,255,255,.82)}
 .body b{color:var(--ink);font-weight:700} body.dark .body b{color:#fff}
+.cover-src{margin-top:32px;font-family:var(--mono);font-size:18px;letter-spacing:.04em;color:var(--soft)}
+body.dark .cover-src{color:rgba(255,255,255,.42)}
 .fuente{position:relative;z-index:2;margin-top:30px;padding-top:24px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:19px;color:var(--muted)}
 .fuente b{color:var(--trail);font-weight:600}
 body.dark .fuente{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
@@ -82,7 +84,7 @@ const foot = (l, h) => `<div class="foot"><span>${l || 'flowrun.fun'}</span>${h 
 function flatHTML(s) {
   switch (s.type) {
     case 'cover':
-      return flatPage('dark', top(s.idx) + `<div class="content"><div class="kick">${s.kick}</div><div class="title big">${s.title}</div><div class="body">${s.body}</div></div>` + foot('flowrun.fun', s.hint || 'Deslizá →'))
+      return flatPage('dark', top(s.idx) + `<div class="content"><div class="kick">${s.kick}</div><div class="title big">${s.title}</div><div class="body">${s.body}</div>${s.src ? `<div class="cover-src">${s.src}</div>` : ''}</div>` + foot('flowrun.fun', s.hint || 'Deslizá →'))
     case 'body':
       return flatPage(s.theme || 'light', top(s.idx) + `<div class="content"><div class="kick">${s.kick}</div><div class="title">${s.title}</div><div class="body">${s.body}</div></div>` + (s.fuente ? `<div class="fuente">Fuente — <b>${s.fuente}</b></div>` : '') + foot('flowrun.fun', s.hint))
     case 'steps':
