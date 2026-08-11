@@ -25,7 +25,7 @@ export default async function SuscripcionPage() {
       )}
       {access.status === 'paid' && (
         <h1 className="text-2xl font-extrabold tracking-tight text-ink leading-tight mb-2">
-          Tu plan está activo
+          {access.canceled ? 'Cancelaste tu plan' : 'Tu plan está activo'}
         </h1>
       )}
       {access.status === 'expired' && (
@@ -38,12 +38,14 @@ export default async function SuscripcionPage() {
         {access.status === 'trial' &&
           `Te quedan ${access.daysLeft} día${access.daysLeft === 1 ? '' : 's'}. Elegí tu plan cuando quieras.`}
         {access.status === 'paid' &&
-          `Renovás el ${formatDate(access.periodEnd)}. Si querés extender antes, comprá otro plan.`}
+          (access.canceled
+            ? `Mantenés acceso hasta el ${formatDate(access.periodEnd)}. Después no se renueva.`
+            : `Renovás el ${formatDate(access.periodEnd)}. Si querés extender antes, comprá otro plan.`)}
         {access.status === 'expired' &&
           'Elegí tu plan para volver a entrenar.'}
       </p>
 
-      {access.status === 'paid' && (
+      {access.status === 'paid' && !access.canceled && (
         <CancelButton periodEnd={access.periodEnd} />
       )}
 

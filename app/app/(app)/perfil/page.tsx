@@ -116,6 +116,7 @@ export default async function PerfilPage() {
                 {access.status === 'trial' && 'Trial gratuito'}
                 {access.status === 'paid' &&
                   (access.plan ? PLAN_LABEL[access.plan] : 'Activa')}
+                {access.status === 'paid' && access.canceled && ' · cancelada'}
                 {access.status === 'expired' && 'Sin acceso'}
               </p>
               {access.status === 'expired' ? (
@@ -127,12 +128,12 @@ export default async function PerfilPage() {
                   {access.daysLeft === 1
                     ? `Último día`
                     : `Quedan ${access.daysLeft} días`}
-                  {' · vence el '}
+                  {access.canceled ? ' · acceso hasta el ' : ' · vence el '}
                   {formatLongDate(access.periodEnd)}
                 </p>
               )}
             </div>
-            {access.status === 'paid' ? (
+            {access.status === 'paid' && !access.canceled ? (
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-pine font-bold">
                 Activa
               </span>

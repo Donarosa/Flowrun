@@ -41,10 +41,16 @@ export function daysRemaining(sub: SubscriptionRow): number {
 }
 
 // Bloqueamos cuando: el periodo (trial o pago) venció.
-// active sin vencer = OK. trialing sin vencer = OK. Resto = bloqueado.
+// active sin vencer = OK. trialing sin vencer = OK.
+//
+// 'canceled' NO bloquea por sí solo: según T&C 6.4 la cancelación toma efecto
+// al final del período en curso y el usuario mantiene acceso hasta esa fecha
+// (es lo que le promete el botón de cancelar y lo que asume el webhook, que
+// deja current_period_end intacto). Cuando llega esa fecha cae por
+// daysRemaining, igual que cualquier otra suscripción vencida.
 export function isLocked(sub: SubscriptionRow | null): boolean {
   if (!sub) return false // nunca debería pasar gracias al trigger, pero por seguridad
-  if (sub.status === 'canceled' || sub.status === 'expired') return true
+  if (sub.status === 'expired') return true
   return daysRemaining(sub) === 0
 }
 
@@ -53,19 +59,30 @@ export type AccessState = {
   daysLeft: number
   plan: SubscriptionPlan | null
   periodEnd: string
+  // Cancelada pero todavía dentro del período pagado: el acceso sigue vivo,
+  // pero no se renueva. La UI tiene que decirlo en vez de mostrar "Activa".
+  canceled: boolean
 }
 
 export function getAccessState(sub: SubscriptionRow | null): AccessState {
   if (!sub) {
-    return { status: 'expired', daysLeft: 0, plan: null, periodEnd: todayIso() }
+    return {
+      status: 'expired',
+      daysLeft: 0,
+      plan: null,
+      periodEnd: todayIso(),
+      canceled: false,
+    }
   }
   const daysLeft = daysRemaining(sub)
+  const canceled = sub.status === 'canceled'
   if (isLocked(sub)) {
     return {
       status: 'expired',
       daysLeft: 0,
       plan: sub.plan,
       periodEnd: sub.current_period_end,
+      canceled,
     }
   }
   return {
@@ -73,6 +90,7 @@ export function getAccessState(sub: SubscriptionRow | null): AccessState {
     daysLeft,
     plan: sub.plan,
     periodEnd: sub.current_period_end,
+    canceled,
   }
 }
 
