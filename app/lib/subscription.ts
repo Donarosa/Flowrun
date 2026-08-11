@@ -48,8 +48,16 @@ export function daysRemaining(sub: SubscriptionRow): number {
 // (es lo que le promete el botón de cancelar y lo que asume el webhook, que
 // deja current_period_end intacto). Cuando llega esa fecha cae por
 // daysRemaining, igual que cualquier otra suscripción vencida.
+// Sin fila de suscripción no hay acceso. Antes esto devolvía false porque el
+// trigger de signup creaba la fila siempre y null se consideraba imposible; la
+// migración 0018 sacó esa creación del trigger y la movió al último paso del
+// onboarding, así que null pasó a ser alcanzable (p. ej. si falla el insert
+// después de que assignPlan ya creó el plan). Fallar abierto ahí regalaba
+// acceso completo sin trial ni vencimiento, así que fallamos cerrado.
+// Las rutas de (app) ya exigen onboarding completo vía el layout, así que
+// nadie a mitad del alta llega hasta acá.
 export function isLocked(sub: SubscriptionRow | null): boolean {
-  if (!sub) return false // nunca debería pasar gracias al trigger, pero por seguridad
+  if (!sub) return true
   if (sub.status === 'expired') return true
   return daysRemaining(sub) === 0
 }
