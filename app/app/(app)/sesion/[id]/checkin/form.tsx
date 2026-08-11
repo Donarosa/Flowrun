@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type {
   BreathingLevel,
   LegsFatigueLevel,
@@ -118,6 +118,7 @@ export function CheckinForm({
   return (
     <div className="flex flex-col gap-6">
       <Field
+        group
         label="Sensación general"
         helper={rpe ? `${rpe}/5 · ${RPE_LABELS[rpe - 1]}` : '1 = muy fácil · 5 = muy duro'}
       >
@@ -142,7 +143,7 @@ export function CheckinForm({
         </div>
       </Field>
 
-      <Field label="¿Podías hablar?">
+      <Field group label="¿Podías hablar?">
         <OptionGroup
           options={TALK_OPTIONS}
           value={talkTest}
@@ -150,7 +151,7 @@ export function CheckinForm({
         />
       </Field>
 
-      <Field label="¿Cómo respirabas?">
+      <Field group label="¿Cómo respirabas?">
         <OptionGroup
           options={BREATHING_OPTIONS}
           value={breathing}
@@ -158,7 +159,7 @@ export function CheckinForm({
         />
       </Field>
 
-      <Field label="Objetivo de hoy">
+      <Field group label="Objetivo de hoy">
         <OptionGroup
           options={INTENT_OPTIONS}
           value={intent}
@@ -166,7 +167,7 @@ export function CheckinForm({
         />
       </Field>
 
-      <Field label="¿Tuviste dolor o molestia?">
+      <Field group label="¿Tuviste dolor o molestia?">
         <div className="grid grid-cols-2 gap-2">
           <PainButton
             value={false}
@@ -183,7 +184,7 @@ export function CheckinForm({
         </div>
       </Field>
 
-      <Field label="Fatiga en piernas">
+      <Field group label="Fatiga en piernas">
         <OptionGroup
           options={FATIGUE_OPTIONS}
           value={legsFatigue}
@@ -244,25 +245,47 @@ function PainButton({
   )
 }
 
+// `group`: usar cuando el contenido son botones y no un input. Un <label> se
+// asocia al primer descendiente etiquetable, así que envolver un grupo de
+// botones le pega al primero el texto entero del grupo como nombre accesible
+// ("Fatiga en piernas Media Algo cargadas Alta Muy cargadas" para el botón
+// "Baja"). Con role="group" + aria-labelledby cada botón conserva su nombre.
 function Field({
   label,
   helper,
+  group,
   children,
 }: {
   label: string
   helper?: string
+  group?: boolean
   children: React.ReactNode
 }) {
+  const labelId = useId()
+  const head = (
+    <div className="flex items-baseline justify-between">
+      <span
+        id={group ? labelId : undefined}
+        className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted font-semibold"
+      >
+        {label}
+      </span>
+      {helper && <span className="text-[11px] text-muted">{helper}</span>}
+    </div>
+  )
+
+  if (group) {
+    return (
+      <div role="group" aria-labelledby={labelId} className="flex flex-col gap-2">
+        {head}
+        {children}
+      </div>
+    )
+  }
+
   return (
     <label className="flex flex-col gap-2">
-      <div className="flex items-baseline justify-between">
-        <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted font-semibold">
-          {label}
-        </span>
-        {helper && (
-          <span className="text-[11px] text-muted">{helper}</span>
-        )}
-      </div>
+      {head}
       {children}
     </label>
   )

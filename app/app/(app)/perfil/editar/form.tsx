@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useId, useState, useTransition } from 'react'
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries'
 import type {
   EffortMode,
@@ -110,7 +110,7 @@ export function EditarForm({ initial }: { initial: Initial }) {
             ))}
           </select>
         </Field>
-        <Field label="Género">
+        <Field group label="Género">
           <div className="grid grid-cols-2 gap-2">
             {GENDER_OPTIONS.map((opt) => (
               <ChipButton
@@ -125,7 +125,7 @@ export function EditarForm({ initial }: { initial: Initial }) {
       </Section>
 
       <Section title="Preferencias">
-        <Field label="Sensación al correr">
+        <Field group label="Sensación al correr">
           <div className="flex flex-col gap-2">
             {SENSACION_OPTIONS.map((opt) => (
               <ChipButton
@@ -138,7 +138,7 @@ export function EditarForm({ initial }: { initial: Initial }) {
             ))}
           </div>
         </Field>
-        <Field label="Mido el esfuerzo con">
+        <Field group label="Mido el esfuerzo con">
           <div className="flex flex-col gap-2">
             {EFFORT_OPTIONS.map((opt) => (
               <ChipButton
@@ -182,18 +182,39 @@ function Section({
   )
 }
 
+// `group`: ver nota en el form de check-in. Un <label> que envuelve botones se
+// asocia al primero y le pega el texto entero del grupo como nombre accesible.
 function Field({
   label,
+  group,
   children,
 }: {
   label: string
+  group?: boolean
   children: React.ReactNode
 }) {
+  const labelId = useId()
+  const head = (
+    <span
+      id={group ? labelId : undefined}
+      className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted font-semibold"
+    >
+      {label}
+    </span>
+  )
+
+  if (group) {
+    return (
+      <div role="group" aria-labelledby={labelId} className="flex flex-col gap-1.5">
+        {head}
+        {children}
+      </div>
+    )
+  }
+
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted font-semibold">
-        {label}
-      </span>
+      {head}
       {children}
     </label>
   )
