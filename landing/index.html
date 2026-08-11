@@ -743,16 +743,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="ptag" data-i18n="price.c2.tag">Pack 3 meses</div>
         <h3 data-i18n="price.c2.name">Más ahorro</h3>
         <div class="price-row">
-          <span class="amount" id="pricePack">$18.000</span>
+          <span class="amount" id="pricePack">$16.800</span>
           <span class="currency" id="currencyPack">ARS</span>
           <span class="period" data-i18n="price.per3">/ 3 meses</span>
         </div>
         <div class="price-alt" id="pricePackAlt" data-i18n="price.c2.alt">o USD 12 / 3 meses</div>
-        <span class="price-save" id="priceSave">Ahorrás 14%</span>
+        <span class="price-save" id="priceSave">Ahorrás 20%</span>
         <span class="payment-method" id="paymentPack"></span>
         <div class="price-feats">
           <div class="pf" data-i18n="price.c2.f1">Mismo acceso completo que el mensual</div>
-          <div class="pf" data-i18n="price.c2.f2">14% off pagando en ARS · 20% off en USD</div>
+          <div class="pf" data-i18n="price.c2.f2">20% off pagando en ARS o en USD</div>
           <div class="pf" data-i18n="price.c2.f3">Pago único, sin renovación automática</div>
           <div class="pf" data-i18n="price.c2.f4">Tope máximo: 3 meses por compra</div>
         </div>
@@ -999,7 +999,7 @@ const TRANSLATIONS = {
     'price.c1.cta': 'Empezá gratis 15 días',
     'price.c2.tag': 'Pack 3 meses','price.c2.name': 'Más ahorro',
     'price.c2.f1': 'Mismo acceso completo que el mensual',
-    'price.c2.f2': '14% off pagando en ARS · 20% off en USD',
+    'price.c2.f2': '20% off pagando en ARS o en USD',
     'price.c2.f3': 'Pago único, sin renovación automática',
     'price.c2.f4': 'Tope máximo: 3 meses por compra',
     'price.c2.cta': 'Quiero el pack',
@@ -1035,8 +1035,8 @@ const TRANSLATIONS = {
     'price.c1.altAR': 'o USD 5 / mes para usuarios fuera de Argentina',
     'price.c1.altIntl': 'o $7.000 ARS / mes para usuarios de Argentina (pago por transferencia bancaria)',
     'price.c2.altAR': 'o USD 12 / 3 meses para usuarios fuera de Argentina',
-    'price.c2.altIntl': 'o $18.000 ARS / 3 meses para usuarios de Argentina (pago por transferencia bancaria)',
-    'price.saveAR': 'Ahorrás 14%','price.saveIntl': 'Ahorrás 20%',
+    'price.c2.altIntl': 'o $16.800 ARS / 3 meses para usuarios de Argentina (pago por transferencia bancaria)',
+    'price.saveAR': 'Ahorrás 20%','price.saveIntl': 'Ahorrás 20%',
     'price.payAR': 'Transferencia bancaria · ARS','price.payIntl': 'Tarjeta internacional · USD',
     'price.note': 'PAGO AR · TRANSFERENCIA BANCARIA &nbsp;·&nbsp; PAGO INTERNACIONAL · TARJETA EN USD',
   },
@@ -1165,7 +1165,7 @@ const TRANSLATIONS = {
     'price.c1.cta': 'Start free 15 days',
     'price.c2.tag': '3-month pack','price.c2.name': 'More savings',
     'price.c2.f1': 'Same full access as monthly',
-    'price.c2.f2': '14% off in ARS · 20% off in USD',
+    'price.c2.f2': '20% off in ARS or USD',
     'price.c2.f3': 'Single payment, no auto-renewal',
     'price.c2.f4': 'Max cap: 3 months per purchase',
     'price.c2.cta': 'Get the pack',
@@ -1201,8 +1201,8 @@ const TRANSLATIONS = {
     'price.c1.altAR': 'or USD 5 / month for users outside Argentina',
     'price.c1.altIntl': 'or $7,000 ARS / month for users in Argentina (paid by bank transfer)',
     'price.c2.altAR': 'or USD 12 / 3 months for users outside Argentina',
-    'price.c2.altIntl': 'or $18,000 ARS / 3 months for users in Argentina (paid by bank transfer)',
-    'price.saveAR': 'Save 14%','price.saveIntl': 'Save 20%',
+    'price.c2.altIntl': 'or $16,800 ARS / 3 months for users in Argentina (paid by bank transfer)',
+    'price.saveAR': 'Save 20%','price.saveIntl': 'Save 20%',
     'price.payAR': 'Bank transfer · ARS','price.payIntl': 'International card · USD',
     'price.note': 'AR PAYMENT · BANK TRANSFER &nbsp;·&nbsp; INTERNATIONAL · CARD IN USD',
   }
@@ -1252,7 +1252,7 @@ function applyPricing() {
     document.getElementById('priceMonthly').textContent = '$7.000';
     document.getElementById('currencyMonthly').textContent = 'ARS';
     document.getElementById('priceMonthlyAlt').textContent = dict['price.c1.altAR'];
-    document.getElementById('pricePack').textContent = '$18.000';
+    document.getElementById('pricePack').textContent = '$16.800';
     document.getElementById('currencyPack').textContent = 'ARS';
     document.getElementById('pricePackAlt').textContent = dict['price.c2.altAR'];
     document.getElementById('priceSave').textContent = dict['price.saveAR'];
